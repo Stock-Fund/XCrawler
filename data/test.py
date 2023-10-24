@@ -6,25 +6,29 @@ import requests
 import os
 from io import BytesIO
 import pytesseract
+import timeutil
 from PIL import Image
+import schedule
 
 bashPath = "http://quote.eastmoney.com"
-driver = webdriver.Chrome()       
-# 每隔5S遍历一次网页的数据
-while True:      # 创建Chrome对象
-     url = driver.get('http://quote.eastmoney.com/zs000001.html') 
-     driver.implicitly_wait(2)
-     soup = BeautifulSoup(driver.page_source,'lxml')
-     # print(driver.page_source)    # 访问东方财富.
-     table = soup.find_all('table',class_='zjl1')
-     logo = soup.find_all('a',class_='logolink2')
+driver = webdriver.Chrome()     
+image = None
+basesoup = None
 
-
-     # 线上抓图，识图
-     for a_tag in logo:
-     #    text = a_tag.text  # 获取<a>标签内的文本内容
+# 创建Chrome对象
+def _get_Data():
+   # if soup is None:
+      url = driver.get('http://quote.eastmoney.com/zs000001.html') 
+      driver.implicitly_wait(2)
+      soup = BeautifulSoup(driver.page_source,'lxml')
+      # print(driver.page_source)    # 访问东方财富.
+      table = soup.find_all('table',class_='zjl1')
+      logo = soup.find_all('a',class_='logolink2')
+      # 线上抓图，识图
+      for a_tag in logo:
+      #    text = a_tag.text  # 获取<a>标签内的文本内容
         href = a_tag['href']  # 获取<a>标签的href属性值
-     #    print(f"文本内容: {text}")
+      #    print(f"文本内容: {text}")
         print(f"链接地址: {href}")
         img_tag = a_tag.find('img')
         if img_tag:
@@ -44,17 +48,33 @@ while True:      # 创建Chrome对象
                custom_config = r'--psm 6 --oem 2'
                text = pytesseract.image_to_string(image,lang='chi_sim',config=custom_config)
                print('123:'+text)
+   # else:
+   #   print("soup is not none")
 
-     
 
-     # 线上抓数据
-     for ta in table:
+    # 线上抓数据
+      for ta in table:
     # print(ta.text)
           for body in ta.find_all('tbody'):
               for tr in body.find_all('tr'):
                print(tr.get_text())
-     time.sleep(60)
+   
+      return soup
 
+
+# 每天9:30遍历一次网页的数据
+while True: 
+     localtime = timeutil.get_network_time()
+     if basesoup:
+         schedule.every().day.at("09:30").do(_get_Data)
+     else: 
+         basesoup = _get_Data()
+         # basesoup = _get_Data()
+         print("basesoup is none")
+         
+         
+    
+     time.sleep(1)
 
 # time.sleep(200)   #两秒后关闭
 # driver.quit()
