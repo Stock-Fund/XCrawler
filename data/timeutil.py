@@ -22,3 +22,7 @@ def get_network_time():
     # print(local_time.hour)
     # print(network_time.hour)
     return local_time
+
+def get_local_time():
+    local_time = datetime.datetime.now()
+    return local_time

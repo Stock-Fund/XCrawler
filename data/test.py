@@ -64,9 +64,10 @@ def _get_Data():
 
 # 每天9:30遍历一次网页的数据
 while True: 
-     localtime = timeutil.get_network_time()
+     localtime = timeutil.get_local_time()
      if basesoup:
          schedule.every().day.at("09:30").do(_get_Data)
+         print("time is 09:30")  
      else: 
          basesoup = _get_Data()
          # basesoup = _get_Data()
