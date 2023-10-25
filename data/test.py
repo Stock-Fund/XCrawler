@@ -9,6 +9,7 @@ import pytesseract
 import timeutil
 from PIL import Image
 import schedule
+import xlsx
 
 bashPath = "http://quote.eastmoney.com"
 driver = webdriver.Chrome()     
@@ -52,13 +53,22 @@ def _get_Data():
    #   print("soup is not none")
 
 
+      datas = []
+      
+     
     # 线上抓数据
       for ta in table:
     # print(ta.text)
           for body in ta.find_all('tbody'):
               for tr in body.find_all('tr'):
+               data = tr.get_text()
+               datas.append(data)
                print(tr.get_text())
-   
+      datas = list(map(str, datas))
+       # 写入xlsx title
+      datas.insert(0, "数据")
+      xlsx.SaveToXlsx(datas,"Assets/data.xlsx")
+      xlsx.SaveToCsv(datas,"Assets/data.csv")
       return soup
 
 
