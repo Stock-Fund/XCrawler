@@ -69,6 +69,7 @@ def _get_Data():
       datas.insert(0, "数据")
       xlsx.SaveToXlsx(datas,"Assets/data.xlsx")
       xlsx.SaveToCsv(datas,"Assets/data.csv")
+      xlsx.SaveToJson(datas,"Assets/data.json")
       return soup
 
 
