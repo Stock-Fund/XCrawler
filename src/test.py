@@ -23,8 +23,12 @@ def _get_Data():
       driver.implicitly_wait(2)
       soup = BeautifulSoup(driver.page_source,'lxml')
       # print(driver.page_source)    # 访问东方财富.
-      table = soup.find_all('table',class_='zjl1')
-      logo = soup.find_all('a',class_='logolink2')
+      # soup select寻找的方式更加效率
+      table = soup.select('table.zjl1')
+      logo = soup.select('a.logolink2')
+      # soup find all方式寻找效率低些，但基于递归的数据用find_all就比较合适
+      # table = soup.find_all('table',class_='zjl1')
+      # logo = soup.find_all('a',class_='logolink2')
       # 线上抓图，识图
       for a_tag in logo:
       #    text = a_tag.text  # 获取<a>标签内的文本内容
@@ -59,8 +63,8 @@ def _get_Data():
     # 线上抓数据
       for ta in table:
     # print(ta.text)
-          for body in ta.find_all('tbody'):
-              for tr in body.find_all('tr'):
+          for body in ta.select('tbody'):
+              for tr in body.select('tr'):
                data = tr.get_text()
                datas.append(data)
                print(tr.get_text())
