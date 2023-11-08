@@ -10,6 +10,7 @@ import timeutil
 from PIL import Image
 import schedule
 import xlsx
+from process.simplethread import SimpleThread
 
 bashPath = "http://quote.eastmoney.com"
 driver = webdriver.Chrome()     
@@ -88,7 +89,14 @@ while True:
          # basesoup = _get_Data()
          print("basesoup is none")
          
-         
+     urls=[
+         'https://www.zhihu.com/question/51359754/answer/3024289861',
+         'https://www.zhihu.com/question/278798145/answer/3266830271',
+         'https://www.youtube.com/'
+     ]    
+
+     thread = SimpleThread(urls)
+     thread.run()
     
      time.sleep(1)
 
