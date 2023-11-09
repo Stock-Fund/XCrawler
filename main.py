@@ -1,4 +1,10 @@
 
+import sys
+import os
+from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtGui import QIcon  # 导入引用图标的函数
+import src
+
 def main():
 
     app = QApplication(sys.argv)
@@ -6,7 +12,9 @@ def main():
     app.setWindowIcon(QIcon(path))
     window = Window()
     window.show()
-
+    
+    print(src.crawler)
+    src.crawler.try_start()
     # # label
     # label = QLabel('Hello World!')
     # label.show()
@@ -20,10 +28,7 @@ def main():
 
     sys.exit(app.exec())
 
-import sys
-import os
-from PyQt6.QtWidgets import QApplication, QWidget
-from PyQt6.QtGui import QIcon  # 导入引用图标的函数
+
 class Window(QWidget):
     def __init__(self):
         super().__init__()  # 用于访问父类的方法和属性

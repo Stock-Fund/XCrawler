@@ -6,21 +6,24 @@ import requests
 import os
 from io import BytesIO
 import pytesseract
-import timeutil
+import src.timeutil
 from PIL import Image
 import schedule
-import xlsx
-from process.simplethread import SimpleThread
+import src.xlsx
+from src.process.simplethread import SimpleThread
+from src.process.simpleprocess import SimpleProcess
 
 bashPath = "http://quote.eastmoney.com"
+bashUrl = 'http://quote.eastmoney.com/zs000001.html'
 driver = webdriver.Chrome()     
 image = None
 basesoup = None
 
 # 创建Chrome对象
-def _get_Data():
+def _get_Data(tmpUrl):
    # if soup is None:
-      url = driver.get('http://quote.eastmoney.com/zs000001.html') 
+      bashUrl = tmpUrl
+      url = driver.get(tmpUrl) 
       driver.implicitly_wait(2)
       soup = BeautifulSoup(driver.page_source,'lxml')
       # print(driver.page_source)    # 访问东方财富.
@@ -72,20 +75,26 @@ def _get_Data():
       datas = list(map(str, datas))
        # 写入xlsx title
       datas.insert(0, "数据")
-      xlsx.SaveToXlsx(datas,"Assets/data.xlsx")
-      xlsx.SaveToCsv(datas,"Assets/data.csv")
-      xlsx.SaveToJson(datas,"Assets/data.json")
+      src.xlsx.SaveToXlsx(datas,"Assets/data.xlsx")
+      src.xlsx.SaveToCsv(datas,"Assets/data.csv")
+      src.xlsx.SaveToJson(datas,"Assets/data.json")
       return soup
+    
+def _run_get_Data():
+  _get_Data(bashUrl)
 
 
-# 每天9:30遍历一次网页的数据
-while True: 
-     localtime = timeutil.get_local_time()
+def _run_cycle():
+  # 每天9:30遍历一次网页的数据
+  while True: 
+     print("cycle=====")
+     localtime = src.timeutil.get_local_time()
+     print(bashUrl)
      if basesoup:
-         schedule.every().day.at("09:30").do(_get_Data)
+         schedule.every().day.at("09:30").do(_run_get_Data)
          print("time is 09:30")  
      else: 
-         basesoup = _get_Data()
+         basesoup = _get_Data(bashUrl)
          # basesoup = _get_Data()
          print("basesoup is none")
          
@@ -98,7 +107,27 @@ while True:
      thread = SimpleThread(urls)
      thread.run()
     
-     time.sleep(1)
+    #  time.sleep(1)
 
-# time.sleep(200)   #两秒后关闭
+def try_start():
+     urls=[
+         'http://quote.eastmoney.com/zs000001.html',
+         'http://quote.eastmoney.com/zs000001.html',
+         'http://quote.eastmoney.com/zs000001.html'
+        #  'https://www.zhihu.com/question/51359754/answer/3024289861',
+        #  'https://www.zhihu.com/question/278798145/answer/3266830271',
+        #  'https://www.youtube.com/'
+     ]  
+     processes = []
+     for url in urls:
+        bashUrl = url
+        p = SimpleProcess(target=_run_cycle)
+        p.start()
+        processes.append(p)
+        
+     for p in processes:
+        p.join()
+
+# _run_get_Data()
+# time.sleep(2000)   #两秒后关闭
 # driver.quit()
