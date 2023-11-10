@@ -10,7 +10,7 @@ class SimpleThread:
     response = src.process.requests.get(url)
     soup = src.process.BeautifulSoup(response.text, 'html.parser')  
     title = soup.select_one('title').text
-    print(title)  
+    # print(title)  
 
   def run(self):  
     threads = []

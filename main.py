@@ -13,7 +13,6 @@ def main():
     window = Window()
     window.show()
     
-    print(src.crawler)
     src.crawler.try_start()
     # # label
     # label = QLabel('Hello World!')

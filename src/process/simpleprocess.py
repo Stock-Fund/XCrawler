@@ -12,7 +12,7 @@ class SimpleProcess(src.process.multiprocessing.Process):
     
     def run(self):
         self.target(*self.args)
-        print("process run"+self.args)
+        # print("process run"+self.args)
         
 # def function(name):
 #     print(f'Hello {name}')
