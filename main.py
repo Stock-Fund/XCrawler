@@ -16,6 +16,7 @@ def main():
     window = Window()   
     window.show()
     
+    ## todo use js code crawling web data
     # src.crawler.try_start()
     # # label
     # label = QLabel('Hello World!')
