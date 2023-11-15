@@ -4,7 +4,9 @@ import schedule
 import src.xlsx
 from src.process.simplethread import SimpleThread
 from src.process.simpleprocess import SimpleProcess
+from multiprocessing import Queue
 import src.html
+import Task
 
 bashPath = "http://quote.eastmoney.com"
 url0 = 'http://quote.eastmoney.com/zs000001.html' # 东方财富
@@ -71,52 +73,75 @@ basesoup = None
   #     src.xlsx.SaveToJson(datas,"Assets/data.json")
   #     return soup
     
-def _run_get_Data(url,driver,index):
-   if index ==1:
-      src.html.eastmoney.get_Data(driver,url)
-   elif index ==2:
-      src.html.sinafinance.get_Data(driver,url)
+# def _run_get_Data(url,driver,index):
+#    if index ==1:
+#       src.html.eastmoney.get_Data(driver,url)
+#    elif index ==2:
+#       src.html.sinafinance.get_Data(driver,url)
 
 
-def _run_cycle(url,index):
-  # 创建Chrome对象
-  driver = webdriver.Chrome()  
-  boo = False
-  urls=[
-         'https://www.zhihu.com/question/51359754/answer/3024289861',
-         'https://www.zhihu.com/question/278798145/answer/3266830271',
-         'https://www.youtube.com/'
-     ]    
+def _run_cycle(url,index,input_queue,output_queue):
+   
+   while True:
+      task = input_queue.get()
+      print(f'processing {task}')
+      task.func(task)
+      output_queue.put(task)
+      input_queue.task_done()
+      
+#   boo = False
+#   urls=[
+#          'https://www.zhihu.com/question/51359754/answer/3024289861',
+#          'https://www.zhihu.com/question/278798145/answer/3266830271',
+#          'https://www.youtube.com/'
+#      ]    
 
-  thread = SimpleThread(urls)
-  thread.run()
-  while True: 
-     localtime = src.timeutil.get_local_time()
-     if boo:
-        # 每天9:30遍历一次网页的数据
-        schedule.every().day.at("09:30").do(_run_get_Data,url,driver,index)
-     else: 
-        boo = True
-        _run_get_Data(url,driver,index)
+#   thread = SimpleThread(urls)
+#   thread.run()
+#   while True: 
+#      localtime = src.timeutil.get_local_time()
+#      if boo:
+#         # 每天9:30遍历一次网页的数据
+#         schedule.every().day.at("09:30").do(_run_get_Data,url,driver,index)
+#      else: 
+#         boo = True
+#         _run_get_Data(url,driver,index)
   
-    
+def _createDriver():
+   # 创建Chrome对象
+   options = webdriver.ChromeOptions()
+   options.add_argument('--headless')
+   driver = webdriver.Chrome(options = options)
+   return driver
+
+   
+
     #  time.sleep(1)
 def try_start():
      urls=[
          'http://quote.eastmoney.com/zs000001.html',
-        #  'http://quote.eastmoney.com/zs000001.html',
-        #  'http://quote.eastmoney.com/zs000001.html'
          'https://finance.sina.com.cn/realstock/company/sh000001/nc.shtml'
-        #  'https://www.zhihu.com/question/278798145/answer/3266830271',
-        #  'https://www.youtube.com/'
      ]  
+     
      processes = []
      index = 1
+     input_queue = Queue()
+     output_queue = Queue()
+     
      for url in urls:
-        p = SimpleProcess(target=_run_cycle,args=(url,index,))
-        p.start()
-        processes.append(p)
-        index=index+1
+         driver = _createDriver()
+         if index ==1:
+            task = Task(url,src.html.eastmoney.get_Data(driver,url))
+         elif index ==2:
+            task = Task(url,src.html.sinafinance.get_Data(driver,url))
+         
+         input_queue.put(task)
+         
+          # 多进程
+         p = SimpleProcess(target=_run_cycle,args=(url,index,input_queue,output_queue))
+         p.start()
+         processes.append(p)
+         index = index + 1
         
      for p in processes:
         p.join()

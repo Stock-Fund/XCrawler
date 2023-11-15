@@ -54,7 +54,7 @@ class Window(QWidget):
          self.widget.resize(self.width(), self.height())
          self.widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
          self.widget.loadFinished.connect(self.handle_load_finished)
-         self.widget.load(QUrl('https://www.zhihu.com/question/51359754/answer/3024289861'))
+         self.widget.load(QUrl('http://quote.eastmoney.com/zs000001.html'))
     
     def center(self)    :
         screen = QGuiApplication.primaryScreen().size()
@@ -70,11 +70,17 @@ class Window(QWidget):
     def handle_load_finished(self):
         # frame = self.view.page().mainFrame()
         # html = frame.toHtml()
-        self.driver = webdriver.Chrome()
-        self.driver.get('https://www.zhihu.com/question/51359754/answer/3024289861')
-        self.driver.implicitly_wait(2)
-        soup = src.html.BeautifulSoup(self.driver.page_source,'lxml')
         
+        src.crawler.try_start()
+        
+        
+        # self.options = webdriver.ChromeOptions()
+        # self.options.add_argument('--headless')
+        # self.driver = webdriver.Chrome(options =self.options)
+        # self.driver.get('http://quote.eastmoney.com/zs000001.html')
+        # self.driver.implicitly_wait(2)
+        # soup = src.html.BeautifulSoup(self.driver.page_source,'lxml')
+
     #     table = soup.select('table.zjl1')
     #     logo = soup.select('a.logolink2')
     #   # soup find all方式寻找效率低些，但基于递归的数据用find_all就比较合适

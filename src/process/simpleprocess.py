@@ -3,6 +3,8 @@ import src.process
 class SimpleProcess(src.process.multiprocessing.Process):
     def __init__(self, target, args=()):
         super().__init__()
+        # 设置为true，表示该进程为守护进程，当主进程关闭时，会关闭所有守护进程
+        # self.daemon = True
         self.target = target
         self.args = args
 
