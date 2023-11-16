@@ -1,9 +1,10 @@
 import src.html
 import time
+from selenium import webdriver
 bashPath = "http://quote.eastmoney.com"
 
 def get_Data(driver,tmpUrl):
-      print(tmpUrl)
+      print("east is runing")
       url = driver.get(tmpUrl) 
       driver.implicitly_wait(2)
       soup = src.html.BeautifulSoup(driver.page_source,'lxml')
@@ -49,17 +50,21 @@ def get_Data(driver,tmpUrl):
               for tr in body.select('tr'):
                data = tr.get_text()
                datas.append(data)
-              #  print(tr.get_text())
+               print(tr.get_text())
       datas = list(map(str, datas))
        # 写入xlsx title
       datas.insert(0, "数据")
       src.xlsx.SaveToXlsx(datas,"Assets/data.xlsx")
       src.xlsx.SaveToCsv(datas,"Assets/data.csv")
       src.xlsx.SaveToJson(datas,"Assets/data.json")
-      # print("get over")
       return soup
 
-def cycle(driver,tmpUrl):
+def cycle():
+  options = webdriver.ChromeOptions()
+  options.add_argument('--headless')
+  # options.add_argument('--disable-tabs')
+  driver = webdriver.Chrome(options = options)
+  url = "http://quote.eastmoney.com/zs000001.html"
   while True:
-     get_Data(driver,tmpUrl)
-     time.sleep(5)
+     get_Data(driver,url)
+     time.sleep(10)
