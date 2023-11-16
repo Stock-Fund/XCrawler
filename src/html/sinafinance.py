@@ -1,6 +1,8 @@
 import src.html
+import time
 
 def get_Data(driver,tmpUrl):
+      print("sina is runing")
       url = driver.get(tmpUrl) 
       driver.implicitly_wait(2)
       soup = src.html.BeautifulSoup(driver.page_source,'lxml')
@@ -46,7 +48,7 @@ def get_Data(driver,tmpUrl):
               for tr in body.select('tr'):
                data = tr.get_text()
                datas.append(data)
-               print(tr.get_text())
+              #  print(tr.get_text())
       datas = list(map(str, datas))
        # 写入xlsx title
       datas.insert(0, "数据")
@@ -54,3 +56,8 @@ def get_Data(driver,tmpUrl):
       src.xlsx.SaveToCsv(datas,"Assets/data.csv")
       src.xlsx.SaveToJson(datas,"Assets/data.json")
       return soup
+    
+def cycle(driver,tmpUrl):
+  # while True:
+     get_Data(driver,tmpUrl)
+    #  time.sleep(1)

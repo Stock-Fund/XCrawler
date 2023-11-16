@@ -2,4 +2,5 @@ import src.crawler
 import src.timeutil
 import src.xlsx
 import src.process
-__all__ = ["crawler","timeutil","xlsx","process"]
+import src.task
+__all__ = ["crawler","timeutil","xlsx","process","task"]

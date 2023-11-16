@@ -4,9 +4,11 @@ import schedule
 import src.xlsx
 from src.process.simplethread import SimpleThread
 from src.process.simpleprocess import SimpleProcess
-from multiprocessing import Queue
+# import multiprocessing
+from multiprocessing import Queue,Pool
+from multiprocessing.queues import Empty
 import src.html
-import Task
+from src.task import Task
 
 bashPath = "http://quote.eastmoney.com"
 url0 = 'http://quote.eastmoney.com/zs000001.html' # 东方财富
@@ -80,14 +82,11 @@ basesoup = None
 #       src.html.sinafinance.get_Data(driver,url)
 
 
-def _run_cycle(url,index,input_queue,output_queue):
-   
-   while True:
-      task = input_queue.get()
-      print(f'processing {task}')
-      task.func(task)
-      output_queue.put(task)
-      input_queue.task_done()
+def _run_cycle(input_queue):
+       print("cycle")
+       task = input_queue.get()
+      #  task.func(task)
+
       
 #   boo = False
 #   urls=[
@@ -111,10 +110,19 @@ def _createDriver():
    # 创建Chrome对象
    options = webdriver.ChromeOptions()
    options.add_argument('--headless')
+   # options.add_argument('--disable-tabs')
    driver = webdriver.Chrome(options = options)
    return driver
 
-   
+
+def process_task(url):
+    driver = _createDriver()
+   #  if index == 1:
+    task = Task(url, src.html.eastmoney.cycle(driver, url))
+    print(task.name)
+   #  elif index == 2:
+   #      task = Task(url, src.html.sinafinance.cycle(driver, url))
+    return task  
 
     #  time.sleep(1)
 def try_start():
@@ -122,29 +130,24 @@ def try_start():
          'http://quote.eastmoney.com/zs000001.html',
          'https://finance.sina.com.cn/realstock/company/sh000001/nc.shtml'
      ]  
-     
-     processes = []
-     index = 1
-     input_queue = Queue()
-     output_queue = Queue()
-     
-     for url in urls:
-         driver = _createDriver()
-         if index ==1:
-            task = Task(url,src.html.eastmoney.get_Data(driver,url))
-         elif index ==2:
-            task = Task(url,src.html.sinafinance.get_Data(driver,url))
-         
-         input_queue.put(task)
-         
-          # 多进程
-         p = SimpleProcess(target=_run_cycle,args=(url,index,input_queue,output_queue))
-         p.start()
-         processes.append(p)
-         index = index + 1
+
+     with Pool() as pool:
+        index = 1
+        results = pool.map(process_task, urls)
+        input_queue = Queue()
         
-     for p in processes:
-        p.join()
+        processes = []
+   
+        for task in results:
+            input_queue.put(task)
+            p = SimpleProcess(target=_run_cycle,args=(input_queue,))
+            p.start()
+            processes.append(p)
+            print(index)
+            index = index + 1
+         
+        for p in processes:
+            p.join()
 
 # _run_get_Data()
 # time.sleep(2000)   #两秒后关闭

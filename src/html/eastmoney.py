@@ -1,7 +1,9 @@
 import src.html
+import time
 bashPath = "http://quote.eastmoney.com"
 
 def get_Data(driver,tmpUrl):
+      print(tmpUrl)
       url = driver.get(tmpUrl) 
       driver.implicitly_wait(2)
       soup = src.html.BeautifulSoup(driver.page_source,'lxml')
@@ -17,15 +19,15 @@ def get_Data(driver,tmpUrl):
       #    text = a_tag.text  # 获取<a>标签内的文本内容
         href = a_tag['href']  # 获取<a>标签的href属性值
       #    print(f"文本内容: {text}")
-        print(f"链接地址: {href}")
+        # print(f"链接地址: {href}")
         img_tag = a_tag.find('img')
         if img_tag:
                img_src = img_tag['src']
                img_alt = img_tag['alt']
-               print(f"图片地址: {img_src}")
-               print(f"图片描述: {img_alt}")
+              #  print(f"图片地址: {img_src}")
+              #  print(f"图片描述: {img_alt}")
                img_url = src.html.urljoin(bashPath, img_src)
-               print(f"原始图片地址: {img_url}")
+              #  print(f"原始图片地址: {img_url}")
                 # 发送GET请求下载图片
                img_response = src.html.requests.get(img_url)
 
@@ -35,7 +37,7 @@ def get_Data(driver,tmpUrl):
                # 设置 pytesseract 参数
                custom_config = r'--psm 6 --oem 2'
                text = src.html.pytesseract.image_to_string(image,lang='chi_sim',config=custom_config)
-               print('123:'+text)
+              #  print('picture:'+text)
 
       datas = []
       
@@ -54,4 +56,10 @@ def get_Data(driver,tmpUrl):
       src.xlsx.SaveToXlsx(datas,"Assets/data.xlsx")
       src.xlsx.SaveToCsv(datas,"Assets/data.csv")
       src.xlsx.SaveToJson(datas,"Assets/data.json")
+      # print("get over")
       return soup
+
+def cycle(driver,tmpUrl):
+  while True:
+     get_Data(driver,tmpUrl)
+     time.sleep(1)
