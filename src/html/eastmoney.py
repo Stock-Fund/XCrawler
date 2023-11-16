@@ -49,7 +49,7 @@ def get_Data(driver,tmpUrl):
               for tr in body.select('tr'):
                data = tr.get_text()
                datas.append(data)
-               print(tr.get_text())
+              #  print(tr.get_text())
       datas = list(map(str, datas))
        # 写入xlsx title
       datas.insert(0, "数据")
@@ -62,4 +62,4 @@ def get_Data(driver,tmpUrl):
 def cycle(driver,tmpUrl):
   while True:
      get_Data(driver,tmpUrl)
-     time.sleep(1)
+     time.sleep(5)

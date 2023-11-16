@@ -1,5 +1,6 @@
 import src.html
 import time
+bashPath = "https://finance.sina.com.cn/realstock/company/sh000001/nc.shtml"
 
 def get_Data(driver,tmpUrl):
       print("sina is runing")
@@ -58,6 +59,6 @@ def get_Data(driver,tmpUrl):
       return soup
     
 def cycle(driver,tmpUrl):
-  # while True:
+  while True:
      get_Data(driver,tmpUrl)
-    #  time.sleep(1)
+     time.sleep(5)
