@@ -5,6 +5,7 @@ bashPath = "http://quote.eastmoney.com"
 
 def get_Data(driver,tmpUrl):
       print("east is runing")
+      print(tmpUrl)
       url = driver.get(tmpUrl) 
       driver.implicitly_wait(2)
       soup = src.html.BeautifulSoup(driver.page_source,'lxml')
@@ -65,6 +66,42 @@ def cycle():
   # options.add_argument('--disable-tabs')
   driver = webdriver.Chrome(options = options)
   url = "http://quote.eastmoney.com/zs000001.html"
+  # http://quote.eastmoney.com/sh603496.html
   while True:
      get_Data(driver,url)
      time.sleep(10)
+     
+def get_stock_data(driver,url):
+    datas = []
+    driver.get(url) 
+    driver.implicitly_wait(2)
+    soup = src.html.BeautifulSoup(driver.page_source,'lxml')
+    namediv = soup.select_one('div.quote_title_l')
+    namespan =  namediv.find('span', class_="quote_title_name quote_title_name_190")
+    class_mm = soup.select_one('div.mm')
+    table = class_mm.find('table')
+    for body in table.select('tbody'):
+        for tr in body.select('tr'):
+            data = tr.get_text()
+            datas.append(data)
+            print(tr.get_text())
+    datas = list(map(str, datas))
+    nameStr = namespan .get('title')
+    datas.insert(0, nameStr)
+    src.xlsx.SaveToXlsx(datas,"Assets/stocks.xlsx")
+    src.xlsx.SaveToCsv(datas,"Assets/stocks.csv")
+    src.xlsx.SaveToJson(datas,"Assets/stocks.json")
+    print("finished")
+  
+
+
+
+def cycleStocks(num):
+   options = webdriver.ChromeOptions()
+   options.add_argument('--headless')
+   # options.add_argument('--disable-tabs')
+   driver = webdriver.Chrome(options = options)
+   url = f"http://quote.eastmoney.com/sh{num}.html"
+   while True:
+       get_stock_data(driver,url)
+       time.sleep(10)

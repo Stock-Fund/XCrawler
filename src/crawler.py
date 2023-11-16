@@ -4,7 +4,7 @@ import src.html
 
 def try_start():
 
-     p1 = Process(target=src.html.eastmoney.cycle,args=())
+     p1 = Process(target=src.html.eastmoney.cycleStocks,args=(603496,))
      p1.daemon =True
      p1.start()
 
