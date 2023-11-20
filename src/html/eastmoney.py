@@ -60,6 +60,7 @@ def get_Data(driver,tmpUrl):
       src.xlsx.SaveToJson(datas,"Assets/data.json")
       return soup
 
+# 循环爬取主版股票
 def cycle():
   options = webdriver.ChromeOptions()
   options.add_argument('--headless')
@@ -95,13 +96,57 @@ def get_stock_data(driver,url):
   
 
 
-
-def cycleStocks(num):
+# 循环爬取制定股票数据
+def cycleStocks(stockNum):
    options = webdriver.ChromeOptions()
    options.add_argument('--headless')
    # options.add_argument('--disable-tabs')
    driver = webdriver.Chrome(options = options)
-   url = f"http://quote.eastmoney.com/sh{num}.html"
+   url = f"http://quote.eastmoney.com/sh{stockNum}.html"
    while True:
        get_stock_data(driver,url)
+       time.sleep(10)
+
+def get_SHBoard_data(driver,tmpUrl):
+     headers = []
+     datas = []
+     url = driver.get(tmpUrl) 
+     driver.implicitly_wait(2)
+     soup = src.html.BeautifulSoup(driver.page_source,'lxml')
+     table = soup.select("table.table_wrapper-table")
+     for ta in table:
+        for body in ta.select('thead'):
+           for tr in body.select('tr'):
+             for th in tr.select('th'):
+                data = th.get_text()
+                headers.append(data)
+                print(data)
+        for body in ta.select('tbody'):
+           for tr in body.select('tr'):
+             for td in tr.select('td'):
+               data = td.get_text()
+               datas.append(data)
+
+             
+        
+     datas = list(map(str, datas))
+    #  print(datas)
+    #  headers = list(map(str, headers))
+    #  print(headers)
+     src.xlsx.SaveToCsv(datas,headers,"Assets/sh_data.csv")
+     src.xlsx.SaveToXlsx(datas,"Assets/sh_data.xlsx")
+    #  src.xlsx.SaveToCsv(datas,"Assets/sh_data.csv")
+     src.xlsx.SaveToJson(datas,"Assets/sh_data.json")
+     return soup
+
+
+# 爬取上证交易所股票 
+def cycleSHBoard():
+   options = webdriver.ChromeOptions()
+   options.add_argument('--headless')
+   # options.add_argument('--disable-tabs')
+   driver = webdriver.Chrome(options = options)
+   url = "http://quote.eastmoney.com/center/gridlist.html#sh_a_board"
+   while True:
+       get_SHBoard_data(driver,url)
        time.sleep(10)
