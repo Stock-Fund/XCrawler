@@ -1,6 +1,7 @@
 import src.html
 import time
 from selenium import webdriver
+import pymysql
 bashPath = "http://quote.eastmoney.com"
 
 def get_Data(driver,tmpUrl):
@@ -131,13 +132,15 @@ def get_SHBoard_data(driver,tmpUrl):
              
         
      datas = list(map(str, datas))
-    #  print(datas)
-    #  headers = list(map(str, headers))
-    #  print(headers)
+     headers = list(map(str, headers))
      src.xlsx.SaveToCsv(datas,headers,"Assets/sh_data.csv")
      src.xlsx.SaveToXlsx(datas,headers,"Assets/sh_data.xlsx")
-    #  src.xlsx.SaveToCsv(datas,"Assets/sh_data.csv")
      src.xlsx.SaveToJson(datas,"Assets/sh_data.json")
+     
+     # 已mysql为例,如果已localhost为host,那port端口一般为3306
+     enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
+     src.xlsx.SaveTosql(datas,headers,enginstr,"SHboard")
+     print("Data crawling completed")
      return soup
 
 
