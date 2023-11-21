@@ -1,19 +1,19 @@
 import pandas as pd
-import csv
 
-def SaveToXlsx(data,path="Assets/data.xlsx"):
-    df = pd.DataFrame(data)
-    df.to_excel(path, index=False,header=False)
+def SaveToXlsx(datas,head,path="Assets/data.xlsx"):
+    num_columns = len(head)
+    num_rows = len(datas)
+    data_rows = [datas[i:i+num_columns] for i in range(0, len(datas), num_columns)]
+    df = pd.DataFrame(data_rows,columns=head)
+    df.to_excel(path, index=False)
 
-def SaveToCsv(data,headers,path="Assets/data.csv", index=False):
-    df = pd.DataFrame(data)
-    df.to_csv(path,index)
-    # with open(path, "w", encoding="utf-8") as f:
-    #     writer = csv.writer(f)
-    #     writer.writerow(headers)
-    # # print(len(header), len(df.columns))
-    # df.to_csv(f, index)
+def SaveToCsv(datas,head,path="Assets/data.csv"):
+    num_columns = len(head)
+    num_rows = len(datas)
+    data_rows = [datas[i:i+num_columns] for i in range(0, len(datas), num_columns)]
+    df = pd.DataFrame(data_rows,columns=head)
+    df.to_csv(path,index=False)
 
-def SaveToJson(data,path="Assets/data.json",ignore_index = None):
-    df = pd.DataFrame(data,ignore_index)
+def SaveToJson(datas,path="Assets/data.json",ignore_index = None):
+    df = pd.DataFrame(datas,ignore_index)
     df.to_json(path, orient="records")

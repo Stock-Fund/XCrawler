@@ -119,13 +119,14 @@ def get_SHBoard_data(driver,tmpUrl):
            for tr in body.select('tr'):
              for th in tr.select('th'):
                 data = th.get_text()
-                headers.append(data)
-                print(data)
+                if len(data) != 0 and data != "加自选":
+                 headers.append(data)
         for body in ta.select('tbody'):
            for tr in body.select('tr'):
              for td in tr.select('td'):
-               data = td.get_text()
-               datas.append(data)
+               data1 = td.get_text()
+               if len(data1) != 0:
+                datas.append(data1)
 
              
         
@@ -134,7 +135,7 @@ def get_SHBoard_data(driver,tmpUrl):
     #  headers = list(map(str, headers))
     #  print(headers)
      src.xlsx.SaveToCsv(datas,headers,"Assets/sh_data.csv")
-     src.xlsx.SaveToXlsx(datas,"Assets/sh_data.xlsx")
+     src.xlsx.SaveToXlsx(datas,headers,"Assets/sh_data.xlsx")
     #  src.xlsx.SaveToCsv(datas,"Assets/sh_data.csv")
      src.xlsx.SaveToJson(datas,"Assets/sh_data.json")
      return soup
