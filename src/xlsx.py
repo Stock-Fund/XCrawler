@@ -29,3 +29,4 @@ def SaveTosql(datas,head,enginestr,table):
     df = pd.DataFrame(data_rows,columns=head)
     df.to_sql(name=table,con=engine,if_exists="append",index=False)
     engine.dispose()
+    

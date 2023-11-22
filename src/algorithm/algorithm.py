@@ -15,6 +15,11 @@ class Stock:
         self.MA30s = nums[9]
         self.MA60s = nums[10]
         
+        # 止盈卖出系数
+        self.TakeProfit = 1.1
+        # 止损卖出系数
+        self.StopLoss = 0.97
+        
         self.Calculate5_predict(self,s=1.099)
        
 
@@ -49,7 +54,7 @@ class Stock:
           return self.CurrentValue < self.predictValue
 
      # 龙头低吸算法2（5日线-10日线检测买入算法）          
-     def CheckBuyValue(self):
+     def CheckBuy(self):
          currentValue = self.CurrentValue
          # 只有连续5板以上
          # 只有在昨天下跌的情况下
@@ -72,6 +77,12 @@ class Stock:
                 # 10日线以下，放弃
                 else:
                     return False
+                
+     # 卖出逻辑           
+     def CheckSell(self,value):
+         # value 传入当前成本价
+         return self.CurrentValue >= value * self.TakeProfit or self.CurrentValue <= value * self.StopLoss
+     
         
      def Update(self,value):
          self.CurrentValue = value
