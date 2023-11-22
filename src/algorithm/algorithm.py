@@ -1,6 +1,6 @@
 class Stock:
      def __init__(self,nums):
-        self.Time = nums[0]
+        self.Time = nums[0]# 10点之前打到预测ma5直接买，下午就缓缓
         self.CurrentValue = nums[1]
         # 60日内的收盘价格列表
         self.CloseValues = nums[2]
@@ -39,27 +39,42 @@ class Stock:
          open = self.OpenValues[0]
          return value <open
 
-     # 预测明天5日线价格，也就是明天买入标准价格
+     # 预测明天5日线价格,可能是阶段低点
      def Calculate5_predict(self,s=1.099):
          self.predictValue = (self.CloseValues[0]*s+self.CloseValues[0]+self.CloseValues[1]+self.CloseValues[2]+self.CloseValues[3])/5
          return self.predictValue
+     
+     # 龙头低吸算法1（预测5日线买入算法）
+     def CheckBuyByPredict(self):
+          return self.CurrentValue < self.predictValue
 
-     # 如果价格跌穿预计5日线,需观察是否击穿10日线             
+     # 龙头低吸算法2（5日线-10日线检测买入算法）          
      def CheckBuyValue(self):
          currentValue = self.CurrentValue
-         predictValue = self.predictValue
-         # 当前价格如果达到预测价格
-         if currentValue <= predictValue:
-             return True
-         
-         MA5 = self.MA5s[0]
-         MA10 = self.MA10s[0]
-         if currentValue > MA5:
-            return False
-            # 击穿5日线，但没破10日线
-         elif currentValue < MA5 and currentValue > MA10:
-            return True
-            ## 击穿10日线，破位
-         elif currentValue <= MA10:
-            return False
+         # 只有连续5板以上
+         # 只有在昨天下跌的情况下
+         if self.IsFallYesterday():         
+           MA5 = self.MA5s[0]
+           MA10 = self.MA10s[0]
+           if currentValue > MA5:
+              return False
+            # 触摸5日线 
+           elif currentValue == MA5:
+               return True
+            # 击穿5日线，就以10日线为准
+           elif currentValue < MA5 :
+                # 在5-10日线之间，没有支撑位，破位！
+                if currentValue > MA10:
+                   return False
+                # 触摸到10日线，找到10日线
+                elif currentValue == MA10 :
+                    return True
+                # 10日线以下，放弃
+                else:
+                    return False
+        
+     def Update(self,value):
+         self.CurrentValue = value
+         return self.CheckBuyByPredict()
+        #  return self.CheckBuyValue(self)
      
