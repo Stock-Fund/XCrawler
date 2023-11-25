@@ -100,6 +100,18 @@ class Stock:
             else:
                trend.append("震荡")
          return trend
+     
+     # 箱体逻辑 
+     def checkBox(self,max,min):
+         if self.CurrentValue >= max:
+             return True
+         elif self.CurrentValue <= min:
+             return False
+         else:
+             return False
+         
+     # boll逻辑 todo
+         
 
 # # 计算MA5、MA10和MA20
 # ma5 = moving_average(prices, 5)
