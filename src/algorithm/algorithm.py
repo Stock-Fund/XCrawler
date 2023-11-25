@@ -1,6 +1,8 @@
+import numpy as np
 class Stock:
      def __init__(self,nums):
         self.Time = nums[0]# 10点之前打到预测ma5直接买，下午就缓缓
+        # 当前价格
         self.CurrentValue = nums[1]
         # 60日内的收盘价格列表
         self.CloseValues = nums[2]
@@ -21,16 +23,16 @@ class Stock:
         self.StopLoss = 0.97
         
         self.Calculate5_predict(self,s=1.099)
-       
+     
+     # 计算移动平均函数
+     def moving_average(data, window):
+         weights = np.repeat(1.0, window) / window
+         ma = np.convolve(data, weights, 'valid')
+         return ma  
 
-     def Calculate5(self):
+     def CalculateAverage(self,num):
          nums = self.CloseValues
-         return (nums[0]+nums[1]+nums[2]+nums[3]+nums[4])/5
-
-     def Calculate10(self):
-         nums = self.CloseValues
-         return (nums[0]+nums[1]+nums[2]+nums[3]+nums[4]
-            +nums[5]+nums[6]+nums[7]+nums[8]+nums[9])/10
+         return self.moving_average(self.CloseValues,num)
 
      # 上一个交易日是否是跌势
      def IsFallYesterday(self):
@@ -48,7 +50,7 @@ class Stock:
      def Calculate5_predict(self,s=1.099):
          self.predictValue = (self.CloseValues[0]*s+self.CloseValues[0]+self.CloseValues[1]+self.CloseValues[2]+self.CloseValues[3])/5
          return self.predictValue
-     
+     # =========== 短线逻辑
      # 龙头低吸算法1（预测5日线买入算法）
      def CheckBuyByPredict(self):
           return self.CurrentValue < self.predictValue
@@ -83,7 +85,26 @@ class Stock:
          # value 传入当前成本价
          return self.CurrentValue >= value * self.TakeProfit or self.CurrentValue <= value * self.StopLoss
      
-        
+     # 长线逻辑(趋势逻辑)
+     # 判断趋势的逻辑
+     def detect_trend(ma5, ma10, ma20):
+         trend = []
+         for i in range(len(ma5)):
+            if ma5[i] > ma10[i] and ma5[i] > ma20[i]:
+               trend.append("上涨")
+            elif ma5[i] < ma10[i] and ma5[i] < ma20[i]:
+               trend.append("下跌")
+            else:
+               trend.append("震荡")
+         return trend
+
+# # 计算MA5、MA10和MA20
+# ma5 = moving_average(prices, 5)
+# ma10 = moving_average(prices, 10)
+# ma20 = moving_average(prices, 20)
+# 执行趋势判断
+# trend = detect_trend(ma5, ma10, ma20)   
+    
      def Update(self,value):
          self.CurrentValue = value
          return self.CheckBuyByPredict()
