@@ -17,6 +17,9 @@ class Stock:
         self.MA30s = nums[9]
         self.MA60s = nums[10]
         
+        # 换手率
+        self.turnoverRates = nums[11]
+        
         # 止盈卖出系数
         self.TakeProfit = 1.1
         # 止损卖出系数
