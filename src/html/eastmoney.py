@@ -128,7 +128,8 @@ def get_SHBoard_data(driver,tmpUrl):
                data1 = td.get_text()
                if len(data1) != 0:
                 datas.append(data1)
-
+     # 给时间表插入时间列
+     headers.append("time_id")
              
         
      datas = list(map(str, datas))
@@ -139,7 +140,7 @@ def get_SHBoard_data(driver,tmpUrl):
      
      # 已mysql为例,如果已localhost为host,那port端口一般为3306
      enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
-     src.xlsx.SaveTosql(datas,headers,enginstr,"SHboard")
+     src.xlsx.SaveTosql(datas,headers,enginstr,"stock")
      print("Data crawling completed")
      return soup
 
