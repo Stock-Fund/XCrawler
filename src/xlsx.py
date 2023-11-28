@@ -30,32 +30,31 @@ def SaveTosql(datas,head,enginestr,table):
     engine = create_engine(enginestr)
     num_columns = len(head)
     num_rows = len(datas)
+    print(num_columns)
+    print(num_rows)
 
    
-    # if boo :
-    df = pd.read_sql_table("time", enginestr)
-    df.loc[df['id'] == formatted , "value"] = timestamp
-    # 将更新后的DataFrame写回MySQL数据库表
-    df.to_sql('time', con=engine, if_exists='replace', index=False)
-    # else :
-    #     time_table = pd.DataFrame([[formatted,timestamp]],columns=['id','value'])
-    #     time_table.to_sql(name='time',con=engine,if_exists="append",index=False)
+    # time table
+    time_table = pd.read_sql_table("time", enginestr)
+    if (time_table['id'] == formatted).any():
+        time_table.loc[time_table['id'] == formatted , "value"] = timestamp
+        # 将更新后的DataFrame写回MySQL数据库表
+        time_table.to_sql('time', con=engine, if_exists='replace', index=False)
+    else :
+        time_table = pd.DataFrame([[formatted,timestamp]],columns=['id','value'])
+        time_table.to_sql(name='time',con=engine,if_exists="append",index=False)
     
+    # data table
+    data_table = pd.read_sql_table(table, enginestr)
+    if (data_table['日期'] == formatted).any():
+        data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
+        data_table = pd.DataFrame(data_rows,columns=head)
+        # 重建表格数据 初始化
+        data_table.to_sql(name=table,con=engine,if_exists="replace",index=False)
+    else :
+       data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
+       data_table = pd.DataFrame(data_rows,columns=head)
+       # 插入表格数据 更新
+       data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
     
-    print(head)
-    data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
-    data_table = pd.DataFrame(data_rows,columns=head)
-    data_table['time_id'] = pd.to_datetime(formatted)
-    data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
     engine.dispose()
-  
-def check_dataform(table,enginestr,param,id):
-     # 读取数据表到DataFrame
-     df = pd.read_sql_table(table, enginestr, index_col=param)
-     existing_data = df[df.index == id]
-     if not existing_data.empty:
-       # 如果存在，更新现有行的值
-        return True
-     else:
-       # 如果不存在，插入新行
-        return False

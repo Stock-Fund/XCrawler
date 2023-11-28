@@ -1,7 +1,8 @@
 import src.html
 import time
 from selenium import webdriver
-import pymysql
+import datetime
+import time
 bashPath = "http://quote.eastmoney.com"
 
 def get_Data(driver,tmpUrl):
@@ -115,23 +116,38 @@ def get_SHBoard_data(driver,tmpUrl):
      driver.implicitly_wait(2)
      soup = src.html.BeautifulSoup(driver.page_source,'lxml')
      table = soup.select("table.table_wrapper-table")
+     
+     timestamp = datetime.datetime.fromtimestamp(time.time())
+     now = datetime.datetime.now()
+     # 格式化为字符串
+     formatted = now.strftime("%Y-%m-%d")
      for ta in table:
         for body in ta.select('thead'):
            for tr in body.select('tr'):
              for th in tr.select('th'):
                 data = th.get_text()
                 if len(data) != 0 and data != "加自选":
-                 headers.append(data)
+                    headers.append(data)
+                    if data == "市净率":
+                        # 给时间表插入时间列
+                        name="日期"
+                        headers.append("日期")
+        max = len(headers)
         for body in ta.select('tbody'):
            for tr in body.select('tr'):
+             index = 1
              for td in tr.select('td'):
                data1 = td.get_text()
                if len(data1) != 0:
-                datas.append(data1)
+                  index += 1
+                  datas.append(data1)
+                  if index == max:
+                     datas.append(formatted)
+                 
      # 给时间表插入时间列
-     headers.append("time_id")
-             
-        
+    #  headers.append("time")                
+    
+    
      datas = list(map(str, datas))
      headers = list(map(str, headers))
      src.xlsx.SaveToCsv(datas,headers,"Assets/sh_data.csv")
