@@ -3,6 +3,9 @@ import time
 from selenium import webdriver
 import datetime
 import time
+import tushare as ts
+from pandas_datareader import data as pdr
+import yfinance as yf
 bashPath = "http://quote.eastmoney.com"
 
 def get_Data(driver,tmpUrl):
@@ -108,6 +111,18 @@ def cycleStocks(stockNum):
    while True:
        get_stock_data(driver,url)
        time.sleep(10)
+
+def getStockData(stockNum):
+   dd = ts.get_hist_data(stockNum) #爬取股票近三年的全部日k信息
+   print(dd)
+   #dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
+
+def getStockData1(stockNum):
+   yf.pdr_override()
+   code = stockNum + '.ss'
+   stock = pdr.get_data_yahoo(code,'2023-11-01','2023-11-28')
+   print(stock)
+
 
 def get_SHBoard_data(driver,tmpUrl):
      headers = []

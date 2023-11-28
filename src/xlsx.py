@@ -30,8 +30,6 @@ def SaveTosql(datas,head,enginestr,table):
     engine = create_engine(enginestr)
     num_columns = len(head)
     num_rows = len(datas)
-    print(num_columns)
-    print(num_rows)
 
    
     # time table
