@@ -179,10 +179,7 @@ def get_SHBoard_data(driver,tmpUrl):
                   index += 1
                   datas.append(data1)
                   if index == max:
-                     datas.append(formatted)
-                 
-     # 给时间表插入时间列
-    #  headers.append("time")                
+                     datas.append(formatted)               
     
     
      datas = list(map(str, datas))
