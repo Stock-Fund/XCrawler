@@ -69,3 +69,10 @@ def ClearsqlTable(enginestr,table):
     if not table.empty:
         table.to_sql(name=table, con=engine, if_exists='replace')
     engine.dispose()
+    
+
+def ReaderSavetosql(enginestr,table,datas):
+    engine = create_engine(enginestr)
+    datas.to_sql(name=table,con=engine,if_exists='replace')
+    engine.dispose()
+    

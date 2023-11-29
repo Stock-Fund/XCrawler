@@ -10,12 +10,13 @@ def try_start():
      # p1.start()
 
 
-     p2 = Process(target=src.html.eastmoney.cycleSHBoard,args=())
-     p2.daemon = True
-     p2.start() 
+     # p2 = Process(target=src.html.eastmoney.cycleSHBoard,args=())
+     # p2.daemon = True
+     # p2.start() 
      
-     
-     p3 = Process(target=src.html.eastmoney.getStockData1,args=('600895',))
+     # 600895 张江高科
+     # 600036 招商银行
+     p3 = Process(target=src.html.eastmoney.getStockData_datareader,args=('600036',))
      p3.daemon = True
      p3.start()
      
