@@ -44,15 +44,28 @@ def SaveTosql(datas,head,enginestr,table):
     
     # data table
     data_table = pd.read_sql_table(table, enginestr)
+   
     if (data_table['日期'] == formatted).any():
-        data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
-        data_table = pd.DataFrame(data_rows,columns=head)
-        # 重建表格数据 初始化
-        data_table.to_sql(name=table,con=engine,if_exists="replace",index=False)
+        update_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
+        update_data_table = pd.DataFrame(update_rows,columns=head)
+        update_table = update_data_table["日期"].unique()
+        # 逐条更新
+        for id in update_table:
+            row_idx = data_table["日期"] == id
+            data_table.loc[row_idx] = update_data_table[update_data_table["日期"]==id]
+        print("update mysql data complete")
     else :
        data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
        data_table = pd.DataFrame(data_rows,columns=head)
        # 插入表格数据 更新
        data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
-    
+       print("create mysql data complete")
+    engine.dispose()
+
+# 清空某个表    
+def ClearsqlTable(enginestr,table):
+    engine = create_engine(enginestr)
+    table = pd.read_sql_table(table, enginestr)
+    if not table.empty:
+        table.to_sql(name=table, con=engine, if_exists='replace')
     engine.dispose()
