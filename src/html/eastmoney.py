@@ -9,7 +9,9 @@ from pandas_datareader import data as pdr
 import yfinance as yf
 import matplotlib.pyplot as plt
 bashPath = "http://quote.eastmoney.com"
+enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 
+# ================================ 个人抓取
 def get_Data(driver,tmpUrl):
       print("east is runing")
       print(tmpUrl)
@@ -103,20 +105,21 @@ def get_stock_data(stockNum,driver,url):
               if index ==0 and titleIndex !=5 :
                  titleStr+=data
               if index == 1:
-                 titleStr+=" "+data
+                 titleStr+=":"+data
                  headers.append(titleStr)
               elif index == 2:
                  datas.append(data)
               index = index + 1
            titleIndex = titleIndex + 1
-    headers.append("时间")
+    headers.append("日期")
     datas.append(formatted)
     datas = list(map(str, datas))
     headers = list(map(str, headers))
     print(headers)
-    src.xlsx.SaveToXlsx(datas,headers,f"Assets/{stockNum}分时.xlsx")
-    src.xlsx.SaveToCsv(datas,headers,f"fAssets/{stockNum}分时.csv")
-    src.xlsx.SaveToJson(datas,headers,f"Assets/{stockNum}分时.json")
+    src.xlsx.SaveToXlsx(datas,headers,f"Assets/{stockNum}_time.xlsx")
+    src.xlsx.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
+    src.xlsx.SaveToJson(datas,f"Assets/{stockNum}_time.json")
+    src.xlsx.SaveTosqlMinutes(datas,headers,enginstr,"分时")
     print("finished")
   
 
@@ -132,39 +135,6 @@ def cycleStocks(stockNum):
        get_stock_data(stockNum,driver,url)
        time.sleep(10)
 
-# tushare获取股票数据
-def getStockData(stockNum):
-   dd = ts.get_hist_data(stockNum) #爬取股票近三年的全部日k信息
-   print(dd)
-   #dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
-
-# pandas_datareader通过yahoo获取股票数据
-def getStockData_datareader(stockNum):
-   yf.pdr_override()
-   code = stockNum + '.ss'
-   stock = pdr.get_data_yahoo(code,'2023-9-01','2023-11-28')
-   stock = stock.round(2) 
-   stock.to_csv('Assets/' + code + '.csv')
-   stock.to_excel('Assets/' + code + '.xlsx')
-   stock.to_json('Assets/' + code + '.json')
-   
-   # 已mysql为例,如果已localhost为host,那port端口一般为3306
-   enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
-   src.xlsx.ReaderSavetosql(enginstr,"招商银行",stock)
-   
-   
-   # 5日收盘价均价
-   mean_price_5 = stock['Close'].rolling(window=5).mean() 
-   mean_price_10 = stock['Close'].rolling(window=10).mean() 
-   mean_price_20 = stock['Close'].rolling(window=20).mean() 
-   mean_price_30 = stock['Close'].rolling(window=30).mean() 
-   mean_price_40 = stock['Close'].rolling(window=40).mean() 
-   mean_price_60 = stock['Close'].rolling(window=60).mean() 
-   # zonghe_data=pd.concat([mean_price_5,mean_price_10,mean_price_20,mean_price_30,mean_price_40,mean_price_60],axis=1)
-   # zonghe_data.columns = ['MA5','MA10','MA20','MA30','MA40','MA60']
-   # zonghe_data[ ['MA5','MA10','MA20','MA30','MA40','MA60']].plot(subplots=False,style=['r','g','b','m'],grid=True)
-   # print(f"MA5: {mean_price_5} MA10: {mean_price_10} MA30: {mean_price_30}")
-   # plt.show()
 
 def get_SHBoard_data(driver,tmpUrl):
      headers = []
@@ -209,7 +179,7 @@ def get_SHBoard_data(driver,tmpUrl):
      src.xlsx.SaveToJson(datas,"Assets/sh_data.json")
      
      # 已mysql为例,如果已localhost为host,那port端口一般为3306
-     enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
+     # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
      src.xlsx.SaveTosql(datas,headers,enginstr,"stock")
      print("Data crawle completed")
      return soup
@@ -225,3 +195,38 @@ def cycleSHBoard():
    while True:
        get_SHBoard_data(driver,url)
        time.sleep(10)
+
+# ==================================== 第三方
+# tushare获取股票数据
+def getStockData(stockNum):
+   dd = ts.get_hist_data(stockNum) #爬取股票近三年的全部日k信息
+   print(dd)
+   #dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
+
+# pandas_datareader通过yahoo获取股票数据
+def getStockData_datareader(stockNum):
+   yf.pdr_override()
+   code = stockNum + '.ss'
+   stock = pdr.get_data_yahoo(code,'2023-9-01','2023-11-30')
+   stock = stock.round(2) 
+   stock.to_csv('Assets/' + code + '.csv')
+   stock.to_excel('Assets/' + code + '.xlsx')
+   stock.to_json('Assets/' + code + '.json')
+   
+   # 已mysql为例,如果已localhost为host,那port端口一般为3306
+   # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
+   src.xlsx.ReaderSavetosql(enginstr,"张江高科",stock)
+   
+   
+   # 5日收盘价均价
+   mean_price_5 = stock['Close'].rolling(window=5).mean() 
+   mean_price_10 = stock['Close'].rolling(window=10).mean() 
+   mean_price_20 = stock['Close'].rolling(window=20).mean() 
+   mean_price_30 = stock['Close'].rolling(window=30).mean() 
+   mean_price_40 = stock['Close'].rolling(window=40).mean() 
+   mean_price_60 = stock['Close'].rolling(window=60).mean() 
+   # zonghe_data=pd.concat([mean_price_5,mean_price_10,mean_price_20,mean_price_30,mean_price_40,mean_price_60],axis=1)
+   # zonghe_data.columns = ['MA5','MA10','MA20','MA30','MA40','MA60']
+   # zonghe_data[ ['MA5','MA10','MA20','MA30','MA40','MA60']].plot(subplots=False,style=['r','g','b','m'],grid=True)
+   # print(f"MA5: {mean_price_5} MA10: {mean_price_10} MA30: {mean_price_30}")
+   # plt.show()

@@ -18,7 +18,7 @@ def SaveToCsv(datas,head,path="Assets/data.csv"):
     df.to_csv(path,index=False)
 
 def SaveToJson(datas,path="Assets/data.json",ignore_index = None):
-    df = pd.DataFrame(datas,ignore_index)
+    df = pd.DataFrame(datas ,ignore_index)
     df.to_json(path, orient="records")
     
 
@@ -43,9 +43,42 @@ def SaveTosql(datas,head,enginestr,table):
         time_table.to_sql(name='time',con=engine,if_exists="append",index=False)
     
     # data table
-    data_table = pd.read_sql_table(table, enginestr)
-   
-    if (data_table['日期'] == formatted).any():
+    try:
+        data_table = pd.read_sql_table(table, enginestr)
+    except:
+        data_table = None
+    if  data_table is not None and (data_table['日期'] == formatted).any():
+        update_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
+        update_data_table = pd.DataFrame(update_rows,columns=head)
+        update_table = update_data_table["日期"].unique()
+        # 逐条更新
+        for id in update_table:
+            row_idx = data_table["日期"] == id
+            data_table.loc[row_idx] = update_data_table[update_data_table["日期"]==id]
+        print("update mysql data complete")
+    else :
+       data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
+       data_table = pd.DataFrame(data_rows,columns=head)
+       # 插入表格数据 更新
+       data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
+       print("create mysql data complete")
+    engine.dispose()
+    
+def SaveTosqlMinutes(datas,head,enginestr,table):
+    timestamp = datetime.datetime.fromtimestamp(time.time())
+    now = datetime.datetime.now()
+    # 格式化为字符串
+    formatted = now.strftime("%Y-%m-%d")
+    engine = create_engine(enginestr)
+    num_columns = len(head)
+    num_rows = len(datas)
+
+    # data table
+    try:
+        data_table = pd.read_sql_table(table, enginestr)
+    except:
+        data_table = None
+    if  data_table is not None and (data_table['日期'] == formatted).any():
         update_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
         update_data_table = pd.DataFrame(update_rows,columns=head)
         update_table = update_data_table["日期"].unique()
