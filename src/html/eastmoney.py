@@ -78,8 +78,9 @@ def cycle():
   while True:
      get_Data(driver,url)
      time.sleep(10)
-     
-def get_stock_data(driver,url):
+
+# 获取指定股票的数据
+def get_stock_data(stockNum,driver,url):
     datas = []
     driver.get(url) 
     driver.implicitly_wait(2)
@@ -88,17 +89,34 @@ def get_stock_data(driver,url):
     namespan =  namediv.find('span', class_="quote_title_name quote_title_name_190")
     class_mm = soup.select_one('div.mm')
     table = class_mm.find('table')
+    headers = []
+    now = datetime.datetime.now()
+     # 格式化为字符串
+    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     for body in table.select('tbody'):
+        titleIndex = 0
         for tr in body.select('tr'):
-            data = tr.get_text()
-            datas.append(data)
-            print(tr.get_text())
+           index = 0
+           titleStr = ""
+           for td in tr.select('td'):
+              data = td.get_text()
+              if index ==0 and titleIndex !=5 :
+                 titleStr+=data
+              if index == 1:
+                 titleStr+=" "+data
+                 headers.append(titleStr)
+              elif index == 2:
+                 datas.append(data)
+              index = index + 1
+           titleIndex = titleIndex + 1
+    headers.append("时间")
+    datas.append(formatted)
     datas = list(map(str, datas))
-    nameStr = namespan .get('title')
-    datas.insert(0, nameStr)
-    src.xlsx.SaveToXlsx(datas,"Assets/stocks.xlsx")
-    src.xlsx.SaveToCsv(datas,"Assets/stocks.csv")
-    src.xlsx.SaveToJson(datas,"Assets/stocks.json")
+    headers = list(map(str, headers))
+    print(headers)
+    src.xlsx.SaveToXlsx(datas,headers,f"Assets/{stockNum}分时.xlsx")
+    src.xlsx.SaveToCsv(datas,headers,f"fAssets/{stockNum}分时.csv")
+    src.xlsx.SaveToJson(datas,headers,f"Assets/{stockNum}分时.json")
     print("finished")
   
 
@@ -111,7 +129,7 @@ def cycleStocks(stockNum):
    driver = webdriver.Chrome(options = options)
    url = f"http://quote.eastmoney.com/sh{stockNum}.html"
    while True:
-       get_stock_data(driver,url)
+       get_stock_data(stockNum,driver,url)
        time.sleep(10)
 
 # tushare获取股票数据
@@ -133,6 +151,8 @@ def getStockData_datareader(stockNum):
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
    src.xlsx.ReaderSavetosql(enginstr,"招商银行",stock)
+   
+   
    # 5日收盘价均价
    mean_price_5 = stock['Close'].rolling(window=5).mean() 
    mean_price_10 = stock['Close'].rolling(window=10).mean() 
