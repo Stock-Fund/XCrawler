@@ -4,7 +4,6 @@ from selenium import webdriver
 import datetime
 import time
 import tushare as ts
-import pandas as pd
 from pandas_datareader import data as pdr
 import yfinance as yf
 import matplotlib.pyplot as plt
