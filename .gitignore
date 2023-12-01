@@ -1,3 +1,4 @@
 /Assets/*
 /delete/*
+/src/__pycache__/*
 /src/html/__pycache__/*
