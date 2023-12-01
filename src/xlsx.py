@@ -55,13 +55,13 @@ def SaveTosql(datas,head,enginestr,table):
         for id in update_table:
             row_idx = data_table["日期"] == id
             data_table.loc[row_idx] = update_data_table[update_data_table["日期"]==id]
-        print("update mysql data complete")
+        # print("update mysql data complete")
     else :
        data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
        data_table = pd.DataFrame(data_rows,columns=head)
        # 插入表格数据 更新
        data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
-       print("create mysql data complete")
+    #    print("create mysql data complete")
     engine.dispose()
     
 def SaveTosqlMinutes(datas,head,enginestr,table):
@@ -86,14 +86,14 @@ def SaveTosqlMinutes(datas,head,enginestr,table):
         for id in update_table:
             row_idx = data_table["日期"] == id
             data_table.loc[row_idx] = update_data_table[update_data_table["日期"]==id]
-        print("update mysql data complete")
+        # print("update mysql data complete")
     else :
         # 当存在一张空白的表格时，需要用replace，而不是append，否则找不到对应的列
        data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
        data_table = pd.DataFrame(data_rows,columns=head)
        # 插入表格数据 更新
        data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
-       print("create mysql data complete")
+    #    print("create mysql data complete")
     engine.dispose()
 
 # 清空某个表    

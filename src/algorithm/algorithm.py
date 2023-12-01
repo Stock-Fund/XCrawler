@@ -110,7 +110,7 @@ class Stock:
          else:
              return False
          
-        
+     # 破位逻辑
      def checkBroken(self,ma5,ma10,ma20,ma30,ma60):
          closeValue = self.CloseValues[0]
          if(closeValue<ma5):

@@ -71,7 +71,7 @@ class Window(QWidget):
         # frame = self.view.page().mainFrame()
         # html = frame.toHtml()
         
-        src.crawler.try_start()
+        src.try_start()
         
         
         # self.options = webdriver.ChromeOptions()
