@@ -1,2 +1,3 @@
 /Assets/*
 /delete/*
+/src/html/__pycache__/*
