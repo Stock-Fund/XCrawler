@@ -10,9 +10,9 @@ def try_start():
      p1.start()
 
 
-     p2 = Process(target=src.html.eastmoney.cycleSHBoard,args=())
-     p2.daemon = True
-     p2.start() 
+     # p2 = Process(target=src.html.eastmoney.cycleSHBoard,args=())
+     # p2.daemon = True
+     # p2.start() 
      
      # 600895 张江高科
      # 600036 招商银行

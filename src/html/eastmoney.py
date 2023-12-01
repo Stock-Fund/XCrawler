@@ -99,14 +99,16 @@ def get_stock_data(stockNum,driver,url):
         for tr in body.select('tr'):
            index = 0
            titleStr = ""
+           value = ""
            for td in tr.select('td'):
               data = td.get_text()
               if index ==0 and titleIndex !=5 :
-                 titleStr+=data
-              if index == 1:
-                 titleStr+=":"+data
+                 titleStr= data
                  headers.append(titleStr)
+              if index == 1:
+                 value=data
               elif index == 2:
+                 data=data+"--价位:"+value
                  datas.append(data)
               index = index + 1
            titleIndex = titleIndex + 1
@@ -114,10 +116,9 @@ def get_stock_data(stockNum,driver,url):
     datas.append(formatted)
     datas = list(map(str, datas))
     headers = list(map(str, headers))
-    print(headers)
-    src.xlsx.SaveToXlsx(datas,headers,f"Assets/{stockNum}_time.xlsx")
-    src.xlsx.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
-    src.xlsx.SaveToJson(datas,f"Assets/{stockNum}_time.json")
+   #  src.xlsx.SaveToXlsx(datas,headers,f"Assets/{stockNum}_time.xlsx")
+   #  src.xlsx.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
+   #  src.xlsx.SaveToJson(datas,f"Assets/{stockNum}_time.json")
     src.xlsx.SaveTosqlMinutes(datas,headers,enginstr,"分时")
     print("finished")
   

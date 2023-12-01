@@ -90,12 +90,12 @@ class Stock:
      
      # 长线逻辑(趋势逻辑)
      # 判断趋势的逻辑
-     def detect_trend(ma5, ma10, ma20):
+     def detect_trend(ma5s, ma10s, ma20s):
          trend = []
-         for i in range(len(ma5)):
-            if ma5[i] > ma10[i] and ma5[i] > ma20[i]:
+         for i in range(len(ma5s)):
+            if ma5s[i] > ma10s[i] and ma5s[i] > ma20s[i]:
                trend.append("上涨")
-            elif ma5[i] < ma10[i] and ma5[i] < ma20[i]:
+            elif ma5s[i] < ma10s[i] and ma5s[i] < ma20s[i]:
                trend.append("下跌")
             else:
                trend.append("震荡")
@@ -109,6 +109,21 @@ class Stock:
              return False
          else:
              return False
+         
+        
+     def checkBroken(self,ma5,ma10,ma20,ma30,ma60):
+         closeValue = self.CloseValues[0]
+         if(closeValue<ma5):
+             print("破5日线")
+         elif(closeValue<ma10):
+             print("破10日线")
+         elif(closeValue<ma20):
+             print("破20日线")
+         elif(closeValue<ma30):
+             print("破30日线")
+         elif(closeValue<ma60):
+             print("破60日线")
+         
          
      # boll逻辑 todo
          
