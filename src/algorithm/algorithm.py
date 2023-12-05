@@ -16,9 +16,14 @@ class Stock:
         self.MA20s = nums[8]
         self.MA30s = nums[9]
         self.MA60s = nums[10]
+       
         
         # 换手率
         self.turnoverRates = nums[11]
+        
+        # 筹码集中度
+        # 筹码集中度=成本区间的（高值-低值）/（高值+低值）
+        self.Chipsconcentration = nums[12]
         
         # 止盈卖出系数
         self.TakeProfit = 1.1
@@ -124,7 +129,8 @@ class Stock:
          elif(closeValue<ma60):
              print("破60日线")
          
-         
+     # 主升浪逻辑
+     
      # boll逻辑 todo
          
 
