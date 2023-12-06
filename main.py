@@ -36,10 +36,16 @@ def main():
 
 
 class Window(QWidget):
-    
+
     def button_clicked(self):
         src.start()
     
+    def button_find(self,stockNum):
+        src.find(stockNum)
+    
+    def on_text_changed(self,text):
+        self.inputText = text
+        print("输入的文字:", text)
     
     def __init__(self):
         super().__init__()  # 用于访问父类的方法和属性
@@ -47,13 +53,28 @@ class Window(QWidget):
         self.setGeometry(200, 200, 800, 480)  # 设置初始位置与窗口大小
         self.setWindowTitle("测试")  # 设置标题
         self.setStyleSheet('background-color:green')  # 设置窗口内背景颜色
+        layout = QtWidgets.QVBoxLayout()
         # self.setWindowOpacity(0.5)  # 设置窗口透明度
         # self.setFixedWidth(700)  # 不生效，被禁用了
         # self.setFixedHeight(400)  # 不生效，被禁用了
         self.ui()
-        button = QtWidgets.QPushButton('button', self)
-        button.setText('保存')
-        button.clicked.connect(lambda:self.button_clicked())
+        saveBtn = QtWidgets.QPushButton('button', self)
+        saveBtn.setText('save')
+        saveBtn.clicked.connect(lambda:self.button_clicked())
+       
+        
+        self.input = QtWidgets.QLineEdit(self)
+        self.input.setPlaceholderText('请输入')
+        # 限制输入15个字符
+        self.input.setMaxLength(15)
+        self.input.setFixedSize(200, 30)
+        self.input.textChanged.connect(self.on_text_changed)
+        findBtn = QtWidgets.QPushButton('button', self)
+        findBtn.setText('find')
+        findBtn.clicked.connect(lambda:self.button_find(self.inputText))
+        findBtn.move(100, 0) 
+        layout.addWidget(self.input)
+        self.setLayout(layout)
         self.center()
         self.resizeEvent = self.handleResize
 

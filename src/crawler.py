@@ -74,4 +74,7 @@ def start():
     else :
         print("MySQL启动失败")
 
+def find(stockNum):
+   print(f"查找对应代码{stockNum}股票")
+
      
