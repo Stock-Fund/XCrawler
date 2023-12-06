@@ -4,6 +4,7 @@ import src.html as html
 import time
 import schedule
 import threading
+import subprocess
 enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 
 done = threading.Event()
@@ -43,9 +44,23 @@ def run_forever():
        # 每天15:00遍历一次网页的数据
        schedule.run_pending()
        time.sleep(1)
+       
+def _runMysql():
+     # 执行命令
+     cmd = 'mysqladmin -u root -p status'
+     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+     # 检查执行结果
+     if result.returncode == 0 and 'Uptime' in result.stdout:
+       print("MySQL已启动")
+       return True
+     else:
+        return False
 
-def try_start():
-     thread = threading.Thread(target=run_forever,daemon=True)
-     thread.start() 
+def try_start():     
+     if _runMysql():
+        thread = threading.Thread(target=run_forever,daemon=True)
+        thread.start() 
+     else :
+        print("MySQL启动失败")
 
      
