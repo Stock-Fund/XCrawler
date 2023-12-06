@@ -2,6 +2,7 @@
 import sys
 import os
 from PyQt6 import QtWebEngineWidgets
+from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QWidget,QApplication,QSizePolicy
 from PyQt6.QtGui import QIcon,QGuiApplication  # 导入引用图标的函数
 from PyQt6.QtCore import QUrl,QPoint
@@ -35,6 +36,11 @@ def main():
 
 
 class Window(QWidget):
+    
+    def button_clicked(self):
+        src.start()
+    
+    
     def __init__(self):
         super().__init__()  # 用于访问父类的方法和属性
 
@@ -45,6 +51,9 @@ class Window(QWidget):
         # self.setFixedWidth(700)  # 不生效，被禁用了
         # self.setFixedHeight(400)  # 不生效，被禁用了
         self.ui()
+        button = QtWidgets.QPushButton('button', self)
+        button.setText('保存')
+        button.clicked.connect(lambda:self.button_clicked())
         self.center()
         self.resizeEvent = self.handleResize
 
@@ -55,6 +64,8 @@ class Window(QWidget):
          self.widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
          self.widget.loadFinished.connect(self.handle_load_finished)
          self.widget.load(QUrl('http://quote.eastmoney.com/zs000001.html'))
+         
+        
     
     def center(self)    :
         screen = QGuiApplication.primaryScreen().size()

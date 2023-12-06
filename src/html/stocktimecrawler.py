@@ -55,6 +55,6 @@ def cycleStocksTime(stockNum,name,enginstr):
    # options.add_argument('--disable-tabs')
    driver = webdriver.Chrome(options = options)
    url = f"http://quote.eastmoney.com/sh{stockNum}.html"
-   while True:
-       get_stock_data(stockNum,name,driver,url,enginstr)
-       time.sleep(10)
+   # while True:
+   get_stock_data(stockNum,name,driver,url,enginstr)
+      #  time.sleep(10)

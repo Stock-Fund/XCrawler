@@ -59,6 +59,6 @@ def cycleSHBoard(url,enginstr):
    # options.add_argument('--disable-tabs')
    driver = webdriver.Chrome(options = options)
 #    url = "http://quote.eastmoney.com/center/gridlist.html#sh_a_board"
-   while True:
-       get_SHBoard_data(driver,url,enginstr)
-       time.sleep(10)
+   # while True:
+   get_SHBoard_data(driver,url,enginstr)
+      #  time.sleep(10)

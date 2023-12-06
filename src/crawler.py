@@ -37,13 +37,16 @@ def _runProcess():
      p5.start()
      done.set()
      
-def run_forever():
-     schedule.every().day.at("15:00").do(_runProcess)
-     while not done.is_set():
-       # localtime = src.timeutil.get_local_time()
-       # 每天15:00遍历一次网页的数据
-       schedule.run_pending()
-       time.sleep(1)
+def run_forever(check):
+     if check:
+        schedule.every().day.at("19:19").do(_runProcess)
+        while not done.is_set():
+          # localtime = src.timeutil.get_local_time()
+          # 每天15:00遍历一次网页的数据
+          schedule.run_pending()
+          time.sleep(1)
+     else :
+       _runProcess()
        
 def _runMysql():
      # 执行命令
@@ -54,13 +57,21 @@ def _runMysql():
        print("MySQL已启动")
        return True
      else:
-        return False
+       return False
 
 def try_start():     
      if _runMysql():
-        thread = threading.Thread(target=run_forever,daemon=True)
+        thread = threading.Thread(target=run_forever,args=(True,),daemon=True)
         thread.start() 
      else :
+        print("MySQL启动失败")
+        
+
+def start():
+    if _runMysql():
+        thread = threading.Thread(target=run_forever,args=(False,),daemon=True)
+        thread.start() 
+    else :
         print("MySQL启动失败")
 
      
