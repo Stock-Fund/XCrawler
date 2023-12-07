@@ -10,12 +10,12 @@ enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 done = threading.Event()
 def _runProcess():
       # 招商分时
-     p1 = Process(target=html.cycleStocksTime,args=(600036,"招商银行分时",enginstr,))
+     p1 = Process(target=html.cycleStocksTime,args=(600036,enginstr,))
      p1.daemon =True
      p1.start()
      
      # # 张江高科分时
-     p2 = Process(target=html.cycleStocksTime,args=(600895,"张江高科分时",enginstr,))
+     p2 = Process(target=html.cycleStocksTime,args=(600895,enginstr,))
      p2.daemon =True
      p2.start()
 
@@ -26,20 +26,20 @@ def _runProcess():
      
      # 600036 招商银行
      # 招商收盘开盘量比等数据
-     p4 = Process(target=html.getStockData_datareader,args=('600036','招商银行',enginstr,))
+     p4 = Process(target=html.getStockData_datareader,args=('600036',enginstr,))
      p4.daemon = True
      p4.start()
      
      # 600895 张江高科
      # 张江高科收盘开盘量比等数据
-     p5 = Process(target=html.getStockData_datareader,args=('600895',"张江高科",enginstr,))
-     p5.daemon = True
-     p5.start()
-     done.set()
+    #  p5 = Process(target=html.getStockData_datareader,args=('600895',"张江高科",enginstr,))
+    #  p5.daemon = True
+    #  p5.start()
+    #  done.set()
      
 def run_forever(check):
      if check:
-        schedule.every().day.at("19:19").do(_runProcess)
+        schedule.every().day.at("15:00").do(_runProcess)
         while not done.is_set():
           # localtime = src.timeutil.get_local_time()
           # 每天15:00遍历一次网页的数据
@@ -75,7 +75,7 @@ def start():
         print("MySQL启动失败")
 
 def find(stockNum):
-     p = Process(target=html.getStockData_datareader,args=(f'{stockNum}',"测试",enginstr,))
+     p = Process(target=html.cycleStocksTime,args=(f'{stockNum}',enginstr,))
      p.daemon = True
      p.start()
      print(f"查找对应代码{stockNum}股票")

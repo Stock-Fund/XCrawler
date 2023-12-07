@@ -13,7 +13,7 @@ def getStockData(stockNum):
    #dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
 
 # pandas_datareader通过yahoo获取股票数据
-def getStockData_datareader(stockNum,name,enginstr):
+def getStockData_datareader(stockNum,enginstr):
    yf.pdr_override()
    code = stockNum + '.ss'
    stock = pdr.get_data_yahoo(code,'2023-9-01')
@@ -24,7 +24,7 @@ def getStockData_datareader(stockNum,name,enginstr):
    
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
-   xlsx.ReaderSavetosql(enginstr,name,stock)
+   xlsx.ReaderSavetosql(stockNum,enginstr,stock)
    
    print("customDatareader crawle completed")
    # 5日收盘价均价

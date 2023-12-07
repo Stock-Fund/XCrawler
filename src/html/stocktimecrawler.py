@@ -5,13 +5,19 @@ import time
 import src.xlsx as xlsx
 
 # 获取指定股票的数据
-def get_stock_data(stockNum,name,driver,url,enginstr):
+def get_stock_data(stockNum,driver,url,enginstr):
     datas = []
     driver.get(url) 
     driver.implicitly_wait(2)
     soup = BeautifulSoup(driver.page_source,'lxml')
     namediv = soup.select_one('div.quote_title_l')
     namespan =  namediv.find('span', class_="quote_title_name quote_title_name_190")
+    baseName = namespan.get_text()
+    name = baseName + "分时"
+    # 将stockNum,stockName存储到数据库，以便后续使用
+    titles = ['代码','名称']
+    xlsx.SaveStockNameByNum(stockNum,baseName,titles,enginstr,"代码库")
+    
     class_mm = soup.select_one('div.mm')
     table = class_mm.find('table')
     headers = []
@@ -45,16 +51,16 @@ def get_stock_data(stockNum,name,driver,url,enginstr):
    #  src.xlsx.SaveToJson(datas,f"Assets/{stockNum}_time.json")
     xlsx.SaveTosqlMinutes(datas,headers,enginstr,name)
     print("stockminutesdata crawle completed")
-  
-
 
 # 循环爬取制定股票数据
-def cycleStocksTime(stockNum,name,enginstr):
+def cycleStocksTime(stockNum,enginstr):
    options = webdriver.ChromeOptions()
    options.add_argument('--headless')
    # options.add_argument('--disable-tabs')
    driver = webdriver.Chrome(options = options)
    url = f"http://quote.eastmoney.com/sh{stockNum}.html"
    # while True:
-   get_stock_data(stockNum,name,driver,url,enginstr)
+   get_stock_data(stockNum,driver,url,enginstr)
       #  time.sleep(10)
+      
+      

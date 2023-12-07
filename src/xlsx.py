@@ -81,6 +81,7 @@ def SaveTosqlMinutes(datas,head,enginestr,table):
     if  data_table is not None and (data_table['日期'] == formatted).any():
         update_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
         update_data_table = pd.DataFrame(update_rows,columns=head)
+        # 获取日期这一列
         update_table = update_data_table["日期"].unique()
         # 逐条更新
         for id in update_table:
@@ -94,6 +95,28 @@ def SaveTosqlMinutes(datas,head,enginestr,table):
        # 插入表格数据 更新
        data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
     #    print("create mysql data complete")
+    engine.dispose()
+
+def SaveStockNameByNum(name,key,head,enginestr,table):
+    engine = create_engine(enginestr)
+    try:
+        data_table = pd.read_sql_table(table, enginestr)
+    except:
+        data_table = None
+    if  data_table is not None:
+        boo = False
+        index = 0
+        for data in data_table:
+            if data['代码'] == name:
+                boo = True
+                break
+            index += 1
+        if not boo:
+            data_table.append({'代码':name,'名称':key},ignore_index=True)
+            
+    else:
+        data_table = pd.DataFrame(datas,columns=head)
+        data_table.to_sql(name=table, con=engine, if_exists='append')
     engine.dispose()
 
 # 清空某个表    
