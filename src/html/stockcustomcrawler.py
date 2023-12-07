@@ -2,6 +2,9 @@ import tushare as ts
 from pandas_datareader import data as pdr
 import yfinance as yf
 import src.xlsx as xlsx
+import requests
+import json
+
 # ==================================== 第三方
 # tushare获取股票数据
 def getStockData(stockNum):

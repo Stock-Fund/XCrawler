@@ -75,6 +75,9 @@ def start():
         print("MySQL启动失败")
 
 def find(stockNum):
-   print(f"查找对应代码{stockNum}股票")
+     p = Process(target=html.getStockData_datareader,args=(f'{stockNum}',"测试",enginstr,))
+     p.daemon = True
+     p.start()
+     print(f"查找对应代码{stockNum}股票")
 
      
