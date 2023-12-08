@@ -97,26 +97,35 @@ def SaveTosqlMinutes(datas,head,enginestr,table):
     #    print("create mysql data complete")
     engine.dispose()
 
-def SaveStockNameByNum(name,key,head,enginestr,table):
+def SaveStockNameByNum(key,name,head,enginestr,table):
+    datas = [key,name]
+    datas = list(map(str,datas))
+    num_columns = len(head)
+    num_rows = len(datas)
     engine = create_engine(enginestr)
     try:
         data_table = pd.read_sql_table(table, enginestr)
     except:
         data_table = None
     if  data_table is not None:
-        boo = False
-        index = 0
-        for data in data_table:
-            if data['代码'] == name:
-                boo = True
-                break
-            index += 1
-        if not boo:
-            data_table.append({'代码':name,'名称':key},ignore_index=True)
-            
+        id = '代码'
+        value = '名字'
+        update_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
+        update_data_table = pd.DataFrame(update_rows,columns=head)
+        # 获取股票代码这一列
+        update_table = update_data_table[id].unique()
+        for updateid in update_table:
+            if updateid in data_table[id].values:
+                # updateid存在,跳过
+                # print('Data already exists')
+                continue
+            else: 
+                # print('Data not found, need to insert')
+                update_data_table.to_sql(name=table, con=engine, if_exists='append', index=False)
     else:
-        data_table = pd.DataFrame(datas,columns=head)
-        data_table.to_sql(name=table, con=engine, if_exists='append')
+        data_rows = [datas[i:i+num_columns] for i in range(0, num_rows, num_columns)]
+        data_table = pd.DataFrame(data_rows,columns=head)
+        data_table.to_sql(name=table, con=engine, if_exists='append',index=False)
     engine.dispose()
 
 # 清空某个表    
@@ -128,8 +137,14 @@ def ClearsqlTable(enginestr,table):
     engine.dispose()
     
 
-def ReaderSavetosql(enginestr,table,datas):
+def ReaderSavetosql(table,enginestr,datas):
     engine = create_engine(enginestr)
     datas.to_sql(name=table,con=engine,if_exists='replace')
     engine.dispose()
     
+def GetDataFromSql(table,id,value,stockNum,enginestr):
+    engine = create_engine(enginestr)
+    df = pd.read_sql_table(table, enginestr)
+    name = df.loc[df[id] == stockNum, value].values[0]
+    engine.dispose()
+    return name

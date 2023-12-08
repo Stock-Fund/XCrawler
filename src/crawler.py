@@ -10,23 +10,27 @@ enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 done = threading.Event()
 def _runProcess():
       # 招商分时
-     p1 = Process(target=html.cycleStocksTime,args=(600036,enginstr,))
-     p1.daemon =True
-     p1.start()
+    #  p1 = Process(target=html.cycleStocksTime,args=(600036,enginstr,))
+    #  p1.daemon =True
+    #  p1.start()
      
-     # # 张江高科分时
-     p2 = Process(target=html.cycleStocksTime,args=(600895,enginstr,))
-     p2.daemon =True
-     p2.start()
+    #  # # 张江高科分时
+    #  p2 = Process(target=html.cycleStocksTime,args=(600895,enginstr,))
+    #  p2.daemon =True
+    #  p2.start()
+     
+    #  p6 = Process(target=html.cycleStocksTime,args=(600287,enginstr,))
+    #  p6.daemon =True
+    #  p6.start()
 
      # # 主板
-     p3 = Process(target=html.cycleSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
-     p3.daemon = True
-     p3.start() 
+    #  p3 = Process(target=html.cycleSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
+    #  p3.daemon = True
+    #  p3.start() 
      
-     # 600036 招商银行
-     # 招商收盘开盘量比等数据
-     p4 = Process(target=html.getStockData_datareader,args=('600036',enginstr,))
+    #  # 600036 招商银行
+    #  # 招商收盘开盘量比等数据
+     p4 = Process(target=html.getStockData_datareader,args=('600287',enginstr,))
      p4.daemon = True
      p4.start()
      

@@ -16,6 +16,7 @@ def get_stock_data(stockNum,driver,url,enginstr):
     name = baseName + "分时"
     # 将stockNum,stockName存储到数据库，以便后续使用
     titles = ['代码','名称']
+    titles = list(map(str,titles))
     xlsx.SaveStockNameByNum(stockNum,baseName,titles,enginstr,"代码库")
     
     class_mm = soup.select_one('div.mm')

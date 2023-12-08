@@ -24,7 +24,8 @@ def getStockData_datareader(stockNum,enginstr):
    
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
-   xlsx.ReaderSavetosql(stockNum,enginstr,stock)
+   name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
+   xlsx.ReaderSavetosql(name,enginstr,stock)
    
    print("customDatareader crawle completed")
    # 5日收盘价均价
