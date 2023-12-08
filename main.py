@@ -7,7 +7,9 @@ from PyQt6.QtWidgets import QWidget,QApplication,QSizePolicy
 from PyQt6.QtGui import QIcon,QGuiApplication  # 导入引用图标的函数
 from PyQt6.QtCore import QUrl,QPoint
 from selenium import webdriver
+import pymysql
 import src
+import subprocess
 
 def main():
 
@@ -15,6 +17,9 @@ def main():
     path = os.path.join(os.path.dirname(sys.modules[__name__].__file__), './Assets/star.png')
     app.setWindowIcon(QIcon(path))
     
+    # 启动数据库
+    conn = pymysql.connect(host='localhost', user='root', password='Akeboshi123~', db='stock', charset='utf8')
+
     window = Window()   
     window.show()
     

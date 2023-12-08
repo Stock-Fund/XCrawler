@@ -9,27 +9,28 @@ enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 
 done = threading.Event()
 def _runProcess():
-      # 招商分时
-    #  p1 = Process(target=html.cycleStocksTime,args=(600036,enginstr,))
-    #  p1.daemon =True
-    #  p1.start()
+     # 招商分时
+     p1 = Process(target=html.cycleStocksTime,args=(600036,enginstr,))
+     p1.daemon =True
+     p1.start()
      
-    #  # # 张江高科分时
-    #  p2 = Process(target=html.cycleStocksTime,args=(600895,enginstr,))
-    #  p2.daemon =True
-    #  p2.start()
+     # 张江高科分时
+     p2 = Process(target=html.cycleStocksTime,args=(600895,enginstr,))
+     p2.daemon =True
+     p2.start()
      
-    #  p6 = Process(target=html.cycleStocksTime,args=(600287,enginstr,))
-    #  p6.daemon =True
-    #  p6.start()
+     # 江苏舜天
+     p6 = Process(target=html.cycleStocksTime,args=(600287,enginstr,))
+     p6.daemon =True
+     p6.start()
 
-     # # 主板
-    #  p3 = Process(target=html.cycleSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
-    #  p3.daemon = True
-    #  p3.start() 
+     # 主板
+     p3 = Process(target=html.cycleSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
+     p3.daemon = True
+     p3.start() 
      
-    #  # 600036 招商银行
-    #  # 招商收盘开盘量比等数据
+     # 600036 招商银行
+     # 招商收盘开盘量比等数据
      p4 = Process(target=html.getStockData_datareader,args=('600287',enginstr,))
      p4.daemon = True
      p4.start()
@@ -39,8 +40,8 @@ def _runProcess():
     #  p5 = Process(target=html.getStockData_datareader,args=('600895',"张江高科",enginstr,))
     #  p5.daemon = True
     #  p5.start()
-    #  done.set()
-     
+     done.set()
+
 def run_forever(check):
      if check:
         schedule.every().day.at("15:00").do(_runProcess)
@@ -51,37 +52,23 @@ def run_forever(check):
           time.sleep(1)
      else :
        _runProcess()
-       
-def _runMysql():
-     # 执行命令
-     cmd = 'mysqladmin -u root -p status'
-     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-     # 检查执行结果
-     if result.returncode == 0 and 'Uptime' in result.stdout:
-       print("MySQL已启动")
-       return True
-     else:
-       return False
 
-def try_start():     
-     if _runMysql():
-        thread = threading.Thread(target=run_forever,args=(True,),daemon=True)
-        thread.start() 
-     else :
-        print("MySQL启动失败")
-        
+def try_start():
+     thread = threading.Thread(target=run_forever,args=(True,),daemon=True)
+     thread.start() 
+  
 
 def start():
-    if _runMysql():
-        thread = threading.Thread(target=run_forever,args=(False,),daemon=True)
-        thread.start() 
-    else :
-        print("MySQL启动失败")
+   run_forever(False)
 
 def find(stockNum):
      p = Process(target=html.cycleStocksTime,args=(f'{stockNum}',enginstr,))
      p.daemon = True
      p.start()
+     
+     p1 = Process(target=html.getStockData_datareader,args=(f'{stockNum}',enginstr,))
+     p1.daemon = True
+     p1.start()
      print(f"查找对应代码{stockNum}股票")
 
      

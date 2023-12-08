@@ -56,6 +56,7 @@ def get_SHBoard_data(driver,tmpUrl,enginstr):
 def cycleSHBoard(url,enginstr):
    options = webdriver.ChromeOptions()
    options.add_argument('--headless')
+   options.add_argument('--disable-notifications')
    # options.add_argument('--disable-tabs')
    driver = webdriver.Chrome(options = options)
 #    url = "http://quote.eastmoney.com/center/gridlist.html#sh_a_board"
