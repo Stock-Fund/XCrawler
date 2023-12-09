@@ -53,7 +53,7 @@ def get_SHBoard_data(driver,tmpUrl,enginstr):
      return soup
 
 # 爬取上证交易所股票 
-def cycleSHBoard(url,enginstr):
+def getSHBoard(url,enginstr):
    options = webdriver.ChromeOptions()
    options.add_argument('--headless')
    options.add_argument('--disable-notifications')

@@ -10,22 +10,22 @@ enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 done = threading.Event()
 def _runProcess():
      # 招商分时
-     p1 = Process(target=html.cycleStocksTime,args=(600036,enginstr,))
+     p1 = Process(target=html.getStocksTime,args=(600036,enginstr,))
      p1.daemon =True
      p1.start()
      
      # 张江高科分时
-     p2 = Process(target=html.cycleStocksTime,args=(600895,enginstr,))
+     p2 = Process(target=html.getStocksTime,args=(600895,enginstr,))
      p2.daemon =True
      p2.start()
      
      # 江苏舜天
-     p6 = Process(target=html.cycleStocksTime,args=(600287,enginstr,))
+     p6 = Process(target=html.getStocksTime,args=(600287,enginstr,))
      p6.daemon =True
      p6.start()
 
      # 主板
-     p3 = Process(target=html.cycleSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
+     p3 = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
      p3.daemon = True
      p3.start() 
      
@@ -62,7 +62,7 @@ def start():
    run_forever(False)
 
 def find(stockNum):
-     p = Process(target=html.cycleStocksTime,args=(f'{stockNum}',enginstr,))
+     p = Process(target=html.getStocksTime,args=(f'{stockNum}',enginstr,))
      p.daemon = True
      p.start()
      

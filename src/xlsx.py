@@ -63,7 +63,8 @@ def SaveTosql(datas,head,enginestr,table):
        data_table.to_sql(name=table,con=engine,if_exists="append",index=False)
     #    print("create mysql data complete")
     engine.dispose()
-    
+
+# 分时数据存储
 def SaveTosqlMinutes(datas,head,enginestr,table):
     timestamp = datetime.datetime.fromtimestamp(time.time())
     now = datetime.datetime.now()
@@ -97,6 +98,7 @@ def SaveTosqlMinutes(datas,head,enginestr,table):
     #    print("create mysql data complete")
     engine.dispose()
 
+# 存储股票名字跟代码
 def SaveStockNameByNum(key,name,head,enginestr,table):
     datas = [key,name]
     datas = list(map(str,datas))
@@ -136,12 +138,13 @@ def ClearsqlTable(enginestr,table):
         table.to_sql(name=table, con=engine, if_exists='replace')
     engine.dispose()
     
-
-def ReaderSavetosql(table,enginestr,datas):
+# 第三方库数据存储
+def customDataSavetosql(table,enginestr,datas):
     engine = create_engine(enginestr)
     datas.to_sql(name=table,con=engine,if_exists='replace')
     engine.dispose()
-    
+
+# 从数据库获取数据  
 def GetDataFromSql(table,id,value,stockNum,enginestr):
     engine = create_engine(enginestr)
     df = pd.read_sql_table(table, enginestr)

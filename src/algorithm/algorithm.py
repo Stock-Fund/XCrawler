@@ -1,7 +1,9 @@
 import numpy as np
+import statistics
 class Stock:
      def __init__(self,nums):
         self.Time = nums[0]# 10点之前打到预测ma5直接买，下午就缓缓
+        ## 所有的数组类数据全部为倒置存储，第0位就是当前天的数据
         # 当前价格
         self.CurrentValue = nums[1]
         # 60日内的收盘价格列表
@@ -17,13 +19,16 @@ class Stock:
         self.MA30s = nums[9]
         self.MA60s = nums[10]
        
+        # 60日内成交量
+        self.Volumes = nums[11]
+        # 60日内成交金额
+        self.VolumesValues = nums[12]
+        # 60日内换手率
+        self.turnoverRates = nums[13]
         
-        # 换手率
-        self.turnoverRates = nums[11]
-        
-        # 筹码集中度
+        # 60内筹码集中度
         # 筹码集中度=成本区间的（高值-低值）/（高值+低值）
-        self.Chipsconcentration = nums[12]
+        self.Chipsconcentrations = nums[14]
         
         # 止盈卖出系数
         self.TakeProfit = 1.1
@@ -128,7 +133,39 @@ class Stock:
              print("破30日线")
          elif(closeValue<ma60):
              print("破60日线")
-         
+             
+    
+     # 判断是否是放量
+     # 以该股票最近一个月或者三个月的日均交易量为基准平均值。
+     # 如果该日交易量高于基准平均值的一定倍数(如150%或者200%),则认为该日交易量较大,是放量。
+     # 如果该日交易量低于基准平均值的一定比例(如50%或者70%),则认为该日交易量较小,是缩量。
+     # 如果在基准平均值和放量标准之间,则认为交易量一般,既不是明显放量也不是缩量。
+     def checkVolumeIncreaseOrShrink(self):
+         totalVolume = sum(self.Volumes)
+         count = len(self.volumes)
+         average = totalVolume/count
+         # 放量
+         if self.Volumes[0] > average*1.5:
+             return 1
+         # 缩量
+         elif self.Volumes[0] < average*0.5:
+             return -1
+         # 正常量
+         else:
+             return 0
+    
+     # 判断某天收盘是否为红盘(收盘价高于开盘价)
+     def checkRise(self,index):
+        return self.CloseValues[index] > self.OpenValues[index]
+     
+     # 判断是否阳包阴，还是阴包阳
+     def checkVolums(self):
+         today = self.Volumes[0]
+         yesterday = self.Volumes[1]
+         if not self.checkRise(0) and yesterday < today:
+             return True
+         else:
+             return False 
      # 主升浪逻辑
      
      # boll逻辑 todo

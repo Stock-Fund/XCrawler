@@ -54,7 +54,7 @@ def get_stock_data(stockNum,driver,url,enginstr):
     print("stockminutesdata crawle completed")
 
 # 循环爬取制定股票数据
-def cycleStocksTime(stockNum,enginstr):
+def getStocksTime(stockNum,enginstr):
    options = webdriver.ChromeOptions()
    options.add_argument('--headless')
    # options.add_argument('--disable-tabs')
