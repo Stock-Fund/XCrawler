@@ -20,26 +20,31 @@ def _runProcess():
      p2.start()
      
      # 江苏舜天
-     p6 = Process(target=html.getStocksTime,args=(600287,enginstr,))
+     p6 = Process(target=html.getStocksTime,args=(603189,enginstr,))
      p6.daemon =True
      p6.start()
+     
+     # 圣龙股份
+     p7 = Process(target=html.getStocksTime,args=(603178,enginstr,))
+     p7.daemon =True
+     p7.start()
 
      # 主板
-     p3 = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
-     p3.daemon = True
-     p3.start() 
+     # p3 = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
+     # p3.daemon = True
+     # p3.start() 
      
      # 600036 招商银行
      # 招商收盘开盘量比等数据
-     p4 = Process(target=html.getStockData_datareader,args=('600287',enginstr,))
-     p4.daemon = True
-     p4.start()
+     # p4 = Process(target=html.getStockData_datareader,args=('600287',enginstr,))
+     # p4.daemon = True
+     # p4.start()
      
      # 600895 张江高科
      # 张江高科收盘开盘量比等数据
-    #  p5 = Process(target=html.getStockData_datareader,args=('600895',"张江高科",enginstr,))
-    #  p5.daemon = True
-    #  p5.start()
+     p5 = Process(target=html.getStockData_datareader,args=('603189',enginstr,))
+     p5.daemon = True
+     p5.start()
      done.set()
 
 def run_forever(check):
