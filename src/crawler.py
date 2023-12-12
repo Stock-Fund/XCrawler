@@ -42,7 +42,7 @@ def _runProcess():
      
      # 600895 张江高科
      # 张江高科收盘开盘量比等数据
-     p5 = Process(target=html.getStockData_datareader,args=('603189',enginstr,))
+     p5 = Process(target=html.getStockData_datareader,args=('600661',enginstr,))
      p5.daemon = True
      p5.start()
      done.set()

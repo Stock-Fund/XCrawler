@@ -148,6 +148,10 @@ def customDataSavetosql(table,enginestr,datas):
 def GetDataFromSql(table,id,value,stockNum,enginestr):
     engine = create_engine(enginestr)
     df = pd.read_sql_table(table, enginestr)
-    name = df.loc[df[id] == stockNum, value].values[0]
+    name = ""
+    try:
+      name = df.loc[df[id] == stockNum, value].values[0]
+    except IndexError:
+      print("name does not exist")
     engine.dispose()
     return name

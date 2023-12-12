@@ -2,6 +2,7 @@ import tushare as ts
 from pandas_datareader import data as pdr
 import yfinance as yf
 import src.xlsx as xlsx
+import src.html as html
 import requests
 import json
 
@@ -25,8 +26,10 @@ def getStockData_datareader(stockNum,enginstr):
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
    name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
+   if name == "":
+      html.getStocksTime(stockNum,enginstr)
+      name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
    xlsx.customDataSavetosql(name,enginstr,stock)
-   
    print(f"{name} customDatareader crawle completed")
    # 5日收盘价均价
    mean_price_5 = stock['Close'].rolling(window=5).mean() 
