@@ -30,9 +30,9 @@ def _runProcess():
      p7.start()
 
      # 主板
-     # p3 = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
-     # p3.daemon = True
-     # p3.start() 
+     p3 = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
+     p3.daemon = True
+     p3.start() 
      
      # 600036 招商银行
      # 招商收盘开盘量比等数据
@@ -42,7 +42,7 @@ def _runProcess():
      
      # 600895 张江高科
      # 张江高科收盘开盘量比等数据
-     p5 = Process(target=html.getStockData_datareader,args=('600661',enginstr,))
+     p5 = Process(target=html.getStockData_datareader,args=('600036',enginstr,))
      p5.daemon = True
      p5.start()
      done.set()

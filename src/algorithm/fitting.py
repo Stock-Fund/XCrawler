@@ -1,8 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-     
+import sklearn.linear_model import LinearRegression
 ## 拟合
 
+## 60日收盘价简单拟合
+def simple_fit(days, closeprices):
+    lr = LinearRegression().fit(days, closeprices)
+    # 返回斜率
+    return lr.coef_[0]
+## rsrs拟合
 N_near = 18  # 计算最新斜率 slope，拟合度 r2 参考最近 N 天,一般是最近18天
 M_norm = 600  # 计算最新标准分 zscore，rsrs_score 参考最近 M 天,一般通过最近600日的数据进行归一化
 score_threshold = 0.7  # rsrs 标准分指标阈值
@@ -54,9 +60,9 @@ def sell_or_buy(stockNum,lowdatas,highdatas):
     print('最近', N_near, '日最高价', highdatas)#最近 18 日最高价 [192.0, 188.5, 188.5, 189.9, 191.5, 189.65, 189.8, 195.51, 193.56, 194.78, 192.74, 190.8, 194.8, 194.74, 199.62, 202.66, 202.8, 205.0]
     print('最近', N_near, '日最低价', lowdatas)#最近 18 日最低价 [188.68, 184.75, 185.0, 186.58, 188.0, 186.5, 184.2, 188.0, 189.05, 187.61, 187.54, 186.0, 190.96, 188.47, 193.35, 196.26, 198.2, 198.0]
     # 计算M日的斜率，返回数据是大小为M的list
-    slopes = M_day_slope(stockNum)
+    slopes = M_day_slope(stockNum,lowdatas,highdatas)
     r2 = calc_r2(lowdatas, highdatas)  # 计算r2的值
-    print('r2的值', r2)#r2的值 0.9272263254381972
+    print('r2的值', r2) #r2的值 0.9272263254381972
     # 通过前M日的数据对最新数据归一化
     rsrs_score = normalization(slopes) * r2
     print('rsrs_score 的值', rsrs_score)#rsrs_score 的值 -0.3155920886739633

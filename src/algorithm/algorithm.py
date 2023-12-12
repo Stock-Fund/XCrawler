@@ -1,5 +1,6 @@
 import numpy as np
 import statistics
+import fitting
 class Stock:
      def __init__(self,nums):
         self.Time = nums[0]# 10点之前打到预测ma5直接买，下午就缓缓
@@ -167,6 +168,15 @@ class Stock:
          else:
              return False 
      # 主升浪逻辑
+     def MainSL(self):
+         # 1-60作为x轴的数值
+         days = np.arange(1,61).reshape(-1,1)
+         # 收盘价
+         slope = fitting.simple_fit(days,self.CloseValues)
+         # 简单判断，当60日收盘价拟合斜率为正，表示60日收盘价处于上涨趋势，可以简单的算作主升浪情况
+         if slope > 0:
+             return True
+         return False
      
      # boll逻辑 todo
          

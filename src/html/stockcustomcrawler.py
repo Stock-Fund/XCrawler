@@ -26,6 +26,7 @@ def getStockData_datareader(stockNum,enginstr):
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
    name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
+   print(name)
    if name == "":
       html.getStocksTime(stockNum,enginstr)
       name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
