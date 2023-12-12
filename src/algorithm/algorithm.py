@@ -171,8 +171,12 @@ class Stock:
      def MainSL(self):
          # 1-60作为x轴的数值
          days = np.arange(1,61).reshape(-1,1)
-         # 收盘价
+         # 收盘价 趋势连续上涨。价格形成一系列超过坚振位的高点和低点,形成上扬趋势。
          slope = fitting.simple_fit(days,self.CloseValues)
+         # todo 均线上行。成交量均线、动量指标等有力指标呈现上升趋势
+         # todo 判断低位集中收购
+         # todo 判断新高突破
+         # todo 指标穿线支持。如动量指标金叉死叉等技术信号表明趋势有望继续
          # 简单判断，当60日收盘价拟合斜率为正，表示60日收盘价处于上涨趋势，可以简单的算作主升浪情况
          if slope > 0:
              return True
