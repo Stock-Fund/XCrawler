@@ -9,7 +9,7 @@ enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 
 done = threading.Event()
 def _runProcess():
-     # 招商分时
+     招商分时
      p1 = Process(target=html.getStocksTime,args=(600036,enginstr,))
      p1.daemon =True
      p1.start()
@@ -42,7 +42,7 @@ def _runProcess():
      
      # 600895 张江高科
      # 张江高科收盘开盘量比等数据
-     p5 = Process(target=html.getStockData_datareader,args=('600036',enginstr,))
+     p5 = Process(target=html.getStockData_datareader,args=('603536',enginstr,))
      p5.daemon = True
      p5.start()
      done.set()

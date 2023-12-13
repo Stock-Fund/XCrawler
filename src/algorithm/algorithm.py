@@ -26,6 +26,11 @@ class Stock:
         self.VolumesValues = nums[12]
         # 60日内换手率
         self.turnoverRates = nums[13]
+        # 60日量比
+        self.QuantityRatios = nums[14]
+        
+        # 60日分时均价 
+        self.AveragePrices = nums[15]
         
         # 60内筹码集中度
         # 筹码集中度=成本区间的（高值-低值）/（高值+低值）
