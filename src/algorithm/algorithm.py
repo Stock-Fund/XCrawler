@@ -29,12 +29,12 @@ class Stock:
         # 60日量比
         self.QuantityRatios = nums[14]
         
-        # 60日分时均价 
+        # 60日分时均价  均价=成交总额/成交量 由于分时均价频率较高，则使用   均价 = 每日收盘时的成交总额/每日收盘时的成交量
         self.AveragePrices = nums[15]
         
         # 60内筹码集中度
         # 筹码集中度=成本区间的（高值-低值）/（高值+低值）
-        self.Chipsconcentrations = nums[14]
+        self.Chipsconcentrations = nums[16]
         
         # 止盈卖出系数
         self.TakeProfit = 1.1
@@ -178,7 +178,7 @@ class Stock:
          days = np.arange(1,61).reshape(-1,1)
          # 收盘价 趋势连续上涨。价格形成一系列超过坚振位的高点和低点,形成上扬趋势。
          slope = fitting.simple_fit(days,self.CloseValues)
-         # todo 均线上行。成交量均线、动量指标等有力指标呈现上升趋势
+         # todo 均线上行。成交量均线、动量指标等有力指标呈现上升趋势MA(C,5)>MA(C,10) AND MA(C,10)>MA(C,20) AND MA(C,20)>MA(C,60) AND MA(C,60)>MA(C,120) AND MA(C,120)>REF(MA(C,120),1) AND MA(C,5)>REF(MA(C,5),1);
          # todo 判断低位集中收购
          # todo 判断新高突破
          # todo 指标穿线支持。如动量指标金叉死叉等技术信号表明趋势有望继续
