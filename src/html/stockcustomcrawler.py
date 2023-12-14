@@ -26,12 +26,12 @@ def getStockData_datareader(stockNum,enginstr):
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
    name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
-   print(name)
    if name == "":
       html.getStocksTime(stockNum,enginstr)
       name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
    xlsx.customDataSavetosql(name,enginstr,stock)
    print(f"{name} customDatareader crawle completed")
+   return
    # 5日收盘价均价
    mean_price_5 = stock['Close'].rolling(window=5).mean() 
    mean_price_10 = stock['Close'].rolling(window=10).mean() 

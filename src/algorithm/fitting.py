@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import sklearn.linear_model import LinearRegression
 ## 拟合
 
-## 60日收盘价简单拟合
+## 0-60日收盘价简单拟合
 def simple_fit(days, closeprices):
     lr = LinearRegression().fit(days, closeprices)
     # 返回斜率

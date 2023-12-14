@@ -2,6 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import datetime
 import time
+import talib as ta
 
 def SaveToXlsx(datas,head,path="Assets/data.xlsx"):
     num_columns = len(head)

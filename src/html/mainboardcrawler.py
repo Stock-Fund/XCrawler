@@ -49,7 +49,7 @@ def get_SHBoard_data(driver,tmpUrl,enginstr):
      # 已mysql为例,如果已localhost为host,那port端口一般为3306
      # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
      xlsx.SaveTosql(datas,headers,enginstr,"stock")
-     print("SHBoardData crawle completed")
+     print("上证主板前十股票数据 crawle completed")
      return soup
 
 # 爬取上证交易所股票 

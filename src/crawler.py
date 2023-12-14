@@ -8,43 +8,27 @@ import subprocess
 enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 
 done = threading.Event()
-def _runProcess():
-     招商分时
-     p1 = Process(target=html.getStocksTime,args=(600036,enginstr,))
-     p1.daemon =True
-     p1.start()
+def _runProcess():     
+     stocks = ['600036','600895','603178','603189','600678','600355','603025','600661','603536']
+     # 股票分时数据
+     for stock in stocks:
+        _p = Process(target=html.getStocksTime,args=(stock,enginstr,))
+        _p.daemon = True
+        _p.start()
+        _p.join(30)
      
-     # 张江高科分时
-     p2 = Process(target=html.getStocksTime,args=(600895,enginstr,))
-     p2.daemon =True
-     p2.start()
-     
-     # 江苏舜天
-     p6 = Process(target=html.getStocksTime,args=(603189,enginstr,))
-     p6.daemon =True
-     p6.start()
-     
-     # 圣龙股份
-     p7 = Process(target=html.getStocksTime,args=(603178,enginstr,))
-     p7.daemon =True
-     p7.start()
-
+     # 股票收盘开盘量比等数据
+     for stock in stocks:
+        _p = Process(target=html.getStockData_datareader,args=(stock,enginstr,))
+        _p.daemon = True
+        _p.start()
+        _p.join(30)
+        
      # 主板
-     p3 = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
-     p3.daemon = True
-     p3.start() 
+     p = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
+     p.daemon = True
+     p.start() 
      
-     # 600036 招商银行
-     # 招商收盘开盘量比等数据
-     # p4 = Process(target=html.getStockData_datareader,args=('600287',enginstr,))
-     # p4.daemon = True
-     # p4.start()
-     
-     # 600895 张江高科
-     # 张江高科收盘开盘量比等数据
-     p5 = Process(target=html.getStockData_datareader,args=('603536',enginstr,))
-     p5.daemon = True
-     p5.start()
      done.set()
 
 def run_forever(check):

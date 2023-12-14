@@ -51,7 +51,7 @@ def get_stock_data(stockNum,driver,url,enginstr):
    #  src.xlsx.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
    #  src.xlsx.SaveToJson(datas,f"Assets/{stockNum}_time.json")
     xlsx.SaveTosqlMinutes(datas,headers,enginstr,name)
-    print("stockminutesdata crawle completed")
+    print(f"{baseName} stockminutesdata crawle completed")
 
 # 循环爬取制定股票数据
 def getStocksTime(stockNum,enginstr):

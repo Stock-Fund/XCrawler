@@ -1,6 +1,7 @@
 import numpy as np
 import statistics
 import fitting
+import talib
 class Stock:
      def __init__(self,nums):
         self.Time = nums[0]# 10点之前打到预测ma5直接买，下午就缓缓
@@ -174,18 +175,30 @@ class Stock:
              return False 
      # 主升浪逻辑
      def MainSL(self):
+         mainBoo = False
          # 1-60作为x轴的数值
          days = np.arange(1,61).reshape(-1,1)
          # 收盘价 趋势连续上涨。价格形成一系列超过坚振位的高点和低点,形成上扬趋势。
          slope = fitting.simple_fit(days,self.CloseValues)
-         # todo 均线上行。成交量均线、动量指标等有力指标呈现上升趋势MA(C,5)>MA(C,10) AND MA(C,10)>MA(C,20) AND MA(C,20)>MA(C,60) AND MA(C,60)>MA(C,120) AND MA(C,120)>REF(MA(C,120),1) AND MA(C,5)>REF(MA(C,5),1);
+         # 简单判断，当60日收盘价拟合斜率为正，表示60日收盘价处于上涨趋势，可以简单的算作主升浪情况
+         # 日K线斜率在0.001~0.005之间。这个范围内表示股价走势呈现出小幅上涨趋势。
+         # 日K线斜率在0.005~0.01之间。此时股价走势属于中等上涨趋势。
+         # 日K线斜率在0.01以上。这种斜率代表股价处于明显的强劲上涨趋势中。
+         mainBoo = True if slope > 0 else False
+         
+         # 均线上行。成交量均线、动量指标等有力指标呈现上升趋势MA(C,5)>MA(C,10) AND MA(C,10)>MA(C,20) AND MA(C,20)>MA(C,60) AND MA(C,60)>MA(C,120) AND MA(C,120)>REF(MA(C,120),1) AND MA(C,5)>REF(MA(C,5),1);
+         slopeMA5 = fitting.simple_fit(days,self.MA5s)
+         slopeMA10 = fitting.simple_fit(days,self.MA10s)
+         slopeMA20 = fitting.simple_fit(days,self.MA20s)
+         slopeMA60 = fitting.simple_fit(days,self.MA60s)
+         slopeMA120 = fitting.simple_fit(days,self.MA120s)
+         mainBoo = True if slopeMA5 > slopeMA10 and slopeMA10 > slopeMA20 and slopeMA20 > slopeMA60 and slopeMA60 > slopeMA120 else False
          # todo 判断低位集中收购
+         
          # todo 判断新高突破
          # todo 指标穿线支持。如动量指标金叉死叉等技术信号表明趋势有望继续
-         # 简单判断，当60日收盘价拟合斜率为正，表示60日收盘价处于上涨趋势，可以简单的算作主升浪情况
-         if slope > 0:
-             return True
-         return False
+        
+         return mainBoo
      
      # boll逻辑 todo
          
