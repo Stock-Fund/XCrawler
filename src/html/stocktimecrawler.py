@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import datetime
 import time
-import src.xlsx as xlsx
+import src.data_processor as data_processor
 
 # 获取指定股票的数据
 def get_stock_data(stockNum,driver,url,enginstr):
@@ -17,7 +17,7 @@ def get_stock_data(stockNum,driver,url,enginstr):
     # 将stockNum,stockName存储到数据库，以便后续使用
     titles = ['代码','名称']
     titles = list(map(str,titles))
-    xlsx.SaveStockNameByNum(stockNum,baseName,titles,enginstr,"代码库")
+    data.SaveStockNameByNum(stockNum,baseName,titles,enginstr,"代码库")
     
     class_mm = soup.select_one('div.mm')
     table = class_mm.find('table')
@@ -47,10 +47,10 @@ def get_stock_data(stockNum,driver,url,enginstr):
     datas.append(formatted)
     datas = list(map(str, datas))
     headers = list(map(str, headers))
-   #  src.xlsx.SaveToXlsx(datas,headers,f"Assets/{stockNum}_time.xlsx")
-   #  src.xlsx.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
-   #  src.xlsx.SaveToJson(datas,f"Assets/{stockNum}_time.json")
-    xlsx.SaveTosqlMinutes(datas,headers,enginstr,name)
+   #  src.data_processor.SaveToXlsx(datas,headers,f"Assets/{stockNum}_time.xlsx")
+   #  src.data_processor.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
+   #  src.data_processor.SaveToJson(datas,f"Assets/{stockNum}_time.json")
+    data.SaveTosqlMinutes(datas,headers,enginstr,name)
     print(f"{baseName} stockminutesdata crawle completed")
 
 # 循环爬取制定股票数据

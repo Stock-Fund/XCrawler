@@ -1,7 +1,7 @@
 import tushare as ts
 from pandas_datareader import data as pdr
 import yfinance as yf
-import src.xlsx as xlsx
+import src.data_processor as data_processor
 import src.html as html
 import requests
 import json
@@ -21,15 +21,14 @@ def getStockData_datareader(stockNum,enginstr):
    stock = stock.round(2) 
    stock.to_csv('Assets/' + code + '.csv')
    stock.to_excel('Assets/' + code + '.xlsx')
-   stock.to_json('Assets/' + code + '.json')
-   
+   stock.to_json('Assets/' + code + '.json')   
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
-   name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
+   name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
    if name == "":
       html.getStocksTime(stockNum,enginstr)
-      name = xlsx.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
-   xlsx.customDataSavetosql(name,enginstr,stock)
+      name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
+   data_processor.customDataSavetosql(name,enginstr,stock)
    print(f"{name} customDatareader crawle completed")
    return
    # 5日收盘价均价
@@ -45,3 +44,6 @@ def getStockData_datareader(stockNum,enginstr):
    # zonghe_data[ ['MA5','MA10','MA20','MA30','MA40','MA60']].plot(subplots=False,style=['r','g','b','m'],grid=True)
    # print(f"MA5: {mean_price_5} MA10: {mean_price_10} MA30: {mean_price_30}")
    # plt.show()
+
+
+   

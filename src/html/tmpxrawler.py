@@ -58,9 +58,9 @@ def get_Data(driver,tmpUrl):
       datas = list(map(str, datas))
        # 写入xlsx title
       datas.insert(0, "数据")
-      src.xlsx.SaveToXlsx(datas,"Assets/data.xlsx")
-      src.xlsx.SaveToCsv(datas,"Assets/data.csv")
-      src.xlsx.SaveToJson(datas,"Assets/data.json")
+      src.data_processor.SaveToXlsx(datas,"Assets/data.xlsx")
+      src.data_processor.SaveToCsv(datas,"Assets/data.csv")
+      src.data_processor.SaveToJson(datas,"Assets/data.json")
       return soup
 
 # 循环爬取主版股票

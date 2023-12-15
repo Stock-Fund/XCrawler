@@ -2,14 +2,15 @@ import numpy as np
 import statistics
 import fitting
 import talib
+import numpy as np
 class Stock:
-     def __init__(self,nums):
+     def __init__(self,data):
         self.Time = nums[0]# 10点之前打到预测ma5直接买，下午就缓缓
         ## 所有的数组类数据全部为倒置存储，第0位就是当前天的数据
         # 当前价格
         self.CurrentValue = nums[1]
         # 60日内的收盘价格列表
-        self.CloseValues = nums[2]
+        self.CloseValues = data['Close'].tolist()
         # 60日内的开盘价格列表
         self.OpenValues = nums[3]
         self.MaxValues = nums[4]
@@ -43,6 +44,7 @@ class Stock:
         self.StopLoss = 0.97
         
         self.Calculate5_predict(self,s=1.099)
+
      
      # 计算移动平均函数
      def moving_average(data, window):
@@ -197,7 +199,7 @@ class Stock:
          
          # todo 判断新高突破
          # todo 指标穿线支持。如动量指标金叉死叉等技术信号表明趋势有望继续
-        
+         
          return mainBoo
      
      # boll逻辑 todo
@@ -214,4 +216,16 @@ class Stock:
          self.CurrentValue = value
          return self.CheckBuyByPredict()
         #  return self.CheckBuyValue(self)
-     
+
+     def dealcustomData(data):
+        close_prices = data['Close'].tolist()
+        close_prices_array = np.array(close_prices, dtype=np.double)
+        # 计算MACD
+        macd = talib.MACD(close_prices_array, fastperiod=12, slowperiod=26, signalperiod=9)
+        # N日简单移动平均数
+        ma5 = ta.SMA(close_prices_array, timeperiod=5)
+        ma10 = ta.SMA(close_prices_array, timeperiod=10)
+        ma30 = ta.SMA(close_prices_array, timeperiod=30)
+   
+   # N日指数移动平均数
+   

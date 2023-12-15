@@ -9,7 +9,8 @@ from PyQt6.QtCore import QUrl,QPoint
 from selenium import webdriver
 import pymysql
 import src
-import subprocess
+import talib
+import numpy as np
 
 def main():
 
@@ -41,7 +42,6 @@ class Window(QWidget):
     
     def __init__(self):
         super().__init__()  # 用于访问父类的方法和属性
-
         self.setGeometry(200, 200, 800, 480)  # 设置初始位置与窗口大小
         self.setWindowTitle("散户救星")  # 设置标题
         self.setStyleSheet('background-color:green')  # 设置窗口内背景颜色
