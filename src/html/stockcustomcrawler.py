@@ -5,7 +5,6 @@ import src.data_processor as data_processor
 import src.html as html
 import requests
 import json
-
 # ==================================== 第三方
 # tushare获取股票数据
 def getStockData(stockNum):
@@ -22,6 +21,8 @@ def getStockData_datareader(stockNum,enginstr):
    stock.to_csv('Assets/' + code + '.csv')
    stock.to_excel('Assets/' + code + '.xlsx')
    stock.to_json('Assets/' + code + '.json')   
+   
+   
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
    # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
    name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
