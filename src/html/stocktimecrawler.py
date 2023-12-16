@@ -17,7 +17,7 @@ def get_stock_data(stockNum,driver,url,enginstr):
     # 将stockNum,stockName存储到数据库，以便后续使用
     titles = ['代码','名称']
     titles = list(map(str,titles))
-    data.SaveStockNameByNum(stockNum,baseName,titles,enginstr,"代码库")
+    data_processor.SaveStockNameByNum(stockNum,baseName,titles,enginstr,"代码库")
     
     class_mm = soup.select_one('div.mm')
     table = class_mm.find('table')
@@ -50,7 +50,7 @@ def get_stock_data(stockNum,driver,url,enginstr):
    #  src.data_processor.SaveToXlsx(datas,headers,f"Assets/{stockNum}_time.xlsx")
    #  src.data_processor.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
    #  src.data_processor.SaveToJson(datas,f"Assets/{stockNum}_time.json")
-    data.SaveTosqlMinutes(datas,headers,enginstr,name)
+    data_processor.SaveTosqlMinutes(datas,headers,enginstr,name)
     print(f"{baseName} stockminutesdata crawle completed")
 
 # 循环爬取制定股票数据

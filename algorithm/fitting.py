@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression
 ## 拟合
 
 ## 0-60日收盘价简单拟合

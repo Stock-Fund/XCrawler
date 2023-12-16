@@ -1,51 +1,9 @@
 import numpy as np
 import statistics
-import fitting
+import algorithm.fitting
 import talib
 import numpy as np
 class Stock:
-     def __init__(self,data):
-        self.Time = nums[0]# 10点之前打到预测ma5直接买，下午就缓缓
-        ## 所有的数组类数据全部为倒置存储，第0位就是当前天的数据
-        # 当前价格
-        self.CurrentValue = nums[1]
-        # 60日内的收盘价格列表
-        self.CloseValues = data['Close'].tolist()
-        # 60日内的开盘价格列表
-        self.OpenValues = nums[3]
-        self.MaxValues = nums[4]
-        self.MinValues = nums[5]
-        # 60内，30日，20日，10日，5日均线价格
-        self.MA5s = nums[6]
-        self.MA10s = nums[7]
-        self.MA20s = nums[8]
-        self.MA30s = nums[9]
-        self.MA60s = nums[10]
-       
-        # 60日内成交量
-        self.Volumes = nums[11]
-        # 60日内成交金额
-        self.VolumesValues = nums[12]
-        # 60日内换手率
-        self.turnoverRates = nums[13]
-        # 60日量比
-        self.QuantityRatios = nums[14]
-        
-        # 60日分时均价  均价=成交总额/成交量 由于分时均价频率较高，则使用   均价 = 每日收盘时的成交总额/每日收盘时的成交量
-        self.AveragePrices = nums[15]
-        
-        # 60内筹码集中度
-        # 筹码集中度=成本区间的（高值-低值）/（高值+低值）
-        self.Chipsconcentrations = nums[16]
-        
-        # 止盈卖出系数
-        self.TakeProfit = 1.1
-        # 止损卖出系数
-        self.StopLoss = 0.97
-        
-        self.Calculate5_predict(self,s=1.099)
-
-     
      # 计算移动平均函数
      def moving_average(data, window):
          weights = np.repeat(1.0, window) / window
@@ -83,8 +41,8 @@ class Stock:
          # 只有连续5板以上
          # 只有在昨天下跌的情况下
          if self.IsFallYesterday():         
-           MA5 = self.MA5s[0]
-           MA10 = self.MA10s[0]
+           MA5 = self.MA5
+           MA10 = self.MA10
            if currentValue > MA5:
               return False
             # 触摸5日线 
@@ -109,15 +67,14 @@ class Stock:
      
      # 长线逻辑(趋势逻辑)
      # 判断趋势的逻辑
-     def detect_trend(ma5s, ma10s, ma20s):
+     def detect_trend(ma5, ma10, ma20):
          trend = []
-         for i in range(len(ma5s)):
-            if ma5s[i] > ma10s[i] and ma5s[i] > ma20s[i]:
-               trend.append("上涨")
-            elif ma5s[i] < ma10s[i] and ma5s[i] < ma20s[i]:
-               trend.append("下跌")
-            else:
-               trend.append("震荡")
+         if ma5 > ma10 and ma5 > ma20:
+            trend.append("上涨")
+         elif ma5 < ma10 and ma5 < ma20:
+            trend.append("下跌")
+         else:
+            trend.append("震荡")
          return trend
      
      # 箱体逻辑 
@@ -130,17 +87,17 @@ class Stock:
              return False
          
      # 破位逻辑
-     def checkBroken(self,ma5,ma10,ma20,ma30,ma60):
+     def checkBroken(self):
          closeValue = self.CloseValues[0]
-         if(closeValue<ma5):
+         if(closeValue<self.MA5):
              print("破5日线")
-         elif(closeValue<ma10):
+         elif(closeValue<self.MA10):
              print("破10日线")
-         elif(closeValue<ma20):
+         elif(closeValue<self.MA20):
              print("破20日线")
-         elif(closeValue<ma30):
+         elif(closeValue<self.MA30):
              print("破30日线")
-         elif(closeValue<ma60):
+         elif(closeValue<self.MA60):
              print("破60日线")
              
     
@@ -188,7 +145,7 @@ class Stock:
          # 日K线斜率在0.01以上。这种斜率代表股价处于明显的强劲上涨趋势中。
          mainBoo = True if slope > 0 else False
          
-         # 均线上行。成交量均线、动量指标等有力指标呈现上升趋势MA(C,5)>MA(C,10) AND MA(C,10)>MA(C,20) AND MA(C,20)>MA(C,60) AND MA(C,60)>MA(C,120) AND MA(C,120)>REF(MA(C,120),1) AND MA(C,5)>REF(MA(C,5),1);
+         # 均线上行。成交量均线、动量指标等有力指标呈现上升趋势MA(C,5)>MA(C,10) AND MA(C,10)>MA(C,20) AND MA(C,20)>MA(C,N) AND MA(C,N)>MA(C,120) AND MA(C,120)>REF(MA(C,120),1) AND MA(C,5)>REF(MA(C,5),1);
          slopeMA5 = fitting.simple_fit(days,self.MA5s)
          slopeMA10 = fitting.simple_fit(days,self.MA10s)
          slopeMA20 = fitting.simple_fit(days,self.MA20s)
@@ -204,14 +161,6 @@ class Stock:
      
      # boll逻辑 todo
          
-
-# # 计算MA5、MA10和MA20
-# ma5 = moving_average(prices, 5)
-# ma10 = moving_average(prices, 10)
-# ma20 = moving_average(prices, 20)
-# 执行趋势判断
-# trend = detect_trend(ma5, ma10, ma20)   
-    
      def Update(self,value):
          self.CurrentValue = value
          return self.CheckBuyByPredict()
@@ -227,5 +176,45 @@ class Stock:
         ma10 = ta.SMA(close_prices_array, timeperiod=10)
         ma30 = ta.SMA(close_prices_array, timeperiod=30)
    
-   # N日指数移动平均数
+     def __init__(self,data,datas):
+        # N日内的收盘价格列表
+        self.CloseValues = data['Close'].tolist()
+        # N日内的开盘价格列表
+        self.OpenValues = data['Open'].tolist()
+        self.MaxValues = data['High'].tolist()
+        self.MinValues = data['Low'].tolist()
+        # N日内成交量
+        self.Volumes = data['Volume'].tolist()
+        # 5日收盘价均价
+        self.MA5 = stock['Close'].rolling(window=5).mean() 
+        self.MA10 = stock['Close'].rolling(window=10).mean() 
+        self.MA20 = stock['Close'].rolling(window=20).mean() 
+        self.MA30 = stock['Close'].rolling(window=30).mean() 
+        self.MA40 = stock['Close'].rolling(window=40).mean() 
+        self.MA60 = stock['Close'].rolling(window=60).mean() 
+        
+        self.Time = datas[0]# 10点之前打到预测ma5直接买，下午就缓缓
+        ## 所有的数组类数据全部为倒置存储，第0位就是当前天的数据
+        # 当前价格
+        self.CurrentValue = datas[1]
+        
+        # N日内换手率
+        self.turnoverRates = datas[2]
+        
+        # N日量比
+        self.QuantityRatios = datas[3]
+        
+        # N日分时均价  均价=成交总额/成交量 由于分时均价频率较高，则使用   均价 = 每日收盘时的成交总额/每日收盘时的成交量
+        self.AveragePrices = datas[4]
+
+        # N内筹码集中度
+        # 筹码集中度=成本区间的（高值-低值）/（高值+低值）
+        self.Chipsconcentrations = datas[5]
+        
+        # 止盈卖出系数
+        self.TakeProfit = 1.1
+        # 止损卖出系数
+        self.StopLoss = 0.97
+        
+        self.Calculate5_predict(self,s=1.099)
    

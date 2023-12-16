@@ -42,13 +42,13 @@ def get_SHBoard_data(driver,tmpUrl,enginstr):
     
      datas = list(map(str, datas))
      headers = list(map(str, headers))
-     data.SaveToCsv(datas,headers,"Assets/sh_data.csv")
-     data.SaveToXlsx(datas,headers,"Assets/sh_data.xlsx")
-     data.SaveToJson(datas,"Assets/sh_data.json")
+     data_processor.SaveToCsv(datas,headers,"Assets/sh_data.csv")
+     data_processor.SaveToXlsx(datas,headers,"Assets/sh_data.xlsx")
+     data_processor.SaveToJson(datas,"Assets/sh_data.json")
      
      # 已mysql为例,如果已localhost为host,那port端口一般为3306
      # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
-     data.SaveTosql(datas,headers,enginstr,"stock")
+     data_processor.SaveTosql(datas,headers,enginstr,"stock")
      print("上证主板前十股票数据 crawle completed")
      return soup
 
