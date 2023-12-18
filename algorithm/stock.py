@@ -2,7 +2,6 @@ import numpy as np
 import statistics
 import algorithm.fitting
 import talib
-import numpy as np
 class Stock:
      # 计算移动平均函数
      def moving_average(data, window):

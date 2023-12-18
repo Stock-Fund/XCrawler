@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: algorithm
+Version: 1.0
+Summary: Quantitative algorithm
+Author: akeboshi
+Author-email: akeboshi82@gmail.com
+Requires-Dist: numpy<=1.24.3,>=1.22
+Requires-Dist: ta-lib==0.4.25
+Requires-Dist: requests>=2.31.0
+Requires-Dist: urllib3<2.0.0,>=1.25.8
