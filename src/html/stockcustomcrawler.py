@@ -5,6 +5,7 @@ import src.data_processor as data_processor
 import src.html as html
 import requests
 import json
+from algorithm.stock import Stock
 # ==================================== 第三方
 # tushare获取股票数据
 def getStockData(stockNum):
@@ -16,19 +17,21 @@ def getStockData(stockNum):
 def getStockData_datareader(stockNum,enginstr):
    yf.pdr_override()
    code = stockNum + '.ss'
-   stock = pdr.get_data_yahoo(code,'2023-10-01')
-   stock = stock.round(2) 
-   stock.to_csv('Assets/' + code + '.csv')
-   stock.to_excel('Assets/' + code + '.xlsx')
-   stock.to_json('Assets/' + code + '.json')   
-   
+   stockData = pdr.get_data_yahoo(code,'2023-10-01')
+   stockData = stockData.round(2) 
+   stockData.to_csv('Assets/' + code + '.csv')
+   stockData.to_excel('Assets/' + code + '.xlsx')
+   stockData.to_json('Assets/' + code + '.json')   
    # 已mysql为例,如果已localhost为host,那port端口一般为3306
-   # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
+   # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stockData"
    name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
    if name == "":
       html.getStocksTime(stockNum,enginstr)
       name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
-   data_processor.customDataSavetosql(name,enginstr,stock)
+   data_processor.customDataSavetosql(name,enginstr,stockData)
+   
+   stock_instance = Stock(stockData, [10,10,10,10,10,10])
+   print(stock_instance)
    print(f"{name} customDatareader crawle completed")
    return
    # 5日收盘价均价

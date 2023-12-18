@@ -11,7 +11,7 @@ import pymysql
 import src
 import talib
 import numpy as np
-import algorithm
+
 
 def main():
 
