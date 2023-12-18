@@ -1,6 +1,0 @@
-setup.py
-algorithm.egg-info/PKG-INFO
-algorithm.egg-info/SOURCES.txt
-algorithm.egg-info/dependency_links.txt
-algorithm.egg-info/requires.txt
-algorithm.egg-info/top_level.txt
