@@ -18,11 +18,26 @@ def get_stock_data(stockNum,driver,url,enginstr):
     titles = ['代码','名称']
     titles = list(map(str,titles))
     data_processor.SaveStockNameByNum(stockNum,baseName,titles,enginstr,"代码库")
-    
+    # 买1-买5，卖1-卖5数据
     class_mm = soup.select_one('div.mm')
     table = class_mm.find('table')
     headers = []
     now = datetime.datetime.now()
+    
+    # 换手率 ，量比，均价等数据
+    class_t1 = soup.select_one('div.sider_brief')
+    table_t1 = class_t1.find('table')
+    
+    index = 0
+    for body in table_t1.select('tbody'):
+       for tr in body.select("tr"):
+          for td in tr.select('td'):
+              data = td.get_text()
+              arr = data.split("：")
+              if index == 0:
+                 headers.append(arr[0])
+              datas.append(arr[1])
+    index = 0
      # 格式化为字符串
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     for body in table.select('tbody'):

@@ -73,7 +73,6 @@ def SaveTosqlMinutes(datas,head,enginestr,table):
     engine = create_engine(enginestr)
     num_columns = len(head)
     num_rows = len(datas)
-
     # data table
     try:
         data_table = pd.read_sql_table(table, enginestr)

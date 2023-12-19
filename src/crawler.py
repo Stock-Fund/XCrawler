@@ -10,7 +10,7 @@ enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 
 done = threading.Event()
 def _runProcess():     
-     stocks = ['600036','600895','603178','603189','600678','600355','603025','600661','603536','603660']
+     stocks = ['603721','600036','600895','603178','603189','600678','600355','603025','600661','603536','603660']
      # 股票分时数据
      for stock in stocks:
         _p = Process(target=html.getStocksTime,args=(stock,enginstr,))
