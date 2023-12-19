@@ -1,11 +1,10 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import datetime
 import time
 import src.data_processor as data_processor
 
 # 获取指定股票的数据
-def get_stock_data(stockNum,driver,url,enginstr):
+def get_stock_data(stockNum,driver,url,now,enginstr):
     datas = []
     driver.get(url) 
     driver.implicitly_wait(2)
@@ -22,7 +21,6 @@ def get_stock_data(stockNum,driver,url,enginstr):
     class_mm = soup.select_one('div.mm')
     table = class_mm.find('table')
     headers = []
-    now = datetime.datetime.now()
     
     # 换手率 ，量比，均价等数据
     class_t1 = soup.select_one('div.sider_brief')
@@ -69,14 +67,14 @@ def get_stock_data(stockNum,driver,url,enginstr):
     print(f"{baseName} stockminutesdata crawle completed")
 
 # 循环爬取制定股票数据
-def getStocksTime(stockNum,enginstr):
+def getStocksTime(stockNum,now,enginstr):
    options = webdriver.ChromeOptions()
    options.add_argument('--headless')
    # options.add_argument('--disable-tabs')
    driver = webdriver.Chrome(options = options)
    url = f"http://quote.eastmoney.com/sh{stockNum}.html"
    # while True:
-   get_stock_data(stockNum,driver,url,enginstr)
+   get_stock_data(stockNum,driver,url,now,enginstr)
       #  time.sleep(10)
       
       

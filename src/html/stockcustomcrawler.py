@@ -14,7 +14,7 @@ def getStockData(stockNum):
    #dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
 
 # pandas_datareader通过yahoo获取股票数据
-def getStockData_datareader(stockNum,enginstr):
+def getStockData_datareader(stockNum,now,enginstr):
    yf.pdr_override()
    code = stockNum + '.ss'
    stockData = pdr.get_data_yahoo(code,'2023-10-01')
@@ -30,8 +30,19 @@ def getStockData_datareader(stockNum,enginstr):
       name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
    data_processor.customDataSavetosql(name,enginstr,stockData)
    
-   stock_instance = Stock(stockData, [10,10,10,10,10,10])
-   print(stock_instance)
+   formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+   timename = name + "分时"
+   Times = now
+   CurrentValue = data_processor.GetDataFromSql(timename,"日期","最高",formatted,enginstr)
+   AveragePrices = data_processor.GetDataFromSql(timename,"日期","均价",formatted,enginstr)
+   turnoverRates = data_processor.GetDataFromSql(timename,"日期","换手",formatted,enginstr)
+   QuantityRatios = data_processor.GetDataFromSql(timename,"日期","量比",formatted,enginstr)
+   Chipsconcentrations = 1 #算法未处理
+   
+   datas =[Times,CurrentValue,turnoverRates,QuantityRatios,AveragePrices,Chipsconcentrations]
+   
+   stock_instance = Stock(stockData, datas)
+   print(str(stock_instance.get_turnoverRates))
    print(f"{name} customDatareader crawle completed")
    return
    # 5日收盘价均价

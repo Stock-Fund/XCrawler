@@ -4,23 +4,24 @@ import src.html as html
 import time
 import schedule
 import threading
-import subprocess
+import datetime
 
 enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
 
 done = threading.Event()
 def _runProcess():     
      stocks = ['603721','600036','600895','603178','603189','600678','600355','603025','600661','603536','603660']
+     now = datetime.datetime.now()
      # 股票分时数据
      for stock in stocks:
-        _p = Process(target=html.getStocksTime,args=(stock,enginstr,))
+        _p = Process(target=html.getStocksTime,args=(stock,now,enginstr,))
         _p.daemon = True
         _p.start()
         _p.join(30)
      
      # 股票收盘开盘量比等数据
      for stock in stocks:
-        _p = Process(target=html.getStockData_datareader,args=(stock,enginstr,))
+        _p = Process(target=html.getStockData_datareader,args=(stock,now,enginstr,))
         _p.daemon = True
         _p.start()
         _p.join(30)
