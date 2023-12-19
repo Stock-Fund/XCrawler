@@ -42,7 +42,7 @@ def getStockData_datareader(stockNum,now,enginstr):
    datas =[Times,CurrentValue,turnoverRates,QuantityRatios,AveragePrices,Chipsconcentrations]
    
    stock_instance = Stock(stockData, datas)
-   print(str(stock_instance.get_turnoverRates))
+   print(stock_instance.checkVolums())
    print(f"{name} customDatareader crawle completed")
    return
    # 5日收盘价均价
