@@ -18,9 +18,17 @@ def main():
     app = QApplication(sys.argv)
     path = os.path.join(os.path.dirname(sys.modules[__name__].__file__), './Assets/star.png')
     app.setWindowIcon(QIcon(path))
-    
+    # 读取本地账号密码
+    with open('./Assets/password.txt', 'r') as file:
+         lines = file.readlines()
+    # 解析键值对
+    credentials = {}
+    for line in lines:
+        key, value = line.strip().split(':')
+        credentials[key] = value
+        print(value)
     # 启动数据库
-    conn = pymysql.connect(host='localhost', user='root', password='Akeboshi123~', db='stock', charset='utf8')
+    conn = pymysql.connect(host=credentials.get('host'), user=credentials.get('user'), password=credentials.get('password'), db=credentials.get('db'), charset='utf8')
 
     window = Window()   
     window.show()
