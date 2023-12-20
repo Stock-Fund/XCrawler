@@ -5,7 +5,7 @@ import src.data_processor as data_processor
 import src.html as html
 import requests
 import json
-from algorithm.stock import Stock
+
 # ==================================== 第三方
 # tushare获取股票数据
 def getStockData(stockNum):
@@ -30,19 +30,8 @@ def getStockData_datareader(stockNum,now,enginstr):
       name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
    data_processor.customDataSavetosql(name,enginstr,stockData)
    
-   formatted = now.strftime("%Y-%m-%d %H:%M:%S")
-   timename = name + "分时"
-   Times = now
-   CurrentValue = data_processor.GetDataFromSql(timename,"日期","最高",formatted,enginstr)
-   AveragePrices = data_processor.GetDataFromSql(timename,"日期","均价",formatted,enginstr)
-   turnoverRates = data_processor.GetDataFromSql(timename,"日期","换手",formatted,enginstr)
-   QuantityRatios = data_processor.GetDataFromSql(timename,"日期","量比",formatted,enginstr)
-   Chipsconcentrations = 1 #算法未处理
    
-   datas =[Times,CurrentValue,turnoverRates,QuantityRatios,AveragePrices,Chipsconcentrations]
    
-   stock_instance = Stock(stockData, datas)
-   print(stock_instance.checkVolums())
    print(f"{name} customDatareader crawle completed")
    return
    # 5日收盘价均价

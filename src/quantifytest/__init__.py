@@ -1,0 +1,1 @@
+from src.quantifytest.stock_quantify_test import startQuantifytest

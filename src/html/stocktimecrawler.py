@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import time
+from datetime import datetime, time
 import src.data_processor as data_processor
 
 # 获取指定股票的数据
@@ -38,6 +38,9 @@ def get_stock_data(stockNum,driver,url,now,enginstr):
     index = 0
      # 格式化为字符串
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    date_part, time_part = formatted.split(' ')
+    if now.time() >= time(15, 0, 0):
+        time_part = '15:00:00'
     for body in table.select('tbody'):
         titleIndex = 0
         for tr in body.select('tr'):
@@ -57,14 +60,16 @@ def get_stock_data(stockNum,driver,url,now,enginstr):
               index = index + 1
            titleIndex = titleIndex + 1
     headers.append("日期")
-    datas.append(formatted)
+    headers.append("时间")
+    datas.append(date_part)
+    datas.append(time_part)
     datas = list(map(str, datas))
     headers = list(map(str, headers))
    #  src.data_processor.SaveToXlsx(datas,headers,f"Assets/{stockNum}_time.xlsx")
    #  src.data_processor.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
    #  src.data_processor.SaveToJson(datas,f"Assets/{stockNum}_time.json")
-    data_processor.SaveTosqlMinutes(datas,headers,enginstr,name)
-    print(f"{baseName} stockminutesdata crawle completed")
+    data_processor.SaveTosqlMinutes(datas,headers,enginstr,time_part,name)
+    print(f"{name} stockminutesdata crawle completed")
 
 # 循环爬取制定股票数据
 def getStocksTime(stockNum,now,enginstr):

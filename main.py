@@ -26,7 +26,6 @@ def main():
     for line in lines:
         key, value = line.strip().split(':')
         credentials[key] = value
-        print(value)
     # 启动数据库
     conn = pymysql.connect(host=credentials.get('host'), user=credentials.get('user'), password=credentials.get('password'), db=credentials.get('db'), charset='utf8')
 
