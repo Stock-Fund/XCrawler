@@ -40,6 +40,9 @@ class Window(QWidget):
 
     def button_clicked(self):
         src.start()
+        
+    def button_check(self):
+        src.check()
     
     def button_find(self,stockNum):
         src.find(stockNum)
@@ -58,9 +61,10 @@ class Window(QWidget):
         # self.setFixedWidth(700)  # 不生效，被禁用了
         # self.setFixedHeight(400)  # 不生效，被禁用了
         self.ui()
-        saveBtn = QtWidgets.QPushButton('button', self)
-        saveBtn.setText('save')
-        saveBtn.clicked.connect(lambda:self.button_clicked())
+        # 爬取数据按钮
+        xcrawlerBtn = QtWidgets.QPushButton('button', self)
+        xcrawlerBtn.setText('xcrawler')
+        xcrawlerBtn.clicked.connect(lambda:self.button_clicked())
        
         
         self.input = QtWidgets.QLineEdit(self)
@@ -73,6 +77,12 @@ class Window(QWidget):
         findBtn.setText('find')
         findBtn.clicked.connect(lambda:self.button_find(self.inputText))
         findBtn.move(100, 0) 
+        
+        checkBtn = QtWidgets.QPushButton('button', self)
+        checkBtn.setText('check')
+        checkBtn.clicked.connect(lambda:self.button_check())
+        checkBtn.move(200,0)
+        
         layout.addWidget(self.input)
         self.setLayout(layout)
         self.center()

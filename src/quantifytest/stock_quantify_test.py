@@ -26,14 +26,16 @@ def startQuantifytest(stockNum,now,enginstr):
     stockTimeData = data_processor.GetDatasFromSql2(timename,{"id":"日期","value":date_part},{"id":"时间","value":time_part},enginstr)
     # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
     stockData = pd.DataFrame({
-    'Close': stockCustomData.loc[1:,"Close"],
-    'Open': stockCustomData.loc[1:,"Open"],
-    'High': stockCustomData.loc[1:,"High"],
-    'Low': stockCustomData.loc[1:,"Low"],
-    'Volume': stockCustomData.loc[1:,"Volume"]
+    'Close': stockCustomData.loc[0:,"Close"],
+    'Open': stockCustomData.loc[0:,"Open"],
+    'High': stockCustomData.loc[0:,"High"],
+    'Low': stockCustomData.loc[0:,"Low"],
+    'Volume': stockCustomData.loc[0:,"Volume"]
      })
     Chipsconcentrations = 1 #算法未处理
     saveTime = datetime.strptime(date_part+" "+time_part, "%Y-%m-%d %H:%M:%S").time()
     datas = [saveTime,stockTimeData[0],stockTimeData[1],stockTimeData[6],stockTimeData[7],Chipsconcentrations]
     stock_instance = Stock(stockData, datas)
-    print(stock_instance.checkVolums())
+    volumsBoo = stock_instance.checkVolums()
+    # 检查今天成交量是否超过昨天的成交量
+    print(f"{name}今日成交量是否超过昨日成交量:{volumsBoo}")

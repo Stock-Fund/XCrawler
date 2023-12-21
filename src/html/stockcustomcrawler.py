@@ -3,18 +3,16 @@ from pandas_datareader import data as pdr
 import yfinance as yf
 import src.data_processor as data_processor
 import src.html as html
-import requests
-import json
+import src.quantifytest as quantifytest
 
 # ==================================== 第三方
 # tushare获取股票数据
 def getStockData(stockNum):
    dd = ts.get_hist_data(stockNum) #爬取股票近三年的全部日k信息
-   print(dd)
    #dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
 
 # pandas_datareader通过yahoo获取股票数据
-def getStockData_datareader(stockNum,now,enginstr):
+def getStockData_datareader(stockNum,now,enginstr,check):
    yf.pdr_override()
    code = stockNum + '.ss'
    stockData = pdr.get_data_yahoo(code,'2023-10-01')
@@ -30,7 +28,8 @@ def getStockData_datareader(stockNum,now,enginstr):
       name = data_processor.GetDataFromSql("代码库","代码","名称",stockNum,enginstr)
    data_processor.customDataSavetosql(name,enginstr,stockData)
    
-   
+   if check:
+      quantifytest.startQuantifytest(stockNum,now,enginstr)
    
    print(f"{name} customDatareader crawle completed")
    return
