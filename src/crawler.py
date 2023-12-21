@@ -13,19 +13,34 @@ done = threading.Event()
 def _runProcess(check):     
      stocks = ['603721','600036','600895','603178','603189','600678','600355','603025','600661','603536','603660']
      now = datetime.datetime.now()
-     # 收盘时间
-     target_time1 = datetime.time(11,30)
-     target_time2 = datetime.time(15,00)
-     target_time3 = datatime.time(13,00)
-     # 大于三点做买入卖出逻辑判断
-     if now.time() > target_time2 or (now.time() < target_time3 and now.time() >= target_time1):
-        # 直接从数据库获取数据
-        for stock in stocks:
-            _p = Process(target=quantifytest.startQuantifytest,args=(stock,now,enginstr,))
-            _p.daemon = True
-            _p.start()
-            _p.join(30)
-           
+     if check:
+        # 收盘时间
+        target_time1 = datetime.time(11,30)
+        target_time2 = datetime.time(15,00)
+        target_time3 = datetime.time(13,00)
+        # 大于三点做买入卖出逻辑判断
+        if now.time() > target_time2 or (now.time() < target_time3 and now.time() >= target_time1):
+           # 直接从数据库获取数据
+           for stock in stocks:
+               _p = Process(target=quantifytest.startQuantifytest,args=(stock,now,enginstr,))
+               _p.daemon = True
+               _p.start()
+               _p.join(30)
+        else :
+           # 开市时间做数据存储
+           # 股票分时数据
+           for stock in stocks:
+              _p = Process(target=html.getStocksTime,args=(stock,now,enginstr,))
+              _p.daemon = True
+              _p.start()
+              _p.join(30)
+     
+           # 股票收盘开盘量比等数据
+           for stock in stocks:
+              _p = Process(target=html.getStockData_datareader,args=(stock,now,enginstr,check,))
+              _p.daemon = True
+              _p.start()
+              _p.join(30)
      else :
         # 开市时间做数据存储
         # 股票分时数据
@@ -41,12 +56,11 @@ def _runProcess(check):
            _p.daemon = True
            _p.start()
            _p.join(30)
-        
-        if not check:
-          # 主板
-          p = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
-          p.daemon = True
-          p.start() 
+
+        # 主板
+        p = Process(target=html.getSHBoard,args=("http://quote.eastmoney.com/center/gridlist.html#sh_a_board",enginstr,))
+        p.daemon = True
+        p.start() 
      
      done.set()
 
