@@ -14,9 +14,11 @@ def _runProcess(check):
      stocks = ['603721','600036','600895','603178','603189','600678','600355','603025','600661','603536','603660']
      now = datetime.datetime.now()
      # 收盘时间
-     target_time = datetime.time(15,00)
+     target_time1 = datetime.time(11,30)
+     target_time2 = datetime.time(15,00)
+     target_time3 = datatime.time(13,00)
      # 大于三点做买入卖出逻辑判断
-     if now.time() > target_time:
+     if now.time() > target_time2 or (now.time() < target_time3 and now.time() >= target_time1):
         # 直接从数据库获取数据
         for stock in stocks:
             _p = Process(target=quantifytest.startQuantifytest,args=(stock,now,enginstr,))

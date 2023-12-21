@@ -38,4 +38,4 @@ def startQuantifytest(stockNum,now,enginstr):
     stock_instance = Stock(stockData, datas)
     volumsBoo = stock_instance.checkVolums()
     # 检查今天成交量是否超过昨天的成交量
-    print(f"{name}今日成交量是否超过昨日成交量:{volumsBoo}")
+    print(f"{name}今日成交量超过昨日成交量:{volumsBoo}")
