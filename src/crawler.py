@@ -81,7 +81,9 @@ def try_start():
   
 
 def start():
-   run_forever(False)
+   # test all stock
+   html.getAllStock()
+   # run_forever(False)
 
 def find(stockNum):
      p = Process(target=html.getStocksTime,args=(f'{stockNum}',enginstr,))

@@ -18,5 +18,6 @@ def getStocksTime(self,stockNum,stockName,enginstr):
 # 通过第三方获取某个股票的价位数据
 def getStockData_datareader(self,stockNum,stockName,enginstr):
     getStockData_datareader(self,stockNum,stockName,enginstr)
+    
 
 
