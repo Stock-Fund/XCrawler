@@ -5,10 +5,8 @@ from io import BytesIO
 import pytesseract
 from PIL import Image
 
-from src.html.mainboardcrawler import getSHBoard
+from src.html.mainboardcrawler import getSHBoard, get_Data_FromSoup
 from src.html.stocktimecrawler import getStocksTime
 from src.html.stockcustomcrawler import getStockData_datareader
 from src.html.stockAllcrawler import getAllStock
 
-# import src.html.eastmoney
-# import src.html.sinafinance
