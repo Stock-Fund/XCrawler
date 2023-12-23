@@ -1,4 +1,5 @@
 import time
+import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -27,7 +28,8 @@ def get_allstock_data(driver, enginstr):
         soup = BeautifulSoup(driver.page_source, "lxml")
         _datas, _headers = xcrawlerStockData(soup)
         datas.extend(_datas)
-        headers.extend(_headers)
+        if index == 1:
+            headers.extend(_headers)
         print(f"第{index}页完成")
         try:
             next_button = WebDriverWait(driver, 10).until(
@@ -66,10 +68,13 @@ def get_allstock_data(driver, enginstr):
                 )
             )
             index += 1
+    now = datetime.datetime.now()
+    # 格式化为字符串
+    formatted = now.strftime("%Y-%m-%d")
     data_processor.SaveToCsv(datas, headers, "Assets/allstock_data.csv")
     data_processor.SaveToXlsx(datas, headers, "Assets/allstock_data.xlsx")
     data_processor.SaveToJson(datas, "Assets/allstock_data.json")
-    data_processor.SaveTosql(datas, headers, enginstr, "allstock")
+    data_processor.SaveTosql(datas, headers, enginstr, f"{formatted}-allstock")
 
 
 def getAllStock(enginstr):
