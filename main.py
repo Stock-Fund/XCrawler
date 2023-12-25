@@ -47,6 +47,9 @@ class Window(QWidget):
     def button_clicked(self):
         src.start()
 
+    def button_Allclicked(self):
+        src.getAllStock()
+
     def button_check(self):
         src.check()
 
@@ -69,8 +72,13 @@ class Window(QWidget):
         self.ui()
         # 爬取数据按钮
         xcrawlerBtn = QtWidgets.QPushButton("button", self)
-        xcrawlerBtn.setText("xcrawler")
+        xcrawlerBtn.setText("抓取")
         xcrawlerBtn.clicked.connect(lambda: self.button_clicked())
+
+        xcrawlerAllBtn = QtWidgets.QPushButton("button", self)
+        xcrawlerAllBtn.setText("全局抓取")
+        xcrawlerAllBtn.clicked.connect(lambda: self.button_Allclicked())
+        xcrawlerAllBtn.move(300, 0)
 
         self.input = QtWidgets.QLineEdit(self)
         self.input.setPlaceholderText("请输入")
@@ -79,12 +87,12 @@ class Window(QWidget):
         self.input.setFixedSize(200, 30)
         self.input.textChanged.connect(self.on_text_changed)
         findBtn = QtWidgets.QPushButton("button", self)
-        findBtn.setText("find")
+        findBtn.setText("查询")
         findBtn.clicked.connect(lambda: self.button_find(self.inputText))
         findBtn.move(100, 0)
 
         checkBtn = QtWidgets.QPushButton("button", self)
-        checkBtn.setText("check")
+        checkBtn.setText("检测")
         checkBtn.clicked.connect(lambda: self.button_check())
         checkBtn.move(200, 0)
 

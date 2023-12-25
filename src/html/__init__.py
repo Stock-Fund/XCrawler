@@ -9,4 +9,3 @@ from src.html.mainboardcrawler import getSHBoard, get_Data_FromSoup
 from src.html.stocktimecrawler import getStocksTime
 from src.html.stockcustomcrawler import getStockData_datareader
 from src.html.stockAllcrawler import getAllStock
-

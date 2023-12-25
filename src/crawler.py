@@ -142,8 +142,11 @@ def try_start():
 
 def start():
     # test all stock
+    run_forever(False)
+
+
+def getAllStock():
     html.getAllStock(enginstr)
-    # run_forever(False)
 
 
 def find(stockNum):
