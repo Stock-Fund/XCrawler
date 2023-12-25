@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from datetime import datetime, time
+from datetime import time
 import src.data_processor as data_processor
+from src.html.stockutils import getStockTimeUrl
 
 
 # 获取指定股票的数据
@@ -79,7 +80,8 @@ def getStocksTime(stockNum, now, enginstr):
     options.add_argument("--headless")
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
-    url = f"http://quote.eastmoney.com/sh{stockNum}.html"
+    url = getStockTimeUrl(stockNum)
+    # url = f"http://quote.eastmoney.com/sh{stockNum}.html"
     # while True:
     get_stock_data(stockNum, driver, url, now, enginstr)
     #  time.sleep(10)

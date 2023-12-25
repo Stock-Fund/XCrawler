@@ -38,8 +38,9 @@ def get_Data_FromSoup(soup):
     return datas, headers
 
 
-def get_Mainboard_data(driver, tmpUrl, enginstr):
-    driver.implicitly_wait(2)
+def get_Mainboard_data(driver, url, enginstr):
+    driver.get(url)
+    driver.implicitly_wait(10)
     soup = BeautifulSoup(driver.page_source, "lxml")
 
     datas, headers = get_Data_FromSoup(soup)

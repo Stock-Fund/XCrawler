@@ -24,6 +24,8 @@ def _runProcess(check):
         "600661",
         "603536",
         "603660",
+        "600765",
+        "002555",
     ]
     now = datetime.datetime.now()
     if check:
@@ -141,7 +143,6 @@ def try_start():
 
 
 def start():
-    # test all stock
     run_forever(False)
 
 

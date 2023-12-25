@@ -4,6 +4,7 @@ import yfinance as yf
 import src.data_processor as data_processor
 import src.html as html
 import src.quantifytest as quantifytest
+from src.html.stockutils import getStockSuffix
 
 
 # ==================================== 第三方
@@ -16,7 +17,8 @@ def getStockData(stockNum):
 # pandas_datareader通过yahoo获取股票数据
 def getStockData_datareader(stockNum, now, enginstr, check):
     yf.pdr_override()
-    code = stockNum + ".ss"
+    code = stockNum + getStockSuffix(stockNum)
+    print(code)
     stockData = pdr.get_data_yahoo(code, "2023-10-01")
     stockData = stockData.round(2)
     stockData.to_csv("Assets/" + code + ".csv")
@@ -26,7 +28,7 @@ def getStockData_datareader(stockNum, now, enginstr, check):
     # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stockData"
     name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     if name == "":
-        html.getStocksTime(stockNum, enginstr)
+        html.getStocksTime(stockNum, now, enginstr)
         name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     data_processor.customDataSavetosql(name, enginstr, stockData)
 
