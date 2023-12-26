@@ -54,6 +54,20 @@ def startQuantifytest(stockNum, now, enginstr):
     ]
     stock_instance = Stock(stockData, datas)
     volumsBoo = stock_instance.checkVolums()
-    print(stock_instance.get_MA(5))
+    ma5s = stock_instance.get_MA(5)
+    ma10s = stock_instance.get_MA(10)
+    len_ma5 = len(ma5s)
+    len_ma10 = len(ma10s)
+    ma5 = ma5s[len_ma5 - 1].round(2)
+    ma10 = ma10s[len_ma10 - 1].round(2)
+    str = f"{name}: {ma5s} ,{ma10s}"
+    slope5 = stock_instance.get_slope(5)
+    # slope10 = stock_instance.get_slope(10)
+    # slope20 = stock_instance.get_slope(20)
+    # slope30 = stock_instance.get_slope(30)
+    # slope40 = stock_instance.get_slope(40)
+    # slope60 = stock_instance.get_slope(60)
+    # str = f"{name}: {slope5} ,{slope10},{slope20},{slope30},{slope40},{slope60}"
+    print(slope5)
     # 检查今天成交量是否超过昨天的成交量
     # print(f"{name}今日成交量超过昨日成交量:{volumsBoo}")

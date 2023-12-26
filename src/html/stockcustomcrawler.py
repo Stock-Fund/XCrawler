@@ -18,7 +18,6 @@ def getStockData(stockNum):
 def getStockData_datareader(stockNum, now, enginstr, check):
     yf.pdr_override()
     code = stockNum + getStockSuffix(stockNum)
-    print(code)
     stockData = pdr.get_data_yahoo(code, "2023-10-01")
     stockData = stockData.round(2)
     stockData.to_csv("Assets/" + code + ".csv")
