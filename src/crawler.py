@@ -173,5 +173,9 @@ def find(stockNum):
     print(f"查找对应代码{stockNum}股票")
 
 
+def showStockData(stockNum):
+    html.showStockData(stockNum, enginstr)
+
+
 def check():
     run_forever(False, True)

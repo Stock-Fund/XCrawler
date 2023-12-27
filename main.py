@@ -50,6 +50,9 @@ class Window(QWidget):
     def button_Allclicked(self):
         src.getAllStock()
 
+    def button_showStockData(self, stockNum):
+        src.showStockData(stockNum)
+
     def button_check(self):
         src.check()
 
@@ -90,6 +93,11 @@ class Window(QWidget):
         findBtn.setText("查询")
         findBtn.clicked.connect(lambda: self.button_find(self.inputText))
         findBtn.move(100, 0)
+
+        showDataBtn = QtWidgets.QPushButton("button", self)
+        showDataBtn.setText("显示")
+        showDataBtn.clicked.connect(lambda: self.button_showStockData(self.inputText))
+        showDataBtn.move(400, 0)
 
         checkBtn = QtWidgets.QPushButton("button", self)
         checkBtn.setText("检测")

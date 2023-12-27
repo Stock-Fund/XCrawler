@@ -5,6 +5,8 @@ import src.data_processor as data_processor
 import src.html as html
 import src.quantifytest as quantifytest
 from src.html.stockutils import getStockSuffix
+import datetime
+import src.data_processor as data_processor
 
 
 # ==================================== 第三方
@@ -12,6 +14,15 @@ from src.html.stockutils import getStockSuffix
 def getStockData(stockNum):
     dd = ts.get_hist_data(stockNum)  # 爬取股票近三年的全部日k信息
     # dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
+
+
+def showStockData(stockNum, enginstr):
+    now = datetime.datetime.now()
+    # 格式化为字符串
+    formatted = now.strftime("%Y-%m-%d")
+    name = f'{formatted}-allstock'
+    data = data_processor.GetDatasFromSql1(name, "代码", stockNum, enginstr)
+    print(data)
 
 
 # pandas_datareader通过yahoo获取股票数据
