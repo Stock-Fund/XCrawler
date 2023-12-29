@@ -13,21 +13,22 @@ done = threading.Event()
 
 def _runProcess(check):
     stocks = [
-        "603721",
-        "600036",
-        "600895",
-        "603178",
-        "603189",
-        "600678",
-        "600355",
-        "603025",
-        "600661",
-        "603536",
-        "603660",
-        "600765",
-        "002555",
-        "603906",
-        "002466"
+        # "603721",
+        # "600036",
+        # "600895",
+        # "603178",
+        # "603189",
+        # "600678",
+        # "600355",
+        # "603025",
+        # "600661",
+        # "603536",
+        # "603660",
+        # "600765",
+        # "002555",
+        # "603906",
+        # "002466",
+        "601166"
     ]
     now = datetime.datetime.now()
     if check:
@@ -153,10 +154,13 @@ def getAllStock():
 
 
 def find(stockNum):
+    now = datetime.datetime.now()
+    check = True
     p = Process(
         target=html.getStocksTime,
         args=(
             f"{stockNum}",
+            now,
             enginstr,
         ),
     )
@@ -167,7 +171,9 @@ def find(stockNum):
         target=html.getStockData_datareader,
         args=(
             f"{stockNum}",
+            now,
             enginstr,
+            check
         ),
     )
     p1.daemon = True
