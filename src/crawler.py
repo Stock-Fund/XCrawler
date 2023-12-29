@@ -26,6 +26,8 @@ def _runProcess(check):
         "603660",
         "600765",
         "002555",
+        "603906",
+        "002466"
     ]
     now = datetime.datetime.now()
     if check:
