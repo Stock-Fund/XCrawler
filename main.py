@@ -53,10 +53,16 @@ class Window(QWidget):
     def button_showStockData(self, stockNum):
         src.showStockData(stockNum)
 
-    def button_check(self):
-        src.check()
+    def button_check(self, stockNum):
+        if len(self.inputText) == 0:
+            src.check()
+        else:
+            src.check([self.inputText])
 
     def button_find(self, stockNum):
+        if len(self.inputText) == 0:
+            print("请输入股票代码")
+            return
         src.find(stockNum)
 
     def on_text_changed(self, text):
@@ -85,6 +91,7 @@ class Window(QWidget):
 
         self.input = QtWidgets.QLineEdit(self)
         self.input.setPlaceholderText("请输入")
+        self.inputText = ""
         # 限制输入15个字符
         self.input.setMaxLength(15)
         self.input.setFixedSize(200, 30)
@@ -101,7 +108,7 @@ class Window(QWidget):
 
         checkBtn = QtWidgets.QPushButton("button", self)
         checkBtn.setText("检测")
-        checkBtn.clicked.connect(lambda: self.button_check())
+        checkBtn.clicked.connect(lambda: self.button_check(self.inputText))
         checkBtn.move(200, 0)
 
         layout.addWidget(self.input)

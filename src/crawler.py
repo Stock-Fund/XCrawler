@@ -7,29 +7,28 @@ import threading
 import datetime
 
 enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
-
+stocks = [
+    "603721",
+    "600036",
+    "600895",
+    "603178",
+    "603189",
+    "600678",
+    "600355",
+    "603025",
+    "600661",
+    "603536",
+    "603660",
+    "600765",
+    "002555",
+    "603906",
+    "002466",
+    "601166",
+]
 done = threading.Event()
 
 
-def _runProcess(check):
-    stocks = [
-        "603721",
-        "600036",
-        "600895",
-        "603178",
-        "603189",
-        "600678",
-        "600355",
-        "603025",
-        "600661",
-        "603536",
-        "603660",
-        "600765",
-        "002555",
-        "603906",
-        "002466",
-        "601166"
-    ]
+def _runProcess(check, stocks):
     now = datetime.datetime.now()
     if check:
         # 收盘时间
@@ -128,25 +127,32 @@ def _runProcess(check):
     done.set()
 
 
-def run_forever(polling, check=False):
+def run_forever(polling, stocks, check=False):
     if polling:
-        schedule.every().day.at("15:00").do(lambda: _runProcess(check))
+        schedule.every().day.at("15:00").do(lambda: _runProcess(check, stocks))
         while not done.is_set():
             # localtime = src.timeutil.get_local_time()
             # 每天15:00遍历一次网页的数据
             schedule.run_pending()
             time.sleep(1)
     else:
-        _runProcess(check)
+        _runProcess(check, stocks)
 
 
 def try_start():
-    thread = threading.Thread(target=run_forever, args=(True,), daemon=True)
+    thread = threading.Thread(
+        target=run_forever,
+        args=(
+            True,
+            stocks,
+        ),
+        daemon=True,
+    )
     thread.start()
 
 
 def start():
-    run_forever(False)
+    run_forever(False, stocks)
 
 
 def getAllStock():
@@ -169,12 +175,7 @@ def find(stockNum):
 
     p1 = Process(
         target=html.getStockData_datareader,
-        args=(
-            f"{stockNum}",
-            now,
-            enginstr,
-            check
-        ),
+        args=(f"{stockNum}", now, enginstr, check),
     )
     p1.daemon = True
     p1.start()
@@ -185,5 +186,7 @@ def showStockData(stockNum):
     html.showStockData(stockNum, enginstr)
 
 
-def check():
-    run_forever(False, True)
+def check(customstocks=None):
+    if not customstocks:
+        customstocks = stocks
+    run_forever(False, customstocks, True)
