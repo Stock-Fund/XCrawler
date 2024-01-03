@@ -1,7 +1,20 @@
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from datetime import datetime
 import time
+
+
+def checkTableExist(table, engine, enginestr):
+    inspector = inspect(engine)
+    # 检查表是否存在
+    if table in inspector.get_table_names():
+        df = pd.read_sql_table(table, enginestr)
+        if df.empty:
+            print(f"{table} does not exist")
+            return None
+        return df
+    else:
+        return None
 
 
 def SaveToXlsx(datas, head, path="Assets/data.xlsx"):
@@ -200,40 +213,49 @@ def GetAllDataFromTable(table, enginestr):
 # 从数据库获取某个数据
 def GetDataFromSql(table, id, value, stockNum, enginestr):
     engine = create_engine(enginestr)
-    df = pd.read_sql_table(table, enginestr)
-    data = ""
-    try:
-        data = df.loc[df[id] == stockNum, value].values[0]
-    except IndexError:
-        print("data does not exist")
-    engine.dispose()
-    return data
+    df = checkTableExist(table, engine, enginestr)
+    if df is not None:
+        data = ""
+        try:
+            data = df.loc[df[id] == stockNum, value].values[0]
+        except IndexError:
+            print("data does not exist")
+        engine.dispose()
+        return data
+    else:
+        return None
 
 
 # 从数据库获取某一行数据 简单判断
 def GetDatasFromSql1(table, id, value, enginestr):
     engine = create_engine(enginestr)
-    df = pd.read_sql_table(table, enginestr)
-    data = ""
-    try:
-        data = df.loc[df[id] == value].values[0]
-    except IndexError:
-        print("data does not exist")
-    engine.dispose()
-    return data
+    df = checkTableExist(table, engine, enginestr)
+    if df is not None:
+        data = ""
+        try:
+            data = df.loc[df[id] == value].values[0]
+        except IndexError:
+            print("data does not exist")
+        engine.dispose()
+        return data
+    else:
+        return None
 
 
 # 从数据库复合判断获取某一行数据
 def GetDatasFromSql2(table, obj1, obj2, enginestr):
     engine = create_engine(enginestr)
-    df = pd.read_sql_table(table, enginestr)
-    datas = ""
-    data = ""
-    try:
-        datas = df.loc[df[obj1["id"]] == obj1["value"]].values
-        # 默认返回最新数据，即最后一位数据
-        data = datas[len(datas) - 1]
-    except IndexError:
-        print("data does not exist")
-    engine.dispose()
-    return data
+    df = checkTableExist(table, engine, enginestr)
+    if df is not None:
+        datas = ""
+        data = ""
+        try:
+            datas = df.loc[df[obj1["id"]] == obj1["value"]].values
+            # 默认返回最新数据，即最后一位数据
+            data = datas[len(datas) - 1]
+        except IndexError:
+            print("data does not exist")
+        engine.dispose()
+        return data
+    else:
+        return None

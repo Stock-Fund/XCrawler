@@ -54,8 +54,15 @@ def startQuantifytest(stockNum, now, enginstr):
     ]
     stock_instance = Stock(stockData, datas)
     # 现有逻辑简单判断
-    if stock_instance.get_slope(5) > 0 and stock_instance.get_slope(10) > 0:
-        if stock_instance.checkVolums() > 0.5:
-            days = stock_instance.check_close_near_ma(2)
-            if len(days) > 0:
-                print(f"{name}可以买入")
+    print(f'{stock_instance.checkVolums()}')
+    if stock_instance.checkVolums() >= 1:
+        print("放量反包上涨")
+    # if stock_instance.get_slope(5) > 0 and stock_instance.get_slope(10) > 0:
+    #     print(f'{stock_instance.get_slope(5)} {stock_instance.get_slope(10)}')
+    #     if stock_instance.checkVolums() > 0.5:
+    #         print(f'{stock_instance.checkVolums()}')
+    #         days = stock_instance.check_close_near_ma(2)
+    #         if len(days) > 0:
+    #             for day in days:
+    #                 print(f'{day}')
+    #                 print(f"{name}可以买入")

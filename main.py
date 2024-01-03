@@ -81,35 +81,35 @@ class Window(QWidget):
         self.ui()
         # 爬取数据按钮
         xcrawlerBtn = QtWidgets.QPushButton("button", self)
-        xcrawlerBtn.setText("抓取")
+        xcrawlerBtn.setText("获取自选数据")
         xcrawlerBtn.clicked.connect(lambda: self.button_clicked())
 
         xcrawlerAllBtn = QtWidgets.QPushButton("button", self)
-        xcrawlerAllBtn.setText("全局抓取")
+        xcrawlerAllBtn.setText("获取全局数据")
         xcrawlerAllBtn.clicked.connect(lambda: self.button_Allclicked())
-        xcrawlerAllBtn.move(300, 0)
+        xcrawlerAllBtn.move(100, 0)
 
         self.input = QtWidgets.QLineEdit(self)
-        self.input.setPlaceholderText("请输入")
+        self.input.setPlaceholderText("请输入股票代码")
         self.inputText = ""
         # 限制输入15个字符
         self.input.setMaxLength(15)
         self.input.setFixedSize(200, 30)
         self.input.textChanged.connect(self.on_text_changed)
         findBtn = QtWidgets.QPushButton("button", self)
-        findBtn.setText("查询")
+        findBtn.setText("查询股票数据")
         findBtn.clicked.connect(lambda: self.button_find(self.inputText))
-        findBtn.move(100, 0)
+        findBtn.move(0, 100)
 
         showDataBtn = QtWidgets.QPushButton("button", self)
-        showDataBtn.setText("显示")
+        showDataBtn.setText("显示股票数据")
         showDataBtn.clicked.connect(lambda: self.button_showStockData(self.inputText))
-        showDataBtn.move(400, 0)
+        showDataBtn.move(100, 100)
 
         checkBtn = QtWidgets.QPushButton("button", self)
-        checkBtn.setText("检测")
+        checkBtn.setText("检测条件")
         checkBtn.clicked.connect(lambda: self.button_check(self.inputText))
-        checkBtn.move(200, 0)
+        checkBtn.move(200, 100)
 
         layout.addWidget(self.input)
         self.setLayout(layout)
