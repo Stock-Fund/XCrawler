@@ -15,7 +15,7 @@ import numpy as np
 def main():
     app = QApplication(sys.argv)
     path = os.path.join(
-        os.path.dirname(sys.modules[__name__].__file__), "./Assets/star.png"
+        os.path.dirname(sys.modules[__name__].__file__), "./Assets/bullmarket.jpg"
     )
     app.setWindowIcon(QIcon(path))
     # 读取本地账号密码
