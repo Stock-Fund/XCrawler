@@ -57,10 +57,10 @@ def startQuantifytest(stockNum, now, enginstr):
         ]
         stock_instance = Stock(stockData, datas)
         # 现有逻辑简单判断
-        if stock_instance.checkNetVolumes(10):
-            print("成交量为正")
-        else:
-            print("成交量为负")
+        day = 10
+        netVolume = stock_instance.checkNetVolumes(day)
+        volumeStr = f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
+        print(f"{name} 最近{day}日 {volumeStr}")
     # print(f'{stock_instance.checkVolums()}')
     # if stock_instance.checkVolums() >= 1:
     #     print("放量反包上涨")
