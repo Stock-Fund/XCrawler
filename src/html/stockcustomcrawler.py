@@ -20,9 +20,12 @@ def showStockData(stockNum, enginstr):
     now = datetime.datetime.now()
     # 格式化为字符串
     formatted = now.strftime("%Y-%m-%d")
-    name = f'{formatted}-allstock'
+    name = f"{formatted}-allstock"
     data = data_processor.GetDatasFromSql1(name, "代码", stockNum, enginstr)
-    print(data)
+    if data.empty:
+        print(f"{formatted} table is not exist")
+    else:
+        print(data)
 
 
 # pandas_datareader通过yahoo获取股票数据
