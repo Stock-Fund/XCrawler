@@ -28,7 +28,7 @@ def startQuantifytest(stockNum, now, enginstr):
         enginstr,
     )
 
-    if stockTimeData.empty:
+    if stockTimeData is None:
         print(f"{formatted} table is not exist")
     else:
         # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
@@ -55,8 +55,10 @@ def startQuantifytest(stockNum, now, enginstr):
         ]
         stock_instance = Stock(stockData, datas)
         # 现有逻辑简单判断
-        if stock_instance.check_net_volume(10):
+        if stock_instance.checkNetVolumes(10):
             print("成交量为正")
+        else:
+            print("成交量为负")
     # print(f'{stock_instance.checkVolums()}')
     # if stock_instance.checkVolums() >= 1:
     #     print("放量反包上涨")

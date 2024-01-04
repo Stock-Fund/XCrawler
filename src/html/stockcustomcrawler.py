@@ -22,7 +22,7 @@ def showStockData(stockNum, enginstr):
     formatted = now.strftime("%Y-%m-%d")
     name = f"{formatted}-allstock"
     data = data_processor.GetDatasFromSql1(name, "代码", stockNum, enginstr)
-    if data.empty:
+    if data is None:
         print(f"{formatted} table is not exist")
     else:
         print(data)
