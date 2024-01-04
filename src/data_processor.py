@@ -17,6 +17,13 @@ def checkTableExist(table, engine, enginestr):
         return None
 
 
+def checkTableExist1(table, engine):
+    query = f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table}')"
+    result = engine.execute(query)
+    exists = result.scalar()
+    return exists
+
+
 def SaveToXlsx(datas, head, path="Assets/data.xlsx"):
     num_columns = len(head)
     num_rows = len(datas)
@@ -204,10 +211,14 @@ def customDataSavetosql(table, enginestr, datas):
 # 获取数据库某个table中所有数据
 def GetAllDataFromTable(table, enginestr):
     engine = create_engine(enginestr)
-    query = f"SELECT * FROM {table}"
-    data = pd.read_sql(query, engine)
-    engine.dispose()
-    return data
+    df = checkTableExist(table, engine, enginestr)
+    if df is not None:
+        query = f"SELECT * FROM {table}"
+        data = pd.read_sql(query, engine)
+        engine.dispose()
+        return data
+    else:
+        return None
 
 
 # 从数据库获取某个数据

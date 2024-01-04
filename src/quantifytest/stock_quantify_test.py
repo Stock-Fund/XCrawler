@@ -13,7 +13,7 @@ def startQuantifytest(stockNum, now, enginstr):
         time_part = "15:00:00"
     name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     if name == "":
-        html.getStocksTime(stockNum, enginstr)
+        html.getStocksTime(stockNum, now, enginstr)
         name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     timename = name + "分时"
     # 某只股票所有的第三方数据
@@ -29,7 +29,9 @@ def startQuantifytest(stockNum, now, enginstr):
     )
 
     if stockTimeData is None:
-        print(f"{formatted} table is not exist")
+        print(f"{timename} table is not exist")
+    elif stockCustomData is None:
+        print(f"{name} table is not exist")
     else:
         # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
         stockData = pd.DataFrame(
