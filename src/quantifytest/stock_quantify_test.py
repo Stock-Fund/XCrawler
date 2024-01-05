@@ -59,7 +59,9 @@ def startQuantifytest(stockNum, now, enginstr):
         # 现有逻辑简单判断
         day = 10
         netVolume = stock_instance.checkNetVolumes(day)
-        volumeStr = f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
+        volumeStr = (
+            f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
+        )
         print(f"{name} 最近{day}日 {volumeStr}")
     # print(f'{stock_instance.checkVolums()}')
     # if stock_instance.checkVolums() >= 1:
