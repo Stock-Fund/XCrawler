@@ -24,12 +24,12 @@ stocks = [
     "603906",
     "002466",
     "601166",
-    "600438"
+    "600438",
 ]
 done = threading.Event()
 
 
-def _runProcess(check, stocks):
+def _runProcess(check, stocks, ma):
     now = datetime.datetime.now()
     if check:
         # 收盘时间
@@ -44,11 +44,7 @@ def _runProcess(check, stocks):
             for stock in stocks:
                 _p = Process(
                     target=quantifytest.startQuantifytest,
-                    args=(
-                        stock,
-                        now,
-                        enginstr,
-                    ),
+                    args=(stock, now, enginstr, ma),
                 )
                 _p.daemon = True
                 _p.start()
@@ -73,12 +69,7 @@ def _runProcess(check, stocks):
             for stock in stocks:
                 _p = Process(
                     target=html.getStockData_datareader,
-                    args=(
-                        stock,
-                        now,
-                        enginstr,
-                        check,
-                    ),
+                    args=(stock, now, enginstr, check, ma),
                 )
                 _p.daemon = True
                 _p.start()
@@ -103,12 +94,7 @@ def _runProcess(check, stocks):
         for stock in stocks:
             _p = Process(
                 target=html.getStockData_datareader,
-                args=(
-                    stock,
-                    now,
-                    enginstr,
-                    check,
-                ),
+                args=(stock, now, enginstr, check, ma),
             )
             _p.daemon = True
             _p.start()
@@ -128,16 +114,16 @@ def _runProcess(check, stocks):
     done.set()
 
 
-def run_forever(polling, stocks, check=False):
+def run_forever(polling, stocks, ma=5, check=False):
     if polling:
-        schedule.every().day.at("15:00").do(lambda: _runProcess(check, stocks))
+        schedule.every().day.at("15:00").do(lambda: _runProcess(check, stocks, ma))
         while not done.is_set():
             # localtime = src.timeutil.get_local_time()
             # 每天15:00遍历一次网页的数据
             schedule.run_pending()
             time.sleep(1)
     else:
-        _runProcess(check, stocks)
+        _runProcess(check, stocks, ma)
 
 
 def try_start():
@@ -160,7 +146,7 @@ def getAllStock():
     html.getAllStock(enginstr)
 
 
-def find(stockNum):
+def find(stockNum, ma=5):
     now = datetime.datetime.now()
     check = True
     p = Process(
@@ -176,7 +162,7 @@ def find(stockNum):
 
     p1 = Process(
         target=html.getStockData_datareader,
-        args=(f"{stockNum}", now, enginstr, check),
+        args=(f"{stockNum}", now, enginstr, check, ma),
     )
     p1.daemon = True
     p1.start()
@@ -187,7 +173,7 @@ def showStockData(stockNum):
     html.showStockData(stockNum, enginstr)
 
 
-def check(customstocks=None):
+def check(customstocks=None, ma=5):
     if not customstocks:
         customstocks = stocks
-    run_forever(False, customstocks, True)
+    run_forever(False, customstocks, ma, True)

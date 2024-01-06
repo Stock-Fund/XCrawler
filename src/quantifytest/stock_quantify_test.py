@@ -5,7 +5,7 @@ from datetime import datetime, time
 import pandas as pd
 
 
-def startQuantifytest(stockNum, now, enginstr):
+def startQuantifytest(stockNum, now, enginstr, ma=5):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")
     # base_time_part = "00:00:00"
@@ -63,6 +63,9 @@ def startQuantifytest(stockNum, now, enginstr):
             f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
         )
         print(f"{name} 最近{day}日 {volumeStr}")
+        print(ma)
+        print(stock_instance.checkMA(ma))
+        print(stock_instance.checkMA20())
     # print(f'{stock_instance.checkVolums()}')
     # if stock_instance.checkVolums() >= 1:
     #     print("放量反包上涨")

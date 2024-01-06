@@ -2,9 +2,9 @@ import sys
 import os
 from PyQt6 import QtWebEngineWidgets
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QWidget, QApplication, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QApplication, QSizePolicy, QSlider, QLabel
 from PyQt6.QtGui import QIcon, QGuiApplication  # 导入引用图标的函数
-from PyQt6.QtCore import QUrl, QPoint
+from PyQt6.QtCore import QUrl, QPoint, Qt
 from selenium import webdriver
 import pymysql
 import src
@@ -57,17 +57,24 @@ class Window(QWidget):
         if len(self.inputText) == 0:
             src.check()
         else:
-            src.check([self.inputText])
+            src.check([self.inputText], self.ma)
 
     def button_find(self, stockNum):
         if len(self.inputText) == 0:
             print("请输入股票代码")
             return
-        src.find(stockNum)
+        src.find(stockNum, self.ma)
 
+    # 输入框事件
     def on_text_changed(self, text):
         self.inputText = text
         # print("输入的文字:", text)
+
+    # 滑块事件
+    def slider_value_changed(self, value):
+        selected_value = self.tick_values[value]
+        self.ma = selected_value
+        self.label.setText(f"{self.ma}日 均线值")
 
     def __init__(self):
         super().__init__()  # 用于访问父类的方法和属性
@@ -79,6 +86,7 @@ class Window(QWidget):
         # self.setFixedWidth(700)  # 不生效，被禁用了
         # self.setFixedHeight(400)  # 不生效，被禁用了
         self.ui()
+        # ============== 第一排按钮
         # 爬取数据按钮
         xcrawlerBtn = QtWidgets.QPushButton("button", self)
         xcrawlerBtn.setText("获取自选数据")
@@ -89,6 +97,7 @@ class Window(QWidget):
         xcrawlerAllBtn.clicked.connect(lambda: self.button_Allclicked())
         xcrawlerAllBtn.move(100, 0)
 
+        # ============== 第四排输入框
         self.input = QtWidgets.QLineEdit(self)
         self.input.setPlaceholderText("请输入股票代码")
         self.inputText = ""
@@ -96,6 +105,8 @@ class Window(QWidget):
         self.input.setMaxLength(15)
         self.input.setFixedSize(200, 30)
         self.input.textChanged.connect(self.on_text_changed)
+        self.input.move(300, 200)
+        # ============== 第二排按钮
         findBtn = QtWidgets.QPushButton("button", self)
         findBtn.setText("查询股票数据")
         findBtn.clicked.connect(lambda: self.button_find(self.inputText))
@@ -111,7 +122,32 @@ class Window(QWidget):
         checkBtn.clicked.connect(lambda: self.button_check(self.inputText))
         checkBtn.move(200, 100)
 
-        layout.addWidget(self.input)
+        # ============== 第三排文本
+        # 滑块选择N日周期，判断是否上穿/下穿对应周期的均线
+        self.ma = 5
+        self.label = QLabel(f"{self.ma}日 均线值", self)
+        # 设置标签的尺寸
+        # self.label.setMinimumSize(200, 30)
+
+        self.slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
+        # 设置滑块的尺寸
+        self.slider.setMinimumSize(200, 30)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(5)
+        self.slider.setTickPosition(QSlider.TickPosition.TicksBothSides)
+        self.slider.setTickInterval(1)
+        self.slider.setSingleStep(1)
+        # 设置刻度标签的显示格式
+        self.tick_values = [5, 10, 20, 30, 40, 60]
+        self.slider.valueChanged.connect(self.slider_value_changed)
+        self.slider_value_changed(0)
+
+        self.label.move(5, 150)
+        self.slider.move(0, 200)
+
+        # layout.addWidget(self.input)
+        # layout.addWidget(self.slider)
+        # layout.addWidget(self.label)
         self.setLayout(layout)
         self.center()
         self.resizeEvent = self.handleResize

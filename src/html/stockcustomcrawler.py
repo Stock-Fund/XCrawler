@@ -29,7 +29,7 @@ def showStockData(stockNum, enginstr):
 
 
 # pandas_datareader通过yahoo获取股票数据
-def getStockData_datareader(stockNum, now, enginstr, check):
+def getStockData_datareader(stockNum, now, enginstr, check, ma=5):
     yf.pdr_override()
     code = stockNum + getStockSuffix(stockNum)
     stockData = pdr.get_data_yahoo(code, "2023-10-01")
@@ -46,7 +46,7 @@ def getStockData_datareader(stockNum, now, enginstr, check):
     data_processor.customDataSavetosql(name, enginstr, stockData)
 
     if check:
-        quantifytest.startQuantifytest(stockNum, now, enginstr)
+        quantifytest.startQuantifytest(stockNum, now, enginstr, ma)
 
     print(f"{name} customDatareader crawle completed")
     return
