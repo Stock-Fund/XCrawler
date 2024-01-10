@@ -9,8 +9,8 @@ import datetime
 import src.data_processor as data_processor
 
 
-# ==================================== 第三方
-# tushare获取股票数据
+
+# 第三方tushare获取股票数据
 def getStockData(stockNum):
     dd = ts.get_hist_data(stockNum)  # 爬取股票近三年的全部日k信息
     # dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中

@@ -9,7 +9,7 @@ from selenium.common.exceptions import StaleElementReferenceException, TimeoutEx
 from src.html.mainboardcrawler import get_Data_FromSoup
 import src.data_processor as data_processor
 
-# A股所有股票页面
+# A股所有股票页面数据爬取
 url = "http://quote.eastmoney.com/center/gridlist.html#hs_a_board"
 
 

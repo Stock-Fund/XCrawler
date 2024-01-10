@@ -5,6 +5,7 @@ from datetime import datetime, time
 import pandas as pd
 
 
+# 股票各因素检测
 def startQuantifytest(stockNum, now, enginstr, ma=5):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")

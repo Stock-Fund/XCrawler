@@ -5,7 +5,7 @@ import src.data_processor as data_processor
 from src.html.stockutils import getStockTimeUrl
 
 
-# 获取指定股票的数据
+# 获取指定股票的分时数据
 def get_stock_data(stockNum, driver, url, now, enginstr):
     datas = []
     driver.get(url)

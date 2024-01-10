@@ -1,6 +1,7 @@
 from enum import Enum
 
 
+# 股票的工具类
 class StockType(Enum):
     SH_A = "上海A股"
     SH_B = "上海B股"
