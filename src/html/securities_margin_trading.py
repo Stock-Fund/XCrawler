@@ -10,6 +10,8 @@ def get_margin_data(driver, url, now, enginstr):
     driver.get(url)
     driver.implicitly_wait(2)
     soup = BeautifulSoup(driver.page_source, "lxml")
+    main_class = soup.select_one("div.table-responsive")
+    print(main_class)
 
 
 def getmargindata(url, now, enginstr):

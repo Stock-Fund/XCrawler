@@ -174,6 +174,11 @@ def showStockData(stockNum):
 
 
 def check(customstocks=None, ma=5):
+    now = datetime.datetime.now()
+    html.getmargindata(
+        "http://www.sse.com.cn/market/othersdata/margin/detail/", now, enginstr
+    )
+    return
     if not customstocks:
         customstocks = stocks
     run_forever(False, customstocks, ma, True)
