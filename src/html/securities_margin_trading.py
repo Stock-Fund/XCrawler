@@ -7,11 +7,12 @@ from selenium import webdriver
 
 
 def get_margin_data(driver, url, now, enginstr):
+    formatted = now.strftime("%Y-%m-%d")
     driver.get(url)
     driver.implicitly_wait(2)
     soup = BeautifulSoup(driver.page_source, "lxml")
-    main_class = soup.select_one("div.table-responsive")
-    print(main_class)
+    # 上海证券交易所网址利用js轮询请求数据，常规手段无法爬取融资融券数据
+
 
 
 def getmargindata(url, now, enginstr):
