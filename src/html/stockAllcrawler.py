@@ -30,9 +30,9 @@ def get_allstock_data(driver, enginstr):
         datas.extend(_datas)
         if index == 1:
             headers.extend(_headers)
-        print(f"第{index}页完成")
+        print(f"第{index}页A股数据获取完成")
         try:
-            next_button = WebDriverWait(driver, 10).until(
+            next_button = WebDriverWait(driver, 100).until(
                 EC.presence_of_element_located(
                     (
                         # 通过判断是否包含 next  , paginate_button 来找next_button,但当找到的next_button中包含disabled则表明已经是最后一页
@@ -62,7 +62,7 @@ def get_allstock_data(driver, enginstr):
             # 增加延时，模拟人类操作间隔
             time.sleep(8)  # 可根据实际情况调整延时时间
             # 等待页面加载完成
-            WebDriverWait(driver, 30).until(
+            WebDriverWait(driver, 100).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[@class='listview full']")
                 )

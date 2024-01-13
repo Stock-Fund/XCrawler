@@ -4,6 +4,7 @@ import datetime
 import src.data_processor as data_processor
 
 
+# 获取主板股票详细数据
 def get_Data_FromSoup(soup):
     headers = []
     datas = []
@@ -36,7 +37,6 @@ def get_Data_FromSoup(soup):
     datas = list(map(str, datas))
     headers = list(map(str, headers))
     return datas, headers
-
 
 def get_Mainboard_data(driver, url, enginstr):
     driver.get(url)
