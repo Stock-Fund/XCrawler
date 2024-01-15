@@ -50,6 +50,9 @@ class Window(QWidget):
     def button_Allclicked(self):
         src.getAllStock()
 
+    def button_AllMarginclicked(self):
+        src.getMarginAllData()
+
     def button_showStockData(self, stockNum):
         src.showStockData(stockNum)
 
@@ -89,13 +92,18 @@ class Window(QWidget):
         # ============== 第一排按钮
         # 爬取数据按钮
         xcrawlerBtn = QtWidgets.QPushButton("button", self)
-        xcrawlerBtn.setText("获取自选数据")
+        xcrawlerBtn.setText("自选股票数据")
         xcrawlerBtn.clicked.connect(lambda: self.button_clicked())
 
         xcrawlerAllBtn = QtWidgets.QPushButton("button", self)
-        xcrawlerAllBtn.setText("获取全局数据")
+        xcrawlerAllBtn.setText("全局股票数据")
         xcrawlerAllBtn.clicked.connect(lambda: self.button_Allclicked())
         xcrawlerAllBtn.move(100, 0)
+
+        marginAllBtn = QtWidgets.QPushButton("button", self)
+        marginAllBtn.setText("全局融资融券数据")
+        marginAllBtn.clicked.connect(lambda: self.button_AllMarginclicked())
+        marginAllBtn.move(200, 0)
 
         # ============== 第四排输入框
         self.input = QtWidgets.QLineEdit(self)

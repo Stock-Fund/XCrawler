@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+import src.data_processor as data_processor
 
 # 融资融券交易数据爬取
 # https://data.eastmoney.com/rzrq/total.html 全局全量融资融券数据
@@ -49,59 +50,84 @@ def xcrawlerMarginData(soup):
             datas.append(data)
     datas = list(map(str, datas))
     headers = list(map(str, headers))
-    print(datas)
     return datas, headers
 
 
 def get_margin_data(driver, url, now, enginstr):
-    formatted = now.strftime("%Y-%m-%d")
     driver.get(url)
     driver.implicitly_wait(30)
     index = 1
     datas = []
     headers = []
+    soup = BeautifulSoup(driver.page_source, "lxml")
+    # 获取当前日期融资融券页签总数
+    soup.find("div", id="rzrq_detail_table_pager")
+    pagerbox = soup.find(class_="pagerbox")
+    cur_page_index = 0
+    last_two_elements = pagerbox.find_all("a")[-2:]
+    totalIndex = int(last_two_elements[0]["data-page"])
+    print(f"融资融券数据总页数：{totalIndex}")
     while True:
         soup = BeautifulSoup(driver.page_source, "lxml")
-        _datas, _headers = xcrawlerMarginData(soup)
-        datas.extend(_datas)
-        if index == 1:
-            headers.extend(_headers)
-        print(f"第{index}页融资融券数据获取完成")
-        # try:
-        next_page = WebDriverWait(driver, 100).until(
-                EC.presence_of_element_located(
-                    (
-                        By.XPATH,
-                        "//a[text()='下一页']",
-                    )
-                )
-            )
-        # except (StaleElementReferenceException, TimeoutException) as e:
-        #     print("页面加载超时或元素未找到:", e)
-        #     break
-        # except Exception as e:
-        #     print("发生异常:", e)
-        #     break
-        if next_page:
-            try:
-                # 点击按钮
-                next_page.click()
-            except StaleElementReferenceException:
-                print("最后一页加载超时!")
-                continue
-
-            # 增加延时，模拟人类操作间隔
+        pagerbox = soup.find(class_="pagerbox")
+        _page_index = pagerbox.find_all("a")[0]["data-page"]
+        if _page_index == cur_page_index and cur_page_index != totalIndex:
+            print(f"{_page_index}延迟{cur_page_index}")
             time.sleep(8)  # 可根据实际情况调整延时时间
             # 等待页面加载完成
-            WebDriverWait(driver, 100).until(
+            WebDriverWait(driver, 30).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[@id='rzrq_detail_table']")
                 )
             )
-            index += 1
+            cur_page_index = _page_index
         else:
-            print("数据获取完成")
-            break
+            _datas, _headers = xcrawlerMarginData(soup)
+            datas.extend(_datas)
+            if index == 1:
+                headers.extend(_headers)
+            print(f"第{index}页融资融券数据获取完成")
+            if index >= totalIndex:
+                print(f"第{index}页最后一页了")
+                break
+            try:
+                next_page = WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located(
+                        (
+                            By.XPATH,
+                            "//a[text()='下一页']",
+                        )
+                    )
+                )
+            except (StaleElementReferenceException, TimeoutException) as e:
+                print("页面加载超时或元素未找到:", e)
+                break
+            except Exception as e:
+                print("发生异常:", e)
+                break
+            if next_page:
+                try:
+                    # 点击按钮
+                    next_page.click()
+                except StaleElementReferenceException:
+                    print("页面加载超时")
+                    continue
+
+                # 增加延时，模拟人类操作间隔
+                time.sleep(8)  # 可根据实际情况调整延时时间
+                # 等待页面加载完成
+                WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, "//div[@id='rzrq_detail_table']")
+                    )
+                )
+                index += 1
+    # 存储数据
+    formatted = now.strftime("%Y-%m-%d")
+    data_processor.SaveToCsv(datas, headers, "Assets/allMargin_data.csv")
+    data_processor.SaveToXlsx(datas, headers, "Assets/allMargin_data.xlsx")
+    data_processor.SaveToJson(datas, "Assets/allMargin_data.json")
+    data_processor.SaveTosql(datas, headers, enginstr, f"{formatted}-allMargin")
 
 
 # 获取融资融券交易明细
