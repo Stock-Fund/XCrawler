@@ -79,3 +79,10 @@ def startQuantifytest(stockNum, now, enginstr, ma=5):
     #             for day in days:
     #                 print(f'{day}')
     #                 print(f"{name}可以买入")
+
+
+# 检测全局5000支股票，提取满足要求股票
+def check_total_stocks(ma,start,end):
+    # todo 获取全局股票代码
+    # todo 利用第三方接口获取每个股票制定开启关闭时间
+    # 利用均线来判断逻辑
