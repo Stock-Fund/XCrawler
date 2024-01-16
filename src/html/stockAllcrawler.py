@@ -8,6 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from src.html.mainboardcrawler import get_Data_FromSoup
 import src.data_processor as data_processor
+from src.html.stockutils import getStockTimeUrl, getStockSuffix
+from pandas_datareader import data as pdr
+import yfinance as yf
 
 # A股所有股票页面数据爬取
 url = "http://quote.eastmoney.com/center/gridlist.html#hs_a_board"
@@ -77,8 +80,27 @@ def get_allstock_data(driver, enginstr):
     data_processor.SaveTosql(datas, headers, enginstr, f"{formatted}-allstock")
 
 
+# 获取所有股票数据
 def getAllStock(enginstr):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
     get_allstock_data(driver, enginstr)
+
+
+# =========================================
+
+
+# 检测所有股票数据的代码，用来筛选满足条件的股票
+def checkAllStock(table, value, start, enginestr):
+    yf.pdr_override()
+    datas = data_processor.GetAllStockCode(table, value, enginestr)
+    print(datas)
+    for stockNum in datas:
+        lastcode = getStockSuffix(stockNum)
+        # 北证暂时不处理
+        if lastcode == "":
+            continue
+        code = stockNum + lastcode
+        stockData = pdr.get_data_yahoo(code, start)
+        print(stockData)

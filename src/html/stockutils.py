@@ -40,3 +40,5 @@ def getStockSuffix(stockNum):
         return ".ss"
     elif stockType == StockType.SZ_A or stockType == StockType.SZ_B:
         return ".sz"
+    else:
+        return ''

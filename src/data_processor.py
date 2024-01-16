@@ -270,3 +270,16 @@ def GetDatasFromSql2(table, obj1, obj2, enginestr):
         return data
     else:
         return None
+
+
+# 从数据库中某个表内获取列名为value的那一列所有数据
+def GetAllStockCode(table, value, enginestr):
+    engine = create_engine(enginestr)
+    df = checkTableExist(table, engine, enginestr)
+    if df is not None:
+        datas = df["代码"].tolist()
+        print(datas)
+        return datas
+    else:
+        print("none")
+        return None
