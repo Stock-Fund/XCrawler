@@ -103,4 +103,5 @@ def checkAllStock(table, value, start, enginestr):
             continue
         code = stockNum + lastcode
         stockData = pdr.get_data_yahoo(code, start)
+        # todo 数据传入算法并筛选满足条件股票
         print(stockData)
