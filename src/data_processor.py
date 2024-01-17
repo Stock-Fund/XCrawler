@@ -277,7 +277,7 @@ def GetAllStockCode(table, value, enginestr):
     engine = create_engine(enginestr)
     df = checkTableExist(table, engine, enginestr)
     if df is not None:
-        datas = df["代码"].tolist()
+        datas = df[value].tolist()
         return datas
     else:
         print("none")
