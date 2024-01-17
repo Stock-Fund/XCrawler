@@ -278,7 +278,6 @@ def GetAllStockCode(table, value, enginestr):
     df = checkTableExist(table, engine, enginestr)
     if df is not None:
         datas = df["代码"].tolist()
-        print(datas)
         return datas
     else:
         print("none")

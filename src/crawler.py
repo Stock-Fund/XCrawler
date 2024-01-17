@@ -174,7 +174,7 @@ def showStockData(stockNum):
 
 
 def check(customstocks=None, ma=5):
-    html.checkAllStock("2024-01-15-allstock", "代码", "2023-10-01", enginstr)
+    quantifytest.check_total_stocks("2024-01-15-allstock", "代码", "2023-10-01", enginstr)
     return
     if not customstocks:
         customstocks = stocks

@@ -11,6 +11,7 @@ import src.data_processor as data_processor
 from src.html.stockutils import getStockTimeUrl, getStockSuffix
 from pandas_datareader import data as pdr
 import yfinance as yf
+import asyncio
 
 # A股所有股票页面数据爬取
 url = "http://quote.eastmoney.com/center/gridlist.html#hs_a_board"
@@ -90,18 +91,20 @@ def getAllStock(enginstr):
 
 # =========================================
 
-
-# 检测所有股票数据的代码，用来筛选满足条件的股票
-def checkAllStock(table, value, start, enginestr):
+# 从数据库中获取所有股票数据并返回
+async def checkAllStock(table, value, start, enginestr):
     yf.pdr_override()
+    # 获取某个表格的所有数据
     datas = data_processor.GetAllStockCode(table, value, enginestr)
-    print(datas)
+    outDatas = []
     for stockNum in datas:
         lastcode = getStockSuffix(stockNum)
         # 北证暂时不处理
         if lastcode == "":
             continue
         code = stockNum + lastcode
-        stockData = pdr.get_data_yahoo(code, start)
-        # todo 数据传入算法并筛选满足条件股票
-        print(stockData)
+        await asyncio.sleep(30)  # 等待30秒，防止触发网站反爬机制
+        # stockData = await pdr.get_data_yahoo(code, start)
+        stockData = await asyncio.to_thread(pdr.get_data_yahoo, code, start)
+        outDatas.append(stockData)
+    return outDatas

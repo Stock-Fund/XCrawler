@@ -3,6 +3,7 @@ import src.html as html
 from algorithm.stock import Stock
 from datetime import datetime, time
 import pandas as pd
+import asyncio
 
 
 # 股票各因素检测
@@ -82,8 +83,24 @@ def startQuantifytest(stockNum, now, enginstr, ma=5):
 
 
 # 检测全局5000支股票，提取满足要求股票
-def check_total_stocks(ma, start, end):
+def check_total_stocks(table, value, start, enginstr):
     # todo 获取全局股票代码
     # todo 利用第三方接口获取每个股票制定开启关闭时间
-    html.checkAllStock()
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(_check_total_stocks(table, value, start, enginstr))
+    finally:
+        loop.close()
+
+
+async def _check_total_stocks(table, value, start, enginstr):
+    datas = await html.checkAllStock(table, value, start, enginstr)
+    print(f'{datas},get stocks')
+    index = 0
+    for data in datas:
+        if index >= 10:
+            break
+        print(f"{data} get for data")
+        index += 1
+    print("complete")
     # 利用均线来判断逻辑
