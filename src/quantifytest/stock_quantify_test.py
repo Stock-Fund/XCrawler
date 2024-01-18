@@ -6,6 +6,9 @@ import pandas as pd
 import asyncio
 
 
+check = False
+
+
 def getStockTimeData(date_part, time_part, name, enginstr, timename):
     # 某只股票所有的第三方数据
     stockCustomData = data_processor.GetAllDataFromTable(name, enginstr)
@@ -95,6 +98,7 @@ def startQuantifytest(stockNum, now, enginstr, ma=5):
 def check_total_stocks(now, table, value, start, enginstr):
     # todo 获取全局股票代码
     # todo 利用第三方接口获取每个股票制定开启关闭时间
+    # await _check_total_stocks(now, table, value, start, enginstr)
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(_check_total_stocks(now, table, value, start, enginstr))
@@ -103,48 +107,54 @@ def check_total_stocks(now, table, value, start, enginstr):
 
 
 async def _check_total_stocks(now, table, value, start, enginstr):
+    global check
+    if check:
+        return
+    check = True
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")
     # 获取日级别数据
-    datas = await html.checkAllStock(table, value, start, enginstr)
-
+    stockdatas = await html.checkAllStock(table, value, start, enginstr)
     # await html.checkAllTimeStock()
-    # print(f"{datas},get stocks")
+    # print(f"{stockdatas},get stocks")
     index = 0
-    rowDatas = []
-    for data in datas:
+    # rowDatas = []
+    saveTime = datetime.strptime(
+        date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
+    ).time()
+    for stockData in stockdatas:
         if index >= 1:
             break
-        for date, row in data.iterrows():
-            saveTime = datetime.strptime(
-                date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
-            ).time()
-            open_value = row["Open"]
-            high_value = row["High"]
-            low_value = row["Low"]
-            close_value = row["Close"]
-            adj_close_value = row["Adj Close"]
-            volume_value = row["Volume"]
-            rowDatas.append(
-                [
-                    date,
-                    open_value,
-                    high_value,
-                    low_value,
-                    close_value,
-                    adj_close_value,
-                    volume_value,
-                ]
-            )
-            # 获取分时级别数据
-            stockNum = row["代码"]
-            headers, datas, name = await html.checkAllTimeStock(stockNum)
-        stockData = pd.DataFrame(
-            rowDatas,
-            columns=["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume"],
-        )
-        name = "test"
-        close_value = row["Close"]
+        # 某一个股票的单位时间内的所有数据
+        # for date, row in data.iterrows():
+        #     saveTime = datetime.strptime(
+        #         date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
+        #     ).time()
+        #     open_value = row["Open"]
+        #     high_value = row["High"]
+        #     low_value = row["Low"]
+        #     close_value = row["Close"]
+        #     adj_close_value = row["Adj Close"]
+        #     volume_value = row["Volume"]
+        #     rowDatas.append(
+        #         [
+        #             date,
+        #             open_value,
+        #             high_value,
+        #             low_value,
+        #             close_value,
+        #             adj_close_value,
+        #             volume_value,
+        #         ]
+        #     )
+        # 获取分时级别数据
+        stockNum = stockData["代码"].tolist()[0]
+        # 分时数据
+        headers, datas, name = await html.checkAllTimeStock(stockNum)
+        # stockData = pd.DataFrame(
+        #     rowDatas,
+        #     columns=["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume"],
+        # )
         _datas = [
             saveTime,  # 数据获取时间
             datas[0],  # 当前价格
@@ -160,7 +170,6 @@ async def _check_total_stocks(now, table, value, start, enginstr):
             f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
         )
         print(f"{name} 最近{day}日 {volumeStr}")
-        print(f"Date: {date}, Close Value: {close_value}")
         index += 1
     print("complete")
     # 利用均线来判断逻辑

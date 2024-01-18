@@ -12,6 +12,7 @@ from src.html.stockutils import getStockTimeUrl, getStockSuffix
 from pandas_datareader import data as pdr
 import yfinance as yf
 import asyncio
+import pandas as pd
 
 # A股所有股票页面数据爬取
 url = "http://quote.eastmoney.com/center/gridlist.html#hs_a_board"
@@ -103,17 +104,57 @@ async def checkAllStock(table, value, start, enginestr):
         if index >= 1:
             print("get table data complete")
             break
+
         lastcode = getStockSuffix(stockNum)
         # 北证暂时不处理
         if lastcode == "":
+            print(f"{stockNum} is not in sh,sz")
+            index = 0
             continue
         code = stockNum + lastcode
         await asyncio.sleep(30)  # 等待30秒，防止触发网站反爬机制
-        # stockData = await pdr.get_data_yahoo(code, start)
-        stockData = await asyncio.to_thread(pdr.get_data_yahoo, code, start)
-        stockData[value] = stockNum
-        # stockData["name"] = "test"
-        # print(stockData)
-        outDatas.append(stockData)
+        # stockBaseData = await pdr.get_data_yahoo(code, start)
+        stockBaseData = await asyncio.to_thread(pdr.get_data_yahoo, code, start)
+        stockBaseData[value] = stockNum
+        # 某一个股票的单位时间内的所有数据
+        rowDatas = []
+        for date, row in stockBaseData.iterrows():
+            open_value = row["Open"]
+            high_value = row["High"]
+            low_value = row["Low"]
+            close_value = row["Close"]
+            adj_close_value = row["Adj Close"]
+            volume_value = row["Volume"]
+            stockNum = row["代码"]
+            rowDatas.append(
+                [
+                    date,
+                    open_value,
+                    high_value,
+                    low_value,
+                    close_value,
+                    adj_close_value,
+                    volume_value,
+                    stockNum,
+                ]
+            )
+        _stockData = pd.DataFrame(
+            rowDatas,
+            columns=[
+                "Date",
+                "Open",
+                "High",
+                "Low",
+                "Close",
+                "Adj Close",
+                "Volume",
+                "代码",
+            ],
+        )
+        if len(_stockData["Close"].tolist()) < 120:
+            print(f"{stockNum},close value is to short")
+            index = 0
+            continue
         index += 1
+        outDatas.append(_stockData)
     return outDatas
