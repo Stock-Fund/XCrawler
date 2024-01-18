@@ -111,9 +111,9 @@ async def checkAllStock(table, value, start, enginestr):
         await asyncio.sleep(30)  # 等待30秒，防止触发网站反爬机制
         # stockData = await pdr.get_data_yahoo(code, start)
         stockData = await asyncio.to_thread(pdr.get_data_yahoo, code, start)
-        # stockData[value] = stockNum
+        stockData[value] = stockNum
         # stockData["name"] = "test"
-        print(stockData)
+        # print(stockData)
         outDatas.append(stockData)
         index += 1
     return outDatas

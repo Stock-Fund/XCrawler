@@ -3,11 +3,31 @@ from selenium import webdriver
 from datetime import time
 import src.data_processor as data_processor
 from src.html.stockutils import getStockTimeUrl
+import asyncio
+
+
+# 获取股票的常用指标数据
+def get_common_indicators(soup):
+    datas = []
+    headers = []
+    # 换手率 ，量比，均价等数据
+    class_t1 = soup.select_one("div.sider_brief")
+    table_t1 = class_t1.find("table")
+
+    index = 0
+    for body in table_t1.select("tbody"):
+        for tr in body.select("tr"):
+            for td in tr.select("td"):
+                data = td.get_text()
+                arr = data.split("：")
+                if index == 0:
+                    headers.append(arr[0])
+                datas.append(arr[1])
+    return headers, datas
 
 
 # 获取指定股票的分时数据
 def get_stock_data(stockNum, driver, url, now, enginstr):
-    datas = []
     driver.get(url)
     driver.implicitly_wait(2)
     soup = BeautifulSoup(driver.page_source, "lxml")
@@ -22,21 +42,9 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
     # 买1-买5，卖1-卖5数据
     class_mm = soup.select_one("div.mm")
     table = class_mm.find("table")
-    headers = []
 
-    # 换手率 ，量比，均价等数据
-    class_t1 = soup.select_one("div.sider_brief")
-    table_t1 = class_t1.find("table")
+    headers, datas = get_common_indicators(soup)
 
-    index = 0
-    for body in table_t1.select("tbody"):
-        for tr in body.select("tr"):
-            for td in tr.select("td"):
-                data = td.get_text()
-                arr = data.split("：")
-                if index == 0:
-                    headers.append(arr[0])
-                datas.append(arr[1])
     index = 0
     # 格式化为字符串
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -85,3 +93,21 @@ def getStocksTime(stockNum, now, enginstr):
     # while True:
     get_stock_data(stockNum, driver, url, now, enginstr)
     #  time.sleep(10)
+
+
+async def checkAllTimeStock(stockNum):
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    # options.add_argument('--disable-tabs')
+    driver = webdriver.Chrome(options=options)
+    url = getStockTimeUrl(stockNum)
+    datas = []
+    driver.get(url)
+    driver.implicitly_wait(2)
+    soup = BeautifulSoup(driver.page_source, "lxml")
+    namediv = soup.select_one("div.quote_title_l")
+    namespan = namediv.find("span", class_="quote_title_name quote_title_name_190")
+    name = namespan.get_text()
+    await asyncio.sleep(10)
+    headers, datas = await asyncio.to_thread(get_common_indicators, soup)
+    return headers, datas, name

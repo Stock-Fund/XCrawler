@@ -105,12 +105,15 @@ def check_total_stocks(now, table, value, start, enginstr):
 async def _check_total_stocks(now, table, value, start, enginstr):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")
+    # 获取日级别数据
     datas = await html.checkAllStock(table, value, start, enginstr)
-    print(f"{datas},get stocks")
+
+    # await html.checkAllTimeStock()
+    # print(f"{datas},get stocks")
     index = 0
     rowDatas = []
     for data in datas:
-        if index >= 10:
+        if index >= 1:
             break
         for date, row in data.iterrows():
             saveTime = datetime.strptime(
@@ -133,26 +136,29 @@ async def _check_total_stocks(now, table, value, start, enginstr):
                     volume_value,
                 ]
             )
+            # 获取分时级别数据
+            stockNum = row["代码"]
+            headers, datas, name = await html.checkAllTimeStock(stockNum)
         stockData = pd.DataFrame(
-                rowDatas,
-                columns=["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume"]
+            rowDatas,
+            columns=["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume"],
         )
         name = "test"
         close_value = row["Close"]
         _datas = [
-                saveTime,
-                close_value,
-                1,
-                1,
-                1,
-                1,
-         ]
+            saveTime,  # 数据获取时间
+            datas[0],  # 当前价格
+            datas[1],  # 换手率
+            datas[6],  # 量比
+            datas[7],  # 分时均价
+            1,  # 筹码集中度
+        ]
         stock_instance = Stock(stockData, _datas)
         day = 10
         netVolume = stock_instance.checkNetVolumes(day)
         volumeStr = (
-                f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
-            )
+            f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
+        )
         print(f"{name} 最近{day}日 {volumeStr}")
         print(f"Date: {date}, Close Value: {close_value}")
         index += 1
