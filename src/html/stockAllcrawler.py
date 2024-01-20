@@ -101,7 +101,8 @@ async def checkAllStock(table, value, start, enginestr):
     outDatas = []
     index = 0
     for stockNum in datas:
-        if index >= 1:
+        # 从前1000支股票开始选取
+        if index >= 1000:
             print("get table data complete")
             break
 
@@ -151,9 +152,10 @@ async def checkAllStock(table, value, start, enginestr):
                 "代码",
             ],
         )
-        if len(_stockData["Close"].tolist()) < 120:
-            print(f"{stockNum},close value is to short")
-            index = 0
+        # 低于5年的股票剔除
+        closevalue_len = len(_stockData["Close"].tolist())
+        if closevalue_len < 250 * 5:
+            print(f"{stockNum},close value len is {closevalue_len}, too short")
             continue
         index += 1
         outDatas.append(_stockData)
