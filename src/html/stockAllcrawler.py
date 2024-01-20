@@ -102,7 +102,7 @@ async def checkAllStock(table, value, start, enginestr):
     index = 0
     for stockNum in datas:
         # 从前1000支股票开始选取
-        if index >= 1000:
+        if index >= 60:
             print("get table data complete")
             break
 
@@ -110,7 +110,6 @@ async def checkAllStock(table, value, start, enginestr):
         # 北证暂时不处理
         if lastcode == "":
             print(f"{stockNum} is not in sh,sz")
-            index = 0
             continue
         code = stockNum + lastcode
         await asyncio.sleep(30)  # 等待30秒，防止触发网站反爬机制
@@ -157,6 +156,8 @@ async def checkAllStock(table, value, start, enginestr):
         if closevalue_len < 250 * 5:
             print(f"{stockNum},close value len is {closevalue_len}, too short")
             continue
+        print(f"{stockNum},close value len is {closevalue_len}")
+        print(f"股票索引{index}")
         index += 1
         outDatas.append(_stockData)
     return outDatas
