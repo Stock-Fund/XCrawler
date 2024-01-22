@@ -176,7 +176,7 @@ def showStockData(stockNum):
 def check(customstocks=None, ma=5):
     now = datetime.datetime.now()
     quantifytest.check_total_stocks(
-        now, "2023-12-28-allstock", "代码", "2015-01-01", enginstr
+        now, "2023-12-28-allstock", "代码", "2015-01-01", "2023-12-28", enginstr
     )
     return
     if not customstocks:

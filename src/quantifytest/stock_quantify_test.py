@@ -95,18 +95,20 @@ def startQuantifytest(stockNum, now, enginstr, ma=5):
 
 
 # 检测全局5000支股票，提取满足要求股票
-def check_total_stocks(now, table, value, start, enginstr):
+def check_total_stocks(now, table, value, start, end, enginstr):
     # todo 获取全局股票代码
     # todo 利用第三方接口获取每个股票制定开启关闭时间
     # await _check_total_stocks(now, table, value, start, enginstr)
     loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(_check_total_stocks(now, table, value, start, enginstr))
+        loop.run_until_complete(
+            _check_total_stocks(now, table, value, start, end, enginstr)
+        )
     finally:
         loop.close()
 
 
-async def _check_total_stocks(now, table, value, start, enginstr):
+async def _check_total_stocks(now, table, value, start, end, enginstr):
     global check
     if check:
         return
@@ -114,7 +116,7 @@ async def _check_total_stocks(now, table, value, start, enginstr):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")
     # 获取日级别数据
-    stockdatas = await html.checkAllStock(table, value, start, enginstr)
+    stockdatas = await html.checkAllStock(table, value, start, end, enginstr)
     # await html.checkAllTimeStock()
     # print(f"{stockdatas},get stocks")
     index = 0
