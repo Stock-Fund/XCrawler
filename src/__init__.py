@@ -7,6 +7,7 @@ from src.crawler import (
     start,
     find,
     check,
+    filter,
     getAllStock,
     showStockData,
     getMarginAllData,

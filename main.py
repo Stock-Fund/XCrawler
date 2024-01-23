@@ -62,6 +62,9 @@ class Window(QWidget):
         else:
             src.check([self.inputText], self.ma)
 
+    def button_filter(self):
+        src.filter()
+
     def button_find(self, stockNum):
         if len(self.inputText) == 0:
             print("请输入股票代码")
@@ -126,9 +129,14 @@ class Window(QWidget):
         showDataBtn.move(100, 100)
 
         checkBtn = QtWidgets.QPushButton("button", self)
-        checkBtn.setText("检测条件")
+        checkBtn.setText("股票条件检测")
         checkBtn.clicked.connect(lambda: self.button_check(self.inputText))
         checkBtn.move(200, 100)
+
+        filterBtn = QtWidgets.QPushButton("button", self)
+        filterBtn.setText("全局筛选")
+        filterBtn.clicked.connect(lambda: self.button_filter())
+        filterBtn.move(300, 100)
 
         # ============== 第三排文本
         # 滑块选择N日周期，判断是否上穿/下穿对应周期的均线

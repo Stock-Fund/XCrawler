@@ -174,14 +174,17 @@ def showStockData(stockNum):
 
 
 def check(customstocks=None, ma=5):
+    if not customstocks:
+        customstocks = stocks
+    run_forever(False, customstocks, ma, True)
+
+
+def filter():
     now = datetime.datetime.now()
     quantifytest.check_total_stocks(
         now, "2023-12-28-allstock", "代码", "2015-01-01", "2023-12-28", enginstr
     )
-    return
-    if not customstocks:
-        customstocks = stocks
-    run_forever(False, customstocks, ma, True)
+    print("开始全局筛选")
 
 
 def getMarginAllData():
