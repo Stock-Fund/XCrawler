@@ -53,7 +53,7 @@ def getStockTimeData(date_part, time_part, name, enginstr, timename):
 
 
 # 股票各因素检测
-def startQuantifytest(stockNum, now, enginstr, ma=5):
+def startQuantifytest(stockNum, now, enginstr, ma=20):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")
     # base_time_part = "00:00:00"
@@ -70,28 +70,12 @@ def startQuantifytest(stockNum, now, enginstr, ma=5):
     else:
         stockData, datas = result
         stock_instance = Stock(stockData, datas)
-        # 现有逻辑简单判断
-        day = 10
-        netVolume = stock_instance.checkNetVolumes(day)
-        volumeStr = (
-            f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
-        )
-        print(f"{name} 最近{day}日 {volumeStr}")
-        print(ma)
-        print(stock_instance.checkMA(ma))
-        print(stock_instance.checkMA20())
-    # print(f'{stock_instance.checkVolums()}')
-    # if stock_instance.checkVolums() >= 1:
-    #     print("放量反包上涨")
-    # if stock_instance.get_slope(5) > 0 and stock_instance.get_slope(10) > 0:
-    #     print(f'{stock_instance.get_slope(5)} {stock_instance.get_slope(10)}')
-    #     if stock_instance.checkVolums() > 0.5:
-    #         print(f'{stock_instance.checkVolums()}')
-    #         days = stock_instance.check_close_near_ma(2)
-    #         if len(days) > 0:
-    #             for day in days:
-    #                 print(f'{day}')
-    #                 print(f"{name}可以买入")
+        # 获取某个股票的检测结果
+        final = stock_instance.get_final_result(ma)
+        if final is True:
+            print(f"{name}检测结果为:{final},满足趋势向上放量反包")
+        # else:
+        #     print(f"{name}检测结果为:{final},未满足条件")
 
 
 # 检测全局5000支股票，提取满足要求股票
@@ -166,12 +150,10 @@ async def _check_total_stocks(now, table, value, start, end, enginstr):
             1,  # 筹码集中度
         ]
         stock_instance = Stock(stockData, _datas)
-        day = 10
-        netVolume = stock_instance.checkNetVolumes(day)
-        volumeStr = (
-            f"成交量:{netVolume} 成交量为正" if netVolume > 0 else f"成交量:{netVolume} 成交量为负"
-        )
-        print(f"{name} 最近{day}日 {volumeStr}")
+        day = 20
+        final = stock_instance.get_final_result(day)
+        if final is True:
+            print(f"{name}检测结果为:{final},满足趋势向上放量反包")
         index += 1
     print("complete")
     # 利用均线来判断逻辑

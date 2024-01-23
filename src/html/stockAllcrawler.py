@@ -102,7 +102,7 @@ async def checkAllStock(table, value, start, end, enginestr):
     index = 0
     for stockNum in datas:
         # 从前1000支股票开始选取
-        if index >= 60:
+        if index >= 50:
             print("get table data complete")
             break
 
