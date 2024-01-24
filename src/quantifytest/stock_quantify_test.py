@@ -79,17 +79,21 @@ def startQuantifytest(stockNum, now, enginstr, ma=20):
 
 
 # 检测全局5000支股票，提取满足要求股票
-def check_total_stocks(now, table, value, start, end, enginstr):
+def check_total_stocks(now, table, value, start, end_single, end_total, enginstr):
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(
-            _check_total_stocks(now, table, value, start, end, enginstr)
+            _check_total_stocks(
+                now, table, value, start, end_single, end_total, enginstr
+            )
         )
     finally:
         loop.close()
 
 
-async def _check_total_stocks(now, table, value, start, end, enginstr):
+async def _check_total_stocks(
+    now, table, value, start, end_single, end_total, enginstr
+):
     global check
     if check:
         return
@@ -97,15 +101,15 @@ async def _check_total_stocks(now, table, value, start, end, enginstr):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")
     # 获取日级别数据
-    stockdatas = await html.checkAllStock(table, value, start, end, enginstr)
+    stockdatas = await html.checkAllStock(
+        table, value, start, end_single, end_total, enginstr
+    )
     index = 0
     saveTime = datetime.strptime(
         date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
     ).time()
     for stockData in stockdatas:
-        # 为了更精确的获取到反包信息，只找当日全局股票上涨的标的
-        quote_change = stockData["涨跌幅"]
-        if index >= 1 or quote_change <= 0:
+        if index >= 1:
             break
         # 获取分时级别数据
         stockNum = stockData["代码"].tolist()[0]
@@ -123,14 +127,18 @@ async def _check_total_stocks(now, table, value, start, end, enginstr):
         day = 20
         final = stock_instance.get_final_result(day)
         if final is True:
+            # 加入乖离率来判断该股票是否存在超卖/超买情况，并以此作标准来判断是否可以关注
             print(f"{name}检测结果为:{final},满足趋势向上放量反包")
             bias_rate = stock_instance.get_over_trade(day)
             if bias_rate == 1:
+                index += 1
                 print(f"{name}{day}检测结果为:超卖")
             elif bias_rate == -1:
+                # 排除超买情况
                 print(f"{name}{day}检测结果为:超买")
             elif bias_rate == 0:
+                index += 1
                 print(f"{name}{day}检测结果为:震荡区间")
-        index += 1
+        else:
+            print(f"{name}检测结果为:{final},不满足放量反包条件")
     print("complete")
-    # 利用均线来判断逻辑

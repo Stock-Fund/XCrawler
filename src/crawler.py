@@ -182,7 +182,13 @@ def check(customstocks=None, ma=5):
 def filter():
     now = datetime.datetime.now()
     quantifytest.check_total_stocks(
-        now, "2023-12-28-allstock", "代码", "2015-01-01", "2023-12-28", enginstr
+        now,
+        "2023-12-28-allstock",
+        "代码",
+        "2015-01-01",
+        "2023-12-29",
+        "2023-12-29",
+        enginstr,
     )
     print("开始全局筛选")
 
@@ -190,4 +196,3 @@ def filter():
 def getMarginAllData():
     now = datetime.datetime.now()
     html.getmargindata("https://data.eastmoney.com/rzrq/detail/all.html", now, enginstr)
-

@@ -94,7 +94,7 @@ def getAllStock(enginstr):
 
 
 # 从数据库中获取所有股票数据并返回
-async def checkAllStock(table, value, start, end, enginestr):
+async def checkAllStock(table, value, start, end_single, end_total, enginestr):
     yf.pdr_override()
     # 获取某个表格的所有数据
     datas = data_processor.GetAllStockCode(table, value, enginestr)
@@ -102,7 +102,7 @@ async def checkAllStock(table, value, start, end, enginestr):
     index = 0
     for stockNum in datas:
         # 从前1000支股票开始选取
-        if index >= 50:
+        if index >= 5:
             print("get table data complete")
             break
 
@@ -114,7 +114,9 @@ async def checkAllStock(table, value, start, end, enginestr):
         code = stockNum + lastcode
         await asyncio.sleep(30)  # 等待30秒，防止触发网站反爬机制
         # stockBaseData = await pdr.get_data_yahoo(code, start)
-        stockBaseData = await asyncio.to_thread(pdr.get_data_yahoo, code, start, end)
+        stockBaseData = await asyncio.to_thread(
+            pdr.get_data_yahoo, code, start, end_single
+        )
         stockBaseData[value] = stockNum
         # 某一个股票的单位时间内的所有数据
         rowDatas = []
