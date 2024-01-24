@@ -180,6 +180,7 @@ def check(customstocks=None, ma=5):
 
 
 def filter():
+    print("开始全局筛选")
     now = datetime.datetime.now()
     quantifytest.check_total_stocks(
         now,
@@ -190,7 +191,6 @@ def filter():
         "2023-12-29",
         enginstr,
     )
-    print("开始全局筛选")
 
 
 def getMarginAllData():
