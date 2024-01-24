@@ -80,9 +80,6 @@ def startQuantifytest(stockNum, now, enginstr, ma=20):
 
 # 检测全局5000支股票，提取满足要求股票
 def check_total_stocks(now, table, value, start, end, enginstr):
-    # todo 获取全局股票代码
-    # todo 利用第三方接口获取每个股票制定开启关闭时间
-    # await _check_total_stocks(now, table, value, start, enginstr)
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(
@@ -101,46 +98,19 @@ async def _check_total_stocks(now, table, value, start, end, enginstr):
     date_part, time_part = formatted.split(" ")
     # 获取日级别数据
     stockdatas = await html.checkAllStock(table, value, start, end, enginstr)
-    # await html.checkAllTimeStock()
-    # print(f"{stockdatas},get stocks")
     index = 0
-    # rowDatas = []
     saveTime = datetime.strptime(
         date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
     ).time()
     for stockData in stockdatas:
-        if index >= 1:
+        # 为了更精确的获取到反包信息，只找当日全局股票上涨的标的
+        quote_change = stockData["涨跌幅"]
+        if index >= 1 or quote_change <= 0:
             break
-        # 某一个股票的单位时间内的所有数据
-        # for date, row in data.iterrows():
-        #     saveTime = datetime.strptime(
-        #         date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
-        #     ).time()
-        #     open_value = row["Open"]
-        #     high_value = row["High"]
-        #     low_value = row["Low"]
-        #     close_value = row["Close"]
-        #     adj_close_value = row["Adj Close"]
-        #     volume_value = row["Volume"]
-        #     rowDatas.append(
-        #         [
-        #             date,
-        #             open_value,
-        #             high_value,
-        #             low_value,
-        #             close_value,
-        #             adj_close_value,
-        #             volume_value,
-        #         ]
-        #     )
         # 获取分时级别数据
         stockNum = stockData["代码"].tolist()[0]
         # 分时数据
         headers, datas, name = await html.checkAllTimeStock(stockNum)
-        # stockData = pd.DataFrame(
-        #     rowDatas,
-        #     columns=["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume"],
-        # )
         _datas = [
             saveTime,  # 数据获取时间
             datas[0],  # 当前价格
@@ -154,6 +124,13 @@ async def _check_total_stocks(now, table, value, start, end, enginstr):
         final = stock_instance.get_final_result(day)
         if final is True:
             print(f"{name}检测结果为:{final},满足趋势向上放量反包")
+            bias_rate = stock_instance.get_over_trade(day)
+            if bias_rate == 1:
+                print(f"{name}{day}检测结果为:超卖")
+            elif bias_rate == -1:
+                print(f"{name}{day}检测结果为:超买")
+            elif bias_rate == 0:
+                print(f"{name}{day}检测结果为:震荡区间")
         index += 1
     print("complete")
     # 利用均线来判断逻辑

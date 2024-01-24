@@ -190,3 +190,4 @@ def filter():
 def getMarginAllData():
     now = datetime.datetime.now()
     html.getmargindata("https://data.eastmoney.com/rzrq/detail/all.html", now, enginstr)
+
