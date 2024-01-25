@@ -8,8 +8,6 @@ from src.html.stockutils import getStockSuffix
 import datetime
 import src.data_processor as data_processor
 
-
-
 # 第三方tushare获取股票数据
 def getStockData(stockNum):
     dd = ts.get_hist_data(stockNum)  # 爬取股票近三年的全部日k信息
@@ -26,7 +24,6 @@ def showStockData(stockNum, enginstr):
         print(f"{formatted} table is not exist")
     else:
         print(data)
-
 
 # pandas_datareader通过yahoo获取股票数据
 def getStockData_datareader(stockNum, now, enginstr, check, ma=5):
@@ -49,7 +46,6 @@ def getStockData_datareader(stockNum, now, enginstr, check, ma=5):
         quantifytest.startQuantifytest(stockNum, now, enginstr, ma)
 
     print(f"{name} customDatareader crawle completed")
-    return
     # 5日收盘价均价
     # mean_price_5 = stock['Close'].rolling(window=5).mean()
     # mean_price_10 = stock['Close'].rolling(window=10).mean()

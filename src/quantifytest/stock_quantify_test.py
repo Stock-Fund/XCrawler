@@ -4,12 +4,13 @@ from algorithm.stock import Stock
 from datetime import datetime, time
 import pandas as pd
 import asyncio
-
+import matplotlib.pyplot as plt
+import talib as ta
 
 check = False
 
 
-def getStockTimeData(date_part, time_part, name, enginstr, timename):
+def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
     # 某只股票所有的第三方数据
     stockCustomData = data_processor.GetAllDataFromTable(name, enginstr)
     # 某只股票分时数据
@@ -48,12 +49,13 @@ def getStockTimeData(date_part, time_part, name, enginstr, timename):
             stockTimeData[6],
             stockTimeData[7],
             Chipsconcentrations,
+            stockNum,
+            name,
         ]
         return stockData, datas
 
 
-# 股票各因素检测
-def startQuantifytest(stockNum, now, enginstr, ma=20):
+def get_stock(stockNum, now, enginstr, ma=20):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     date_part, time_part = formatted.split(" ")
     # base_time_part = "00:00:00"
@@ -64,18 +66,44 @@ def startQuantifytest(stockNum, now, enginstr, ma=20):
         html.getStocksTime(stockNum, now, enginstr)
         name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     timename = name + "分时"
-    result = getStockTimeData(date_part, time_part, name, enginstr, timename)
+    result = getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum)
     if result is None:
-        return
+        return None
     else:
         stockData, datas = result
         stock_instance = Stock(stockData, datas)
-        # 获取某个股票的检测结果
-        final = stock_instance.get_final_result(ma)
-        if final is True:
-            print(f"{name}检测结果为:{final},满足趋势向上放量反包")
-        # else:
-        #     print(f"{name}检测结果为:{final},未满足条件")
+        return stock_instance
+
+
+# 股票各因素检测
+def startQuantifytest(stockNum, now, enginstr, ma=20):
+    stock_instance = get_stock(stockNum, now, enginstr, ma)
+    if stock_instance is None:
+        return
+    # 获取某个股票的检测结果
+    final = stock_instance.get_final_result(ma)
+    if final is True:
+        name = stock_instance.get_Name()
+        print(f"{name}检测结果为:{final},满足趋势向上放量反包")
+    macd, macd_signal, macd_hist = stock_instance.get_MACD()
+    # 绘制MACD图像
+    plt.figure(figsize=(10, 6))
+    plt.plot(macd, label="MACD")
+    plt.plot(macd_signal, label="Signal Line")
+    plt.bar(range(len(macd_hist)), macd_hist, label="Histogram")
+
+    # 设置图表标题和标签
+    plt.title("MACD Indicator")
+    plt.xlabel("Period")
+    plt.ylabel("MACD")
+
+    # 添加图例
+    plt.legend()
+
+    # 展示图表
+    plt.show()
+    # else:
+    # print(f"{name}检测结果为:{final},未满足条件")
 
 
 # 检测全局5000支股票，提取满足要求股票
@@ -120,6 +148,8 @@ async def _check_total_stocks(
             datas[6],  # 量比
             datas[7],  # 分时均价
             1,  # 筹码集中度
+            stockNum,
+            name,
         ]
         stock_instance = Stock(stockData, _datas)
         day = 20
