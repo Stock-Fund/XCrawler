@@ -6,6 +6,7 @@ import pandas as pd
 import asyncio
 import matplotlib.pyplot as plt
 import talib as ta
+import numpy as np
 
 check = False
 
@@ -87,21 +88,59 @@ def startQuantifytest(stockNum, now, enginstr, ma=20):
         print(f"{name}检测结果为:{final},满足趋势向上放量反包")
     macd, macd_signal, macd_hist = stock_instance.get_MACD()
     # 绘制MACD图像
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(20, 6))
+    plt.subplot(2, 1, 1)  # 创建第一个子图
     plt.plot(macd, label="MACD")
-    plt.plot(macd_signal, label="Signal Line")
+    plt.plot(macd_signal, label="MACD Signal Line")
     plt.bar(range(len(macd_hist)), macd_hist, label="Histogram")
 
+    # 将NaN值替换为0
+    macd_hist = np.nan_to_num(macd_hist)
+
+    # 指定横轴刻度
+    plt.xticks(range(len(macd_hist)), [str(i + 1) for i in range(len(macd_hist))])
+
+    # 计算纵轴刻度位置和标签
+    max_hist = max(macd_hist)
+    min_hist = min(macd_hist)
+    hist_range = max_hist - min_hist
+    # 计算纵轴刻度位置
+    yticks = [min_hist, min_hist + hist_range / 2, max_hist]
+    # 计算纵轴刻度标签
+    ytick_labels = [
+        f"{min_hist:.2f}",
+        f"{(min_hist + hist_range/2):.2f}",
+        f"{max_hist:.2f}",
+    ]
+    # 指定纵轴刻度
+    plt.yticks(yticks, ytick_labels)
     # 设置图表标题和标签
     plt.title("MACD Indicator")
-    plt.xlabel("Period")
+    plt.xlabel("Day")
     plt.ylabel("MACD")
 
-    # 添加图例
-    plt.legend()
+    # # 添加图例
+    # plt.legend()
 
+    # # 展示图表
+    # plt.show()
+
+    # 绘制ma均线图
+    closeValues = stock_instance.get_Close_Values
+    ma5 = stock_instance.getMA(5)
+    plt.subplot(2, 1, 2)  # 创建第二个子图
+    plt.plot(closeValues, label="Close Prices")
+    plt.plot(ma5, label="MA5")
+    # 添加图例和标签
+    plt.legend()
+    plt.title("Moving Averages")
+    plt.xlabel("Period")
+    plt.ylabel("Price")
+
+    plt.tight_layout()  # 自动调整子图的布局
     # 展示图表
     plt.show()
+
     # else:
     # print(f"{name}检测结果为:{final},未满足条件")
 
