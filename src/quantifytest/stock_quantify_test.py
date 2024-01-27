@@ -14,6 +14,14 @@ check = False
 def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
     # 某只股票所有的第三方数据
     stockCustomData = data_processor.GetAllDataFromTable(name, enginstr)
+
+    stockCustomData["Date"] = pd.to_datetime(stockCustomData["Date"])
+    # 将"Date"列设置为索引
+    stockCustomData.set_index("Date", inplace=True)
+    day1 = stockCustomData.index[0]
+    day2 = stockCustomData.index[-1]
+    print(f"开始时间：{day1}")
+    print(f"结束时间：{day2}")
     # 某只股票分时数据
     stockTimeData = data_processor.GetDatasFromSql2(
         timename,
@@ -37,6 +45,8 @@ def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
                 "High": stockCustomData.loc[0:, "High"],
                 "Low": stockCustomData.loc[0:, "Low"],
                 "Volume": stockCustomData.loc[0:, "Volume"],
+                # 记录股票数据的时间范围
+                "Date": stockCustomData.loc[0, "Date"],
             }
         )
         Chipsconcentrations = 1  # 筹码集中度，算法未处理，暂时为1
@@ -118,12 +128,6 @@ def startQuantifytest(stockNum, now, enginstr, ma=20):
     plt.title("MACD Indicator")
     plt.xlabel("Day")
     plt.ylabel("MACD")
-
-    # # 添加图例
-    # plt.legend()
-
-    # # 展示图表
-    # plt.show()
 
     # 绘制ma均线图
     closeValues = stock_instance.get_Close_Values

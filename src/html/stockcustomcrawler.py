@@ -34,6 +34,8 @@ def getStockData_datareader(stockNum, now, enginstr, check, ma=5):
     stockData.to_csv("Assets/" + code + ".csv")
     stockData.to_excel("Assets/" + code + ".xlsx")
     stockData.to_json("Assets/" + code + ".json")
+    print(stockData.index[0])
+    print(stockData.index[-1])
     # 已mysql为例,如果已localhost为host,那port端口一般为3306
     # enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stockData"
     name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
