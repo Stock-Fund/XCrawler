@@ -14,14 +14,6 @@ check = False
 def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
     # 某只股票所有的第三方数据
     stockCustomData = data_processor.GetAllDataFromTable(name, enginstr)
-
-    stockCustomData["Date"] = pd.to_datetime(stockCustomData["Date"])
-    # 将"Date"列设置为索引
-    stockCustomData.set_index("Date", inplace=True)
-    day1 = stockCustomData.index[0]
-    day2 = stockCustomData.index[-1]
-    print(f"开始时间：{day1}")
-    print(f"结束时间：{day2}")
     # 某只股票分时数据
     stockTimeData = data_processor.GetDatasFromSql2(
         timename,
@@ -49,6 +41,15 @@ def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
                 "Date": stockCustomData.loc[0, "Date"],
             }
         )
+        
+        # stockCustomData["Date"] = pd.to_datetime(stockCustomData["Date"])
+        # # 将"Date"列设置为索引
+        # stockCustomData.set_index("Date", inplace=True)
+        # day1 = stockCustomData.index[0]
+        # day2 = stockCustomData.index[-1]
+        # print(f"开始时间：{day1}")
+        # print(f"结束时间：{day2}")
+        
         Chipsconcentrations = 1  # 筹码集中度，算法未处理，暂时为1
         saveTime = datetime.strptime(
             date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
@@ -94,7 +95,7 @@ def startQuantifytest(stockNum, now, enginstr, ma=20):
     # 获取某个股票的检测结果
     final = stock_instance.get_final_result(ma)
     if final is True:
-        name = stock_instance.get_Name()
+        name = stock_instance.get_Name
         print(f"{name}检测结果为:{final},满足趋势向上放量反包")
     macd, macd_signal, macd_hist = stock_instance.get_MACD()
     # 绘制MACD图像

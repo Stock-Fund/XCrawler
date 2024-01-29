@@ -24,8 +24,7 @@ stocks = [
     "603906",
     "002466",
     "601166",
-    "600438",
-    "526160"
+    "600438"
 ]
 done = threading.Event()
 
@@ -185,11 +184,11 @@ def filter():
     now = datetime.datetime.now()
     quantifytest.check_total_stocks(
         now,
-        "2023-12-28-allstock",
+        "2024-01-29-allstock",
         "代码",
-        "2015-01-01",
-        "2023-12-29",
-        "2023-12-29",
+        "2024-01-28",
+        "2024-01-29",
+        "2024-01-29",
         enginstr,
     )
 
