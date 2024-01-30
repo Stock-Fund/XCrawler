@@ -17,7 +17,8 @@ import pandas as pd
 # A股所有股票页面数据爬取
 url = "http://quote.eastmoney.com/center/gridlist.html#hs_a_board"
 
-
+delay_time = 30
+sleep_time = 8
 def xcrawlerStockData(soup):
     datas, headers = get_Data_FromSoup(soup)
     return datas, headers
@@ -65,7 +66,7 @@ def get_allstock_data(driver, enginstr):
                 continue
 
             # 增加延时，模拟人类操作间隔
-            time.sleep(8)  # 可根据实际情况调整延时时间
+            time.sleep(sleep_time)  # 可根据实际情况调整延时时间
             # 等待页面加载完成
             WebDriverWait(driver, 100).until(
                 EC.presence_of_element_located(
@@ -112,11 +113,12 @@ async def checkAllStock(table, value, start, end_single, end_total, enginestr):
             print(f"{stockNum} is not in sh,sz")
             continue
         code = stockNum + lastcode
-        await asyncio.sleep(30)  # 等待30秒，防止触发网站反爬机制
+        await asyncio.sleep(delay_time)  # 等待30秒，防止触发网站反爬机制
         # stockBaseData = await pdr.get_data_yahoo(code, start)
         stockBaseData = await asyncio.to_thread(
             pdr.get_data_yahoo, code, start, end_single
         )
+        print(stockBaseData)
         stockBaseData[value] = stockNum
         # 某一个股票的单位时间内的所有数据
         rowDatas = []

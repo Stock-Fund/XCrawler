@@ -10,6 +10,7 @@ import pymysql
 import src
 import talib
 import numpy as np
+from datetime import datetime
 
 
 def main():
@@ -56,11 +57,13 @@ class Window(QWidget):
     def button_showStockData(self, stockNum):
         src.showStockData(stockNum)
 
-    def button_check(self, stockNum):
+    def button_check(self):
         if len(self.inputText) == 0:
             src.check()
         else:
-            src.check([self.inputText], self.ma)
+            date_string = "2024-01-29"
+            date_object = datetime.strptime(date_string, "%Y-%m-%d")
+            src.check([self.inputText], self.ma, date_object)
 
     def button_filter(self):
         src.filter()
@@ -130,7 +133,7 @@ class Window(QWidget):
 
         checkBtn = QtWidgets.QPushButton("button", self)
         checkBtn.setText("股票条件检测")
-        checkBtn.clicked.connect(lambda: self.button_check(self.inputText))
+        checkBtn.clicked.connect(lambda: self.button_check())
         checkBtn.move(200, 100)
 
         filterBtn = QtWidgets.QPushButton("button", self)

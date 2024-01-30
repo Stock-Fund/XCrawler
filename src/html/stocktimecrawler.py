@@ -5,6 +5,9 @@ import src.data_processor as data_processor
 from src.html.stockutils import getStockTimeUrl
 import asyncio
 
+# 页面刷新延时
+delay_time = 10
+
 
 # 获取股票的常用指标数据
 def get_common_indicators(soup):
@@ -29,7 +32,7 @@ def get_common_indicators(soup):
 # 获取指定股票的分时数据
 def get_stock_data(stockNum, driver, url, now, enginstr):
     driver.get(url)
-    driver.implicitly_wait(2)
+    driver.implicitly_wait(delay_time)
     soup = BeautifulSoup(driver.page_source, "lxml")
     namediv = soup.select_one("div.quote_title_l")
     namespan = namediv.find("span", class_="quote_title_name quote_title_name_190")
@@ -103,11 +106,11 @@ async def checkAllTimeStock(stockNum):
     url = getStockTimeUrl(stockNum)
     datas = []
     driver.get(url)
-    driver.implicitly_wait(2)
+    driver.implicitly_wait(delay_time)
     soup = BeautifulSoup(driver.page_source, "lxml")
     namediv = soup.select_one("div.quote_title_l")
     namespan = namediv.find("span", class_="quote_title_name quote_title_name_190")
     name = namespan.get_text()
-    await asyncio.sleep(10)
+    await asyncio.sleep(delay_time)
     headers, datas = await asyncio.to_thread(get_common_indicators, soup)
     return headers, datas, name

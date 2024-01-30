@@ -8,6 +8,7 @@ from src.html.stockutils import getStockSuffix
 import datetime
 import src.data_processor as data_processor
 
+
 # 第三方tushare获取股票数据
 def getStockData(stockNum):
     dd = ts.get_hist_data(stockNum)  # 爬取股票近三年的全部日k信息
@@ -25,11 +26,16 @@ def showStockData(stockNum, enginstr):
     else:
         print(data)
 
+
 # pandas_datareader通过yahoo获取股票数据
-def getStockData_datareader(stockNum, now, enginstr, check, ma=5):
+def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     yf.pdr_override()
+    if start is not None:
+        formatted_date = start
+    else:
+        formatted_date = "2023-10-01"
     code = stockNum + getStockSuffix(stockNum)
-    stockData = pdr.get_data_yahoo(code, "2023-10-01")
+    stockData = pdr.get_data_yahoo(code, formatted_date)
     stockData = stockData.round(2)
     stockData.to_csv("Assets/" + code + ".csv")
     stockData.to_excel("Assets/" + code + ".xlsx")

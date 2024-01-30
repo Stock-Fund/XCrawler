@@ -75,6 +75,7 @@ def get_stock(stockNum, now, enginstr, ma=20):
         time_part = "15:00:00"
     name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     if name == "":
+        print(f"get_stock {stockNum}")
         html.getStocksTime(stockNum, now, enginstr)
         name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     timename = name + "分时"

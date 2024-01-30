@@ -10,7 +10,8 @@ import src.data_processor as data_processor
 # 融资融券交易数据爬取
 # https://data.eastmoney.com/rzrq/total.html 全局全量融资融券数据
 # https://data.eastmoney.com/rzrq/detail/all.html 个股融资融券数据
-
+delay_time= 30
+sleep_time = 8
 
 def xcrawlerMarginData(soup):
     div_element = soup.find("div", id="rzrq_detail_table")
@@ -55,7 +56,7 @@ def xcrawlerMarginData(soup):
 
 def get_margin_data(driver, url, now, enginstr):
     driver.get(url)
-    driver.implicitly_wait(30)
+    driver.implicitly_wait(delay_time)
     index = 1
     datas = []
     headers = []
@@ -73,9 +74,9 @@ def get_margin_data(driver, url, now, enginstr):
         _page_index = pagerbox.find_all("a")[0]["data-page"]
         if _page_index == cur_page_index and cur_page_index != totalIndex:
             print(f"{_page_index}延迟{cur_page_index}")
-            time.sleep(8)  # 可根据实际情况调整延时时间
+            time.sleep(sleep_time)  # 可根据实际情况调整延时时间
             # 等待页面加载完成
-            WebDriverWait(driver, 30).until(
+            WebDriverWait(driver, delay_time).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[@id='rzrq_detail_table']")
                 )
@@ -91,7 +92,7 @@ def get_margin_data(driver, url, now, enginstr):
                 print(f"第{index}页最后一页了")
                 break
             try:
-                next_page = WebDriverWait(driver, 30).until(
+                next_page = WebDriverWait(driver, delay_time).until(
                     EC.presence_of_element_located(
                         (
                             By.XPATH,
@@ -114,9 +115,9 @@ def get_margin_data(driver, url, now, enginstr):
                     continue
 
                 # 增加延时，模拟人类操作间隔
-                time.sleep(8)  # 可根据实际情况调整延时时间
+                time.sleep(sleep_time)  # 可根据实际情况调整延时时间
                 # 等待页面加载完成
-                WebDriverWait(driver, 30).until(
+                WebDriverWait(driver, delay_time).until(
                     EC.presence_of_element_located(
                         (By.XPATH, "//div[@id='rzrq_detail_table']")
                     )
@@ -145,7 +146,7 @@ def getmargindata(url, now, enginstr):
 def get_margin_total_data(driver, url, now, enginstr):
     formatted = now.strftime("%Y-%m-%d")
     driver.get(url)
-    driver.implicitly_wait(30)
+    driver.implicitly_wait(delay_time)
     soup = BeautifulSoup(driver.page_source, "lxml")
     div_element = soup.find("div", id="rzrq_history_table")
 

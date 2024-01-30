@@ -29,7 +29,7 @@ stocks = [
 done = threading.Event()
 
 
-def _runProcess(check, stocks, ma):
+def _runProcess(check, _stocks, ma, start):
     now = datetime.datetime.now()
     if check:
         # 收盘时间
@@ -41,7 +41,7 @@ def _runProcess(check, stocks, ma):
             now.time() < target_time3 and now.time() >= target_time1
         ):
             # 直接从数据库获取数据
-            for stock in stocks:
+            for stock in _stocks:
                 _p = Process(
                     target=quantifytest.startQuantifytest,
                     args=(stock, now, enginstr, ma),
@@ -52,7 +52,7 @@ def _runProcess(check, stocks, ma):
         else:
             # 开市时间做数据存储
             # 股票分时数据
-            for stock in stocks:
+            for stock in _stocks:
                 _p = Process(
                     target=html.getStocksTime,
                     args=(
@@ -66,10 +66,10 @@ def _runProcess(check, stocks, ma):
                 _p.join(30)
 
             # 股票收盘开盘量比等数据
-            for stock in stocks:
+            for stock in _stocks:
                 _p = Process(
                     target=html.getStockData_datareader,
-                    args=(stock, now, enginstr, check, ma),
+                    args=(stock, now, start, enginstr, check, ma),
                 )
                 _p.daemon = True
                 _p.start()
@@ -77,7 +77,7 @@ def _runProcess(check, stocks, ma):
     else:
         # 开市时间做数据存储
         # 股票分时数据
-        for stock in stocks:
+        for stock in _stocks:
             _p = Process(
                 target=html.getStocksTime,
                 args=(
@@ -91,10 +91,10 @@ def _runProcess(check, stocks, ma):
             _p.join(30)
 
         # 股票收盘开盘量比等数据
-        for stock in stocks:
+        for stock in _stocks:
             _p = Process(
                 target=html.getStockData_datareader,
-                args=(stock, now, enginstr, check, ma),
+                args=(stock, now, start, enginstr, check, ma),
             )
             _p.daemon = True
             _p.start()
@@ -114,16 +114,18 @@ def _runProcess(check, stocks, ma):
     done.set()
 
 
-def run_forever(polling, stocks, ma=5, check=False):
+def run_forever(polling, _stocks, ma=5, now=None, check=False):
     if polling:
-        schedule.every().day.at("15:00").do(lambda: _runProcess(check, stocks, ma))
+        schedule.every().day.at("15:00").do(
+            lambda: _runProcess(check, _stocks, ma, now)
+        )
         while not done.is_set():
             # localtime = src.timeutil.get_local_time()
             # 每天15:00遍历一次网页的数据
             schedule.run_pending()
             time.sleep(1)
     else:
-        _runProcess(check, stocks, ma)
+        _runProcess(check, _stocks, ma, now)
 
 
 def try_start():
@@ -162,7 +164,7 @@ def find(stockNum, ma=5):
 
     p1 = Process(
         target=html.getStockData_datareader,
-        args=(f"{stockNum}", now, enginstr, check, ma),
+        args=(f"{stockNum}", now, None, enginstr, check, ma),
     )
     p1.daemon = True
     p1.start()
@@ -173,10 +175,10 @@ def showStockData(stockNum):
     html.showStockData(stockNum, enginstr)
 
 
-def check(customstocks=None, ma=5):
+def check(customstocks=None, ma=5, now=None):
     if not customstocks:
         customstocks = stocks
-    run_forever(False, customstocks, ma, True)
+    run_forever(False, customstocks, ma, now, True)
 
 
 def filter():
