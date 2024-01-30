@@ -121,11 +121,8 @@ def SaveTosqlMinutes(datas, head, enginestr, timepart, table):
             row_idx = data_table["日期"] == id
             # 当前时间
             now = datetime.strptime(timepart, "%H:%M:%S").time()
-            print(f"now:{now}")
-            print(f"datetime:{datetime}")
             if "时间" in data_table.loc[row_idx]:
                 value = data_table.loc[row_idx]["时间"]
-                print(f"value:{value}")
                 # 对存在的索引值进行操作
                 # 数据库内存入的时间
                 data_time = datetime.strptime(value[datalen - 1], "%H:%M:%S").time()

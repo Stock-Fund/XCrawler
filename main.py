@@ -61,7 +61,7 @@ class Window(QWidget):
         if len(self.inputText) == 0:
             src.check()
         else:
-            date_string = "2023-12-30 15:00:00"
+            date_string = "2023-12-01 15:00:00"
             date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
             src.check([self.inputText], self.ma, date_object)
 
