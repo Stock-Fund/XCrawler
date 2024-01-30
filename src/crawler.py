@@ -24,7 +24,7 @@ stocks = [
     "603906",
     "002466",
     "601166",
-    "600438"
+    "600438",
 ]
 done = threading.Event()
 
@@ -44,7 +44,7 @@ def _runProcess(check, _stocks, ma, start):
             for stock in _stocks:
                 _p = Process(
                     target=quantifytest.startQuantifytest,
-                    args=(stock, now, enginstr, ma),
+                    args=(stock, now, start, enginstr, ma),
                 )
                 _p.daemon = True
                 _p.start()
@@ -114,7 +114,7 @@ def _runProcess(check, _stocks, ma, start):
     done.set()
 
 
-def run_forever(polling, _stocks, ma=5, now=None, check=False):
+def run_forever(polling, _stocks, ma=5, start=None, check=False):
     if polling:
         schedule.every().day.at("15:00").do(
             lambda: _runProcess(check, _stocks, ma, now)
@@ -125,7 +125,7 @@ def run_forever(polling, _stocks, ma=5, now=None, check=False):
             schedule.run_pending()
             time.sleep(1)
     else:
-        _runProcess(check, _stocks, ma, now)
+        _runProcess(check, _stocks, ma, start)
 
 
 def try_start():
@@ -175,10 +175,10 @@ def showStockData(stockNum):
     html.showStockData(stockNum, enginstr)
 
 
-def check(customstocks=None, ma=5, now=None):
+def check(customstocks=None, ma=5, start=None):
     if not customstocks:
         customstocks = stocks
-    run_forever(False, customstocks, ma, now, True)
+    run_forever(False, customstocks, ma, start, True)
 
 
 def filter():

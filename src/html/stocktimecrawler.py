@@ -85,7 +85,7 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
     print(f"{name} stockminutesdata crawle completed")
 
 
-# 循环爬取制定股票数据
+# 循环爬取制定股票分时数据
 def getStocksTime(stockNum, now, enginstr):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")

@@ -213,11 +213,16 @@ def customDataSavetosql(table, enginestr, datas):
 
 
 # 获取数据库某个table中所有数据
-def GetAllDataFromTable(table, enginestr):
+def GetAllDataFromTable(table, enginestr, start="", end=""):
     engine = create_engine(enginestr)
     df = checkTableExist(table, engine, enginestr)
     if df is not None:
-        query = f"SELECT * FROM {table}"
+        if start != "" and end != "":
+            query = f"SELECT * FROM {table}  WHERE Date BETWEEN '{start}' AND '{end}'"
+        elif start != "" and end == "":
+            query = f"SELECT * FROM {table}  WHERE Date >= '{start}'"
+        else:
+            query = f"SELECT * FROM {table}"
         data = pd.read_sql(query, engine)
         engine.dispose()
         return data

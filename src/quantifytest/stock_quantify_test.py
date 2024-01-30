@@ -11,9 +11,11 @@ import numpy as np
 check = False
 
 
-def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
+def getStockTimeData(
+    date_part, time_part, start, end, name, enginstr, timename, stockNum
+):
     # 某只股票所有的第三方数据
-    stockCustomData = data_processor.GetAllDataFromTable(name, enginstr)
+    stockCustomData = data_processor.GetAllDataFromTable(name, enginstr, start, end)
     # 某只股票分时数据
     stockTimeData = data_processor.GetDatasFromSql2(
         timename,
@@ -41,7 +43,7 @@ def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
                 "Date": stockCustomData.loc[0, "Date"],
             }
         )
-        
+
         # stockCustomData["Date"] = pd.to_datetime(stockCustomData["Date"])
         # # 将"Date"列设置为索引
         # stockCustomData.set_index("Date", inplace=True)
@@ -49,7 +51,7 @@ def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
         # day2 = stockCustomData.index[-1]
         # print(f"开始时间：{day1}")
         # print(f"结束时间：{day2}")
-        
+
         Chipsconcentrations = 1  # 筹码集中度，算法未处理，暂时为1
         saveTime = datetime.strptime(
             date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
@@ -67,8 +69,9 @@ def getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum):
         return stockData, datas
 
 
-def get_stock(stockNum, now, enginstr, ma=20):
+def get_stock(stockNum, now, start, enginstr, ma=20):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    formatted_start = start
     date_part, time_part = formatted.split(" ")
     # base_time_part = "00:00:00"
     if now.time() >= time(15, 0, 0):
@@ -79,7 +82,9 @@ def get_stock(stockNum, now, enginstr, ma=20):
         html.getStocksTime(stockNum, now, enginstr)
         name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     timename = name + "分时"
-    result = getStockTimeData(date_part, time_part, name, enginstr, timename, stockNum)
+    result = getStockTimeData(
+        date_part, time_part, start, "", name, enginstr, timename, stockNum
+    )
     if result is None:
         return None
     else:
@@ -89,15 +94,17 @@ def get_stock(stockNum, now, enginstr, ma=20):
 
 
 # 股票各因素检测
-def startQuantifytest(stockNum, now, enginstr, ma=20):
-    stock_instance = get_stock(stockNum, now, enginstr, ma)
+def startQuantifytest(stockNum, now, start, enginstr, ma=20):
+    stock_instance = get_stock(stockNum, now, start, enginstr, ma)
     if stock_instance is None:
         return
     # 获取某个股票的检测结果
     final = stock_instance.get_final_result(ma)
+    name = stock_instance.get_Name
     if final is True:
-        name = stock_instance.get_Name
         print(f"{name}检测结果为:{final},满足趋势向上放量反包")
+    else:
+        print(f"{name}检测结果为:{final},观望为主")
     macd, macd_signal, macd_hist = stock_instance.get_MACD()
     # 绘制MACD图像
     plt.figure(figsize=(20, 6))
@@ -108,6 +115,7 @@ def startQuantifytest(stockNum, now, enginstr, ma=20):
 
     # 将NaN值替换为0
     macd_hist = np.nan_to_num(macd_hist)
+    print(macd_hist)
 
     # 指定横轴刻度
     plt.xticks(range(len(macd_hist)), [str(i + 1) for i in range(len(macd_hist))])
