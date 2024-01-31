@@ -154,6 +154,7 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     plt.tight_layout()  # 自动调整子图的布局
     # 展示图表
     plt.show()
+    # todo 周，月，年macd图 及 红柱区域
 
     # else:
     # print(f"{name}检测结果为:{final},未满足条件")
