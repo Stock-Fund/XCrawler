@@ -106,16 +106,30 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     else:
         print(f"{name}检测结果为:{final},观望为主")
     macd, macd_signal, macd_hist = stock_instance.get_MACD()
+
+    ma5 = stock_instance.getMA(5)
+    ma10 = stock_instance.getMA(10)
+    ma20 = stock_instance.getMA(20)
+    ma30 = stock_instance.getMA(30)
+    ma40 = stock_instance.getMA(40)
+    ma60 = stock_instance.getMA(60)
+    weekly_close = ma5
+    monthly_close = ma30
+    weekly_macd, weekly_signal, weekly_hist = ta.MACD(
+        weekly_close, fastperiod=5, slowperiod=10, signalperiod=9
+    )
+    monthly_macd, monthly_signal, mouthly_hist = ta.MACD(
+        monthly_close, fastperiod=20, slowperiod=30, signalperiod=9
+    )
     # 绘制MACD图像
     plt.figure(figsize=(20, 6))
     plt.subplot(4, 1, 1)  # 创建第一个子图
-    plt.plot(macd, label="MACD")
-    plt.plot(macd_signal, label="MACD Signal Line")
-    plt.bar(range(len(macd_hist)), macd_hist, label="Histogram")
+    plt.plot(macd, label="Daily MACD")
+    plt.plot(macd_signal, label="MACD Daily Signal Line")
+    plt.bar(range(len(macd_hist)), macd_hist, label="Daily Histogram")
 
     # 将NaN值替换为0
     macd_hist = np.nan_to_num(macd_hist)
-    print(macd_hist)
 
     # 指定横轴刻度
     plt.xticks(range(len(macd_hist)), [str(i + 1) for i in range(len(macd_hist))])
@@ -151,35 +165,20 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     plt.xlabel("Period")
     plt.ylabel("Price")
 
-    # todo 周，月，年macd图 及 红柱区域
-    ma5 = stock_instance.getMA(5)
-    ma10 = stock_instance.getMA(10)
-    ma20 = stock_instance.getMA(20)
-    ma30 = stock_instance.getMA(30)
-    ma40 = stock_instance.getMA(40)
-    ma60 = stock_instance.getMA(60)
-    weekly_macd = np.nan_to_num(ma5) - np.nan_to_num(ma10)
-    monthly_macd = np.nan_to_num(ma20) - np.nan_to_num(ma30)
-    # annual_macd = np.nan_to_num(ma40) - np.nan_to_num(ma60)
-    # 时间长度相同,周期MACD的9期EMA线
-    weekly_signal = ta.EMA(weekly_macd, timeperiod=9)
-    monthly_signal = ta.EMA(monthly_macd, timeperiod=9)
-    # annual_signal = ta.EMA(annual_macd, timeperiod=9)
-
     weekly_signal = np.nan_to_num(weekly_signal)
     monthly_signal = np.nan_to_num(monthly_signal)
     # annual_signal = np.nan_to_num(annual_signal)
-    print(f"{weekly_macd},{weekly_signal}")
-    print(f"{monthly_signal},{monthly_signal}")
     plt.subplot(4, 1, 3)
     plt.plot(weekly_macd, label="Weekly MACD")
     plt.plot(weekly_signal, label="Weekly Signal")
+    plt.bar(range(len(weekly_hist)), weekly_hist, label="Week Histogram")
     plt.title("Weekly MACD")
     plt.legend()
 
     plt.subplot(4, 1, 4)
     plt.plot(monthly_macd, label="Monthly MACD")
     plt.plot(monthly_signal, label="Monthly Signal")
+    plt.bar(range(len(mouthly_hist)), mouthly_hist, label="Mouth Histogram")
     plt.title("Monthly MACD")
     plt.legend()
 
