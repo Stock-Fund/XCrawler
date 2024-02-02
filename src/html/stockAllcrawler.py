@@ -118,6 +118,9 @@ async def checkAllStock(table, value, start, end_single, end_total, enginestr):
         stockBaseData = await asyncio.to_thread(
             pdr.get_data_yahoo, code, start, end_single
         )
+        # Calculate daily returns
+        daily_returns = stockBaseData.pct_change().dropna()
+        print(f"{daily_returns}")
         # print(stockBaseData)
         stockBaseData[value] = stockNum
         # 某一个股票的单位时间内的所有数据
