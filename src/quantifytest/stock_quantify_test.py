@@ -128,7 +128,7 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     )
     # 绘制MACD图像
     plt.figure(figsize=(20, 6))
-    plt.subplot(5, 1, 1)  # 创建第一个子图
+    plt.subplot(4, 1, 1)  # 创建第一个子图
     plt.plot(macd, label="Daily MACD")
     plt.plot(macd_signal, label="MACD Daily Signal Line")
     plt.bar(range(len(macd_hist)), macd_hist, label="Daily Histogram")
@@ -161,7 +161,7 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     # 绘制ma均线图
     closeValues = stock_instance.get_Close_Values
     ma5 = stock_instance.getMA(5)
-    plt.subplot(5, 1, 2)  # 创建第二个子图
+    plt.subplot(4, 1, 2)  # 创建第二个子图
     plt.plot(closeValues, label="Close Prices")
     plt.plot(ma5, label="MA5")
     # 添加图例和标签
@@ -173,21 +173,21 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     weekly_signal = np.nan_to_num(weekly_signal)
     monthly_signal = np.nan_to_num(monthly_signal)
     # annual_signal = np.nan_to_num(annual_signal)
-    plt.subplot(5, 1, 3)
+    plt.subplot(4, 1, 3)
     plt.plot(weekly_macd, label="Weekly MACD")
     plt.plot(weekly_signal, label="Weekly Signal")
     plt.bar(range(len(weekly_hist)), weekly_hist, label="Week Histogram")
     plt.title("Weekly MACD")
     plt.legend()
 
-    plt.subplot(5, 1, 4)
+    plt.subplot(4, 1, 4)
     plt.plot(monthly_macd, label="Monthly MACD")
     plt.plot(monthly_signal, label="Monthly Signal")
     plt.bar(range(len(mouthly_hist)), mouthly_hist, label="Mouth Histogram")
     plt.title("Monthly MACD")
     plt.legend()
 
-    plt.subplot(5, 1, 5)
+    plt.figure(figsize=(10, 6))
     plt.plot(simulated_prices.T, alpha=0.1)
     plt.title("Monte Carlo Simulation for {}".format(stockNum))
     plt.xlabel("Days")
