@@ -118,6 +118,8 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     ma30 = stock_instance.getMA(30)
     ma40 = stock_instance.getMA(40)
     ma60 = stock_instance.getMA(60)
+
+    df = stock_instance.calculate_kdj()
     weekly_close = ma5
     monthly_close = ma30
     weekly_macd, weekly_signal, weekly_hist = ta.MACD(
@@ -192,7 +194,18 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     plt.title("Monte Carlo Simulation for {}".format(stockNum))
     plt.xlabel("Days")
     plt.ylabel("Price")
-    plt.show()
+
+    # 绘制KDJ图表
+    plt.figure(figsize=(10, 6))
+    plt.plot(df.index, df["k"], label="K")
+    plt.plot(df.index, df["d"], label="D")
+    plt.plot(df.index, df["j"], label="J")
+    plt.legend()
+    plt.xlabel("Date")
+    plt.ylabel("Value")
+    plt.title("KDJ Indicator")
+    plt.xticks(rotation=45)
+    plt.grid(True)
 
     plt.tight_layout()  # 自动调整子图的布局
     # 展示图表
