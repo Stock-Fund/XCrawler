@@ -1,5 +1,6 @@
 
 # XCrawler
+<a href="http://dev.mysql.com/"><img src="https://img.shields.io/badge/Database-MySQL-red.svg?style=flat"></a>
 
 A股爬虫项目
 - 环境安装:
