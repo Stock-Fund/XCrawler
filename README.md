@@ -1,5 +1,7 @@
 
 # XCrawler
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/Code-python-blue"></a>
+<a href="https://pypi.org/project/PyQt6/"><img src="https://img.shields.io/badge/UI-PyQt6-green"></a>
 <a href="http://dev.mysql.com/"><img src="https://img.shields.io/badge/Database-MySQL-red.svg?style=flat"></a>
 
 A股爬虫项目
