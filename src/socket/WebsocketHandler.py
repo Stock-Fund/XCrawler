@@ -1,4 +1,5 @@
 import websocket
+import google.protobuf
 async def receive_notification():
     async with websocket.connect("ws://localhost:8000") as websocket:
         # 接收字节流
