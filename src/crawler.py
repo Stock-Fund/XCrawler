@@ -6,7 +6,7 @@ import schedule
 import threading
 import datetime
 
-enginstr = "mysql+pymysql://root:Akeboshi123~@localhost:3306/stock"
+enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
 stocks = [
     "000938",
     "002466",
