@@ -55,7 +55,10 @@ def SaveTosql(datas, head, enginestr, table):
     num_rows = len(datas)
 
     # time table
-    time_table = pd.read_sql_table("time", enginestr)
+    try:
+        time_table = pd.read_sql_table("time", enginestr)
+    except:
+        time_table = pd.DataFrame(columns=["id", "value"])
     if (time_table["id"] == formatted).any():
         time_table.loc[time_table["id"] == formatted, "value"] = timestamp
         # 将更新后的DataFrame写回MySQL数据库表
