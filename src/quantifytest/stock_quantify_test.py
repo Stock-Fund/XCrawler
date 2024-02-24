@@ -267,6 +267,9 @@ async def _check_total_stocks(
         stock_instance = Stock(stockData, _datas)
         day = 20
         final = stock_instance.get_final_result(day)
+        short = stock_instance.get_short_result()
+        if short is True:
+            print(f"{name}检测结果为:{short},短期情绪高涨")
         if final is True:
             # 加入乖离率来判断该股票是否存在超卖/超买情况，并以此作标准来判断是否可以关注
             print(f"{name}检测结果为:{final},满足趋势向上放量反包")
