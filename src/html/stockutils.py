@@ -18,10 +18,13 @@ def stockcheck(stockNum):
         return StockType.SZ_B
     elif stockNum.startswith("300"):
         return StockType.CHUANGYEBAN
+    elif stockNum.startswith("301"):
+        return StockType.CHUANGYEBAN
     elif stockNum.startswith("60"):
         return StockType.SH_A
     elif stockNum.startswith("900"):
         return StockType.SH_B
+
     else:
         return StockType.UNKNOWN
 
@@ -38,7 +41,11 @@ def getStockSuffix(stockNum):
     stockType = stockcheck(stockNum)
     if stockType == StockType.SH_A or stockType == StockType.SH_B:
         return ".ss"
-    elif stockType == StockType.SZ_A or stockType == StockType.SZ_B:
+    elif (
+        stockType == StockType.SZ_A
+        or stockType == StockType.SZ_B
+        or stockType == StockType.CHUANGYEBAN
+    ):
         return ".sz"
     else:
-        return ''
+        return ""

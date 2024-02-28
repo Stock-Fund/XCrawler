@@ -37,6 +37,8 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     code = stockNum + getStockSuffix(stockNum)
     stockData = pdr.get_data_yahoo(code, formatted_date)
     stockData = stockData.round(2)
+    week = stockData.index.week
+    print(f'{week}')
     stockData.to_csv("Assets/" + code + ".csv")
     stockData.to_excel("Assets/" + code + ".xlsx")
     stockData.to_json("Assets/" + code + ".json")
