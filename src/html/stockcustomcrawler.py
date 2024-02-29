@@ -37,11 +37,11 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     code = stockNum + getStockSuffix(stockNum)
     stockData = pdr.get_data_yahoo(code, formatted_date)
     stockData = stockData.round(2)
-    week = stockData.index.week
-    print(f'{week}')
     stockData.to_csv("Assets/" + code + ".csv")
     stockData.to_excel("Assets/" + code + ".xlsx")
     stockData.to_json("Assets/" + code + ".json")
+
+    stockData.plot(y="Close")
     # 开始时间
     # print(stockData.index[0])
     # 结束时间
@@ -51,7 +51,9 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
     if name == "":
         html.getStocksTime(stockNum, now, enginstr)
-        name = data_processor.GetDataFromSql("代码库", "代码", "名称", stockNum, enginstr)
+        name = data_processor.GetDataFromSql(
+            "代码库", "代码", "名称", stockNum, enginstr
+        )
     data_processor.customDataSavetosql(name, enginstr, stockData)
 
     if check:

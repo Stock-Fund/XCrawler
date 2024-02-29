@@ -33,7 +33,11 @@ def getStockTimeUrl(stockNum):
     stockType = stockcheck(stockNum)
     if stockType == StockType.SH_A or stockType == StockType.SH_B:
         return f"http://quote.eastmoney.com/sh{stockNum}.html"
-    elif stockType == StockType.SZ_A or stockType == StockType.SZ_B:
+    elif (
+        stockType == StockType.SZ_A
+        or stockType == StockType.SZ_B
+        or stockType == StockType.CHUANGYEBAN
+    ):
         return f"http://quote.eastmoney.com/sz{stockNum}.html"
 
 
