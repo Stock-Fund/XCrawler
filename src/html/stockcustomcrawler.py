@@ -1,5 +1,6 @@
 import tushare as ts
 from pandas_datareader import data as pdr
+import pandas as pd
 import yfinance as yf
 import src.data_processor as data_processor
 import src.html as html
@@ -41,7 +42,13 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     stockData.to_excel("Assets/" + code + ".xlsx")
     stockData.to_json("Assets/" + code + ".json")
 
-    stockData.plot(y="Close")
+    # stockData.index = pd.to_datetime(stockData.index)
+    # # 周级别数据
+    # weekdata = stockData.resample("W").last()
+
+    # # 月级别数据
+    # mouthdata = stockData.resample("M").last()
+
     # 开始时间
     # print(stockData.index[0])
     # 结束时间
@@ -54,12 +61,17 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
         name = data_processor.GetDataFromSql(
             "代码库", "代码", "名称", stockNum, enginstr
         )
-    data_processor.customDataSavetosql(name, enginstr, stockData)
+        if name == "":
+            print(f"{stockNum} table is not exist")
+            return
+    else:
+        data_processor.customDataSavetosql(name, enginstr, stockData)
 
-    if check:
-        quantifytest.startQuantifytest(stockNum, now, start, enginstr, ma)
+        if check:
+            quantifytest.startQuantifytest(stockNum, now, start, enginstr, ma)
 
-    print(f"{name} customDatareader crawle completed")
+        print(f"{name} customDatareader crawle completed")
+
     # 5日收盘价均价
     # mean_price_5 = stock['Close'].rolling(window=5).mean()
     # mean_price_10 = stock['Close'].rolling(window=10).mean()

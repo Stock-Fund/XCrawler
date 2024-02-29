@@ -146,7 +146,7 @@ def SaveTosqlMinutes(datas, head, enginestr, timepart, table):
             # 插入表格数据 更新
             data_table.to_sql(name=table, con=engine, if_exists="append", index=False)
     else:
-        print("create new table"+f'{head}')
+        print("create new table" + f"{head}")
         # 当存在一张空白的表格时，需要用replace，而不是append，否则找不到对应的列
         data_rows = [
             datas[i : i + num_columns] for i in range(0, num_rows, num_columns)
@@ -209,7 +209,13 @@ def ClearsqlTable(enginestr, table):
 # 第三方库数据存储
 def customDataSavetosql(table, enginestr, datas):
     engine = create_engine(enginestr)
-    datas.to_sql(name=table, con=engine, if_exists="replace")
+    df = checkTableExist(table, engine, enginestr)
+    if df is not None:
+        print(table, "存在")
+        datas.to_sql(name=table, con=engine, if_exists="replace")
+    else:
+        print(table, "不存在")
+        datas.to_sql(name=table, con=engine, if_exists="append")
     engine.dispose()
 
 
@@ -269,7 +275,7 @@ def GetDatasFromSql2(table, obj1, obj2, enginestr):
     df = checkTableExist(table, engine, enginestr)
     if df is not None:
         datas = ""
-        data = ""
+        data = None
         try:
             datas = df.loc[df[obj1["id"]] == obj1["value"]].values
             # 默认返回最新数据，即最后一位数据
