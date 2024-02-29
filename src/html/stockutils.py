@@ -53,3 +53,10 @@ def getStockSuffix(stockNum):
         return ".sz"
     else:
         return ""
+
+
+def checkGem(stockNum):
+    if stockcheck(stockNum) == StockType.CHUANGYEBAN:
+        return True
+    else:
+        return False

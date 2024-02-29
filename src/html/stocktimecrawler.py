@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from datetime import time
 import src.data_processor as data_processor
-from src.html.stockutils import getStockTimeUrl
+from src.html.stockutils import getStockTimeUrl, checkGem
 import asyncio
 
 # 页面刷新延时
@@ -45,9 +45,8 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
     # 买1-买5，卖1-卖5数据
     class_mm = soup.select_one("div.mm")
     table = class_mm.find("table")
-
     headers, datas = get_common_indicators(soup)
-
+    isGem = checkGem(stockNum)
     index = 0
     # 格式化为字符串
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -62,9 +61,13 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
             value = ""
             for td in tr.select("td"):
                 data = td.get_text()
-                if index == 0 and titleIndex != 5:
-                    titleStr = data
-                    headers.append(titleStr)
+                if index == 0:
+                    if isGem and (titleIndex != 0 and titleIndex != 11):
+                        titleStr = data
+                        headers.append(titleStr)
+                    elif not isGem and (titleIndex != 5):
+                        titleStr = data
+                        headers.append(titleStr)
                 if index == 1:
                     value = data
                 elif index == 2:
