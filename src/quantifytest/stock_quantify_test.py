@@ -121,8 +121,8 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
 
     df = stock_instance.calculate_kdj()
     
-    weekValue = stock_instance.get_weekValue()
-    mouthValue = stock_instance.get_mouthValue()
+    weekValue = stock_instance.get_weekValue
+    mouthValue = stock_instance.get_mouthValue
     print(weekValue, mouthValue)
     weekly_close = ma5
     monthly_close = ma30
