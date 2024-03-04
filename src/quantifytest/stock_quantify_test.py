@@ -33,17 +33,20 @@ def getStockTimeData(
         return None
     else:
         # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
-        stockData = pd.DataFrame(
-            {
-                "Close": stockCustomData.loc[0:, "Close"],
-                "Open": stockCustomData.loc[0:, "Open"],
-                "High": stockCustomData.loc[0:, "High"],
-                "Low": stockCustomData.loc[0:, "Low"],
-                "Volume": stockCustomData.loc[0:, "Volume"],
-                # 记录股票数据的时间范围
-                "Date": stockCustomData.loc[0, "Date"],
-            }
-        )
+        stockData = stockCustomData
+        # pd.DataFrame(
+        #     {
+        #         "Close": stockCustomData.loc[0:, "Close"],
+        #         "Open": stockCustomData.loc[0:, "Open"],
+        #         "High": stockCustomData.loc[0:, "High"],
+        #         "Low": stockCustomData.loc[0:, "Low"],
+        #         "Volume": stockCustomData.loc[0:, "Volume"],
+        #         # 记录股票数据的时间范围
+        #         "Date": stockCustomData.loc[0, "Date"],
+        #         "Week": stockCustomData.resample("W").last(),
+        #         "Mouth": stockCustomData.resample("M").last(),
+        #     }
+        # )
 
         # stockCustomData["Date"] = pd.to_datetime(stockCustomData["Date"])
         # # 将"Date"列设置为索引
@@ -120,10 +123,15 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     ma60 = stock_instance.getMA(60)
 
     df = stock_instance.calculate_kdj()
-    
-    weekValue = stock_instance.get_weekValue
-    mouthValue = stock_instance.get_mouthValue
-    print(weekValue, mouthValue)
+
+    weekClose = stock_instance.get_weekClose
+    mouthClose = stock_instance.get_mouthClose
+    print(f"{weekClose},{mouthClose}")
+    buy = stock_instance.StockBuy()
+    if buy is False:
+        print("非买入区间")
+    else:
+        print("可买入区间")
     weekly_close = ma5
     monthly_close = ma30
     weekly_macd, weekly_signal, weekly_hist = ta.MACD(
