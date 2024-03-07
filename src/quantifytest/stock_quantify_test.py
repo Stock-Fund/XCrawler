@@ -128,6 +128,16 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     mouthClose = stock_instance.get_mouthClose
     print(f"{weekClose},{mouthClose}")
     buy = stock_instance.StockBuy()
+    buy_short = stock_instance.StockBuy_short()
+    sell_short = stock_instance.StockSell_short()
+    if buy_short is False:
+        print("非短期买入区间")
+    else:
+        print("短期可买入区间")
+    if sell_short is False:
+        print("非短期卖出区间")
+    else:
+        print("短期可卖出区间")
     if buy is False:
         print("非买入区间")
     else:
