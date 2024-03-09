@@ -94,6 +94,11 @@ def SaveTosql(datas, head, enginestr, table):
     engine.dispose()
 
 
+# 存储股票资金流入流出情况
+def SaveTosqlInflowOutflow(datas, head, enginestr, timepart, table):
+    SaveTosqlMinutes(datas, head, enginestr, timepart, table)
+
+
 # 分时数据存储
 def SaveTosqlMinutes(datas, head, enginestr, timepart, table):
     # timestamp = datetime.fromtimestamp(time.time())
@@ -152,7 +157,7 @@ def SaveTosqlMinutes(datas, head, enginestr, timepart, table):
         ]
         data_table = pd.DataFrame(data_rows, columns=head)
         # 插入表格数据 更新
-        data_table.to_sql(name=table, con=engine, if_exists="replace", index=False)
+        data_table.to_sql(name=table, con=engine, if_exists="append", index=False)
     #    print("create mysql data complete")
     engine.dispose()
 

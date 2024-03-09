@@ -2,8 +2,9 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from datetime import time
 import src.data_processor as data_processor
-from src.html.stockutils import getStockTimeUrl, checkGem
+from src.html.stockutils import getStockTimeUrl, checkGem, get_StockInflow_Outflow
 import asyncio
+import re
 
 # 页面刷新延时
 delay_time = 10
@@ -88,6 +89,51 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
     print(f"{name} stockminutesdata crawle completed")
 
 
+def getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
+    driver.get(url)
+    driver.implicitly_wait(delay_time)
+    # 格式化为字符串
+    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    date_part, time_part = formatted.split(" ")
+    if now.time() >= time(15, 0, 0):
+        time_part = "15:00:00"
+    soup = BeautifulSoup(driver.page_source, "lxml")
+    namediv = soup.find("div", class_="title", id="titlename")
+    name = namediv.text
+    match = re.match(r"^(.*?)\((.*?)\)$", name)
+    name = match.group(1)
+    code = match.group(2)
+    table = soup.find("table", class_="table1")
+    headers = ["代码", "名字"]
+    datas = [code, name]
+    for body in table.select("tbody"):
+        titleIndex = 0
+        for tr in body.select("tr"):
+            index = 0
+            for td in tr.select("td"):
+                data = td.get_text()
+                if data == "" or data == "\n\n":
+                    index += 1
+                    continue
+                if index == 1 or index == 3:
+                    headers.append(data)
+                else:
+                    datas.append(data)
+                index += 1
+            titleIndex += 1
+    headers.append("日期")
+    headers.append("时间")
+    datas.append(date_part)
+    datas.append(time_part)
+    datas = list(map(str, datas))
+    headers = list(map(str, headers))
+    tableName = name + "资金流入流出情况"
+    data_processor.SaveTosqlInflowOutflow(
+        datas, headers, enginstr, time_part, tableName
+    )
+    print(f'{name} 资金情况获取完成')
+
+
 # 循环爬取制定股票分时数据
 def getStocksTime(stockNum, now, enginstr):
     options = webdriver.ChromeOptions()
@@ -99,6 +145,16 @@ def getStocksTime(stockNum, now, enginstr):
     # while True:
     get_stock_data(stockNum, driver, url, now, enginstr)
     #  time.sleep(10)
+
+
+# 循环爬去指定股票的大单净量流入流出
+def getStockInflowOutflow(stockNum, now, enginstr):
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    # options.add_argument('--disable-tabs')
+    driver = webdriver.Chrome(options=options)
+    url = get_StockInflow_Outflow(stockNum)
+    getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
 
 
 async def checkAllTimeStock(stockNum):

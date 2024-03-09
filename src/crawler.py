@@ -21,8 +21,7 @@ stocks = [
     "002673",
     "601611",
     "600745",
-    "000777"
-    
+    "000777",
 ]
 done = threading.Event()
 
@@ -63,7 +62,17 @@ def _runProcess(check, _stocks, ma, start):
                 _p.start()
                 _p.join(30)
 
-            # 股票收盘开盘量比等数据
+            # 获取股票的资金流入流出数据
+            for stock in _stocks:
+                _p = Process(
+                    target=html.getStockInflowOutflow,
+                    args=(stock, now, enginstr),
+                )
+                _p.daemon = True
+                _p.start()
+                _p.join(30)
+
+            # 获取股票第三方数据
             for stock in _stocks:
                 _p = Process(
                     target=html.getStockData_datareader,
@@ -88,7 +97,17 @@ def _runProcess(check, _stocks, ma, start):
             _p.start()
             _p.join(30)
 
-        # 股票收盘开盘量比等数据
+        # 获取股票的资金流入流出数据
+        for stock in _stocks:
+            _p = Process(
+                target=html.getStockInflowOutflow,
+                args=(stock, now, enginstr),
+            )
+            _p.daemon = True
+            _p.start()
+            _p.join(30)
+
+        # 获取股票第三方数据
         for stock in _stocks:
             _p = Process(
                 target=html.getStockData_datareader,
@@ -161,11 +180,19 @@ def find(stockNum, ma=5):
     p.start()
 
     p1 = Process(
-        target=html.getStockData_datareader,
-        args=(f"{stockNum}", now, None, enginstr, check, ma),
+        target=html.getStockInflowOutflow,
+        args=(f"{stockNum}", now, enginstr),
     )
     p1.daemon = True
     p1.start()
+    
+    p2 = Process(
+        target=html.getStockData_datareader,
+        args=(f"{stockNum}", now, None, enginstr, check, ma),
+    )
+    p2.daemon = True
+    p2.start()
+    
     print(f"查找对应代码{stockNum}股票")
 
 

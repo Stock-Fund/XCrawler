@@ -41,6 +41,10 @@ def getStockTimeUrl(stockNum):
         return f"http://quote.eastmoney.com/sz{stockNum}.html"
 
 
+def get_StockInflow_Outflow(stockNum):
+    return f"http://data.eastmoney.com/zjlx/{stockNum}.html"
+
+
 def getStockSuffix(stockNum):
     stockType = stockcheck(stockNum)
     if stockType == StockType.SH_A or stockType == StockType.SH_B:
