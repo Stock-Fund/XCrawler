@@ -89,6 +89,28 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
     print(f"{name} stockminutesdata crawle completed")
 
 
+def getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
+    driver.get(url)
+    driver.implicitly_wait(delay_time)
+    # 格式化为字符串
+    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    date_part, time_part = formatted.split(" ")
+    if now.time() >= time(15, 0, 0):
+        time_part = "15:00:00"
+    soup = BeautifulSoup(driver.page_source, "lxml")
+    namediv = soup.find("div", class_="title", id="titlename")
+    name = namediv.text
+    match = re.match(r"^(.*?)\((.*?)\)$", name)
+    name = match.group(1)
+    code = match.group(2)
+    div_element = soup.find("div", id="table_ls", class_="dataviews")
+    table_element = div_element.find("table")
+    # 数据标题
+    thead_element = table_element.find("thead")
+    # 数据
+    tbody_element = table_element.find("tbody")
+    # todo 爬取历史数据
+
 def getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     driver.get(url)
     driver.implicitly_wait(delay_time)
@@ -131,7 +153,7 @@ def getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     data_processor.SaveTosqlInflowOutflow(
         datas, headers, enginstr, time_part, tableName
     )
-    print(f'{name} 资金情况获取完成')
+    print(f"{name} 当日资金情况获取完成")
 
 
 # 循环爬取制定股票分时数据
@@ -147,7 +169,7 @@ def getStocksTime(stockNum, now, enginstr):
     #  time.sleep(10)
 
 
-# 循环爬去指定股票的大单净量流入流出
+# 爬取指定股票当日资金流入流出
 def getStockInflowOutflow(stockNum, now, enginstr):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
@@ -155,6 +177,16 @@ def getStockInflowOutflow(stockNum, now, enginstr):
     driver = webdriver.Chrome(options=options)
     url = get_StockInflow_Outflow(stockNum)
     getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
+
+
+# 爬取知道股票时间范围内的资金流入流出情况
+def getAllStockInflowOutflow(stockNum, now, enginstr):
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    # options.add_argument('--disable-tabs')
+    driver = webdriver.Chrome(options=options)
+    url = get_StockInflow_Outflow(stockNum)
+    getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
 
 
 async def checkAllTimeStock(stockNum):
