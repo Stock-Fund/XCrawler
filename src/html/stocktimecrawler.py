@@ -109,25 +109,49 @@ def getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     thead_element = table_element.find("thead")
     # 数据
     tbody_element = table_element.find("tbody")
-    total_list = []
-    for head in thead_element:
-        data = head.get_text()
-        if data == "\n":
-            continue
-        words = data.split('\n')
-        # 去除空字符串和空格
-        words = [word.strip() for word in words if word.strip() != '']
-        for word in words:
-            total_list.append(word)
-
-    total_data = []
-    for body in tbody_element:
-        # for tr in body.select("tr"):
-        #     for th in tr.select("th"):
-        #         data = th.get_text()
-        #         total_data.append(data)
-                
-    print(total_data, 2)
+    headers = []
+    titleIndex = 0
+    preTitle = ""
+    for head in thead_element.select("tr"):
+        for th in head.select("th"):
+            data = th.get_text()
+            if titleIndex == 8 or titleIndex == 9:
+                preTitle = "主力"
+            elif titleIndex == 10 or titleIndex == 11:
+                preTitle = "超大单"
+            elif titleIndex == 12 or titleIndex == 13:
+                preTitle = "大单"
+            elif titleIndex == 14 or titleIndex == 15:
+                preTitle = "中单"
+            elif titleIndex == 16 or titleIndex == 17:
+                preTitle = "小单"
+            elif titleIndex == 0 or titleIndex == 1 or titleIndex == 2:
+                preTitle = ""
+            else:
+                titleIndex += 1
+                continue
+            data = preTitle + data
+            headers.append(data)
+            titleIndex += 1
+    datas = []
+    for tr in tbody_element.select("tr"):
+        td_count = len(tr.select("td"))
+        index = 0
+        for td in tr.select("td"):
+            data = td.get_text()
+            datas.append(data)
+            if index == td_count - 1:
+                datas.append(name)
+                datas.append(code)
+            index += 1
+    headers.append("名字")
+    headers.append("代码")
+    datas = list(map(str, datas))
+    headers = list(map(str, headers))
+    tableName = name + "历史资金统计"
+    data_processor.SaveTosqlInflowOutflow(
+        datas, headers, enginstr, time_part, tableName, True
+    )
 
 
 def getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
@@ -190,14 +214,15 @@ def getStocksTime(stockNum, now, enginstr):
 
 # 爬取指定股票当日资金流入流出
 def getStockInflowOutflow(stockNum, now, enginstr):
-    getAllStockInflowOutflow(stockNum, now, enginstr)
-    return
+    # getAllStockInflowOutflow(stockNum, now, enginstr)
+    # return
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
     url = get_StockInflow_Outflow(stockNum)
     getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
+    getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
 
 
 # 爬取知道股票时间范围内的资金流入流出情况
