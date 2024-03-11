@@ -103,13 +103,32 @@ def getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     match = re.match(r"^(.*?)\((.*?)\)$", name)
     name = match.group(1)
     code = match.group(2)
-    div_element = soup.find("div", id="table_ls", class_="dataviews")
-    table_element = div_element.find("table")
+    div_element = soup.find("div", id="table_ls", class_="dataview")
+    table_element = div_element.select("table")[0]
     # 数据标题
     thead_element = table_element.find("thead")
     # 数据
     tbody_element = table_element.find("tbody")
-    # todo 爬取历史数据
+    total_list = []
+    for head in thead_element:
+        data = head.get_text()
+        if data == "\n":
+            continue
+        words = data.split('\n')
+        # 去除空字符串和空格
+        words = [word.strip() for word in words if word.strip() != '']
+        for word in words:
+            total_list.append(word)
+
+    total_data = []
+    for body in tbody_element:
+        # for tr in body.select("tr"):
+        #     for th in tr.select("th"):
+        #         data = th.get_text()
+        #         total_data.append(data)
+                
+    print(total_data, 2)
+
 
 def getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     driver.get(url)
@@ -171,6 +190,8 @@ def getStocksTime(stockNum, now, enginstr):
 
 # 爬取指定股票当日资金流入流出
 def getStockInflowOutflow(stockNum, now, enginstr):
+    getAllStockInflowOutflow(stockNum, now, enginstr)
+    return
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     # options.add_argument('--disable-tabs')
