@@ -32,6 +32,11 @@ def getStockTimeData(
         print(f"{name} table is not exist")
         return None
     else:
+        table = name + "历史资金情况"
+        stockInflow_OutflowData = data_processor.GetAllStockCode(
+            table, "主力净额", enginstr
+        )
+        print(stockInflow_OutflowData, f"{table}")
         # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
         stockData = stockCustomData
         # pd.DataFrame(

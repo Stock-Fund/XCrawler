@@ -68,7 +68,7 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
         data_processor.customDataSavetosql(name, enginstr, stockData)
 
         if check:
-            quantifytest.startQuantifytest(stockNum, now, start, enginstr, ma)
+            quantifytest.startQuantifytest(stockNum, now, formatted_date, enginstr, ma)
 
         print(f"{name} customDatareader crawle completed")
 

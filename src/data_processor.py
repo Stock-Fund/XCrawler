@@ -100,7 +100,6 @@ def SaveTosql(datas, head, enginestr, table, replace=False):
 
 # 存储股票资金流入流出情况
 def SaveTosqlInflowOutflow(datas, head, enginestr, timepart, table, replace=False):
-    print(f"{replace}")
     SaveTosqlMinutes(datas, head, enginestr, timepart, table, replace)
 
 
