@@ -34,7 +34,7 @@ def getStockTimeData(
     else:
         table = name + "历史资金统计"
         stockInflow_OutflowData = data_processor.GetAllStockCode(
-            table, "主力净额", enginstr, True
+            table, "主力净额", enginstr
         )
         # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
         stockData = stockCustomData
@@ -135,6 +135,9 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     buy = stock_instance.StockBuy()
     buy_short = stock_instance.StockBuy_short()
     sell_short = stock_instance.StockSell_short()
+    day = 10
+    flow = stock_instance.checkFlow(day)
+    print(f"{name},{day}日内资金情况为{flow}")
     if buy_short is False:
         print("非短期买入区间")
     else:
@@ -285,7 +288,7 @@ async def _check_total_stocks(
         headers, datas, name = await html.checkAllTimeStock(stockNum)
         table = name + "历史资金统计"
         stockInflow_OutflowData = data_processor.GetAllStockCode(
-            table, "主力净额", enginstr, True
+            table, "主力净额", enginstr
         )
         _datas = [
             saveTime,  # 数据获取时间
