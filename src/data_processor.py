@@ -317,5 +317,4 @@ def GetAllStockCode(table, value, enginestr, reverse=False):
             datas.reverse()
         return datas
     else:
-        print("none")
         return None

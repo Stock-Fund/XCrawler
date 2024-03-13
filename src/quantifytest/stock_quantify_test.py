@@ -283,12 +283,17 @@ async def _check_total_stocks(
         stockNum = stockData["代码"].tolist()[0]
         # 分时数据
         headers, datas, name = await html.checkAllTimeStock(stockNum)
+        table = name + "历史资金统计"
+        stockInflow_OutflowData = data_processor.GetAllStockCode(
+            table, "主力净额", enginstr, True
+        )
         _datas = [
             saveTime,  # 数据获取时间
             datas[0],  # 当前价格
             datas[1],  # 换手率
             datas[6],  # 量比
             datas[7],  # 分时均价
+            stockInflow_OutflowData,
             1,  # 筹码集中度
             stockNum,
             name,
