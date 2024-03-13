@@ -32,11 +32,10 @@ def getStockTimeData(
         print(f"{name} table is not exist")
         return None
     else:
-        table = name + "历史资金情况"
+        table = name + "历史资金统计"
         stockInflow_OutflowData = data_processor.GetAllStockCode(
-            table, "主力净额", enginstr
+            table, "主力净额", enginstr, True
         )
-        print(stockInflow_OutflowData, f"{table}")
         # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
         stockData = stockCustomData
         # pd.DataFrame(
@@ -71,6 +70,7 @@ def getStockTimeData(
             stockTimeData[1],
             stockTimeData[6],
             stockTimeData[7],
+            stockInflow_OutflowData,
             Chipsconcentrations,
             stockNum,
             name,
@@ -139,10 +139,12 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
         print("非短期买入区间")
     else:
         print("短期可买入区间")
+
     if sell_short is False:
         print("非短期卖出区间")
     else:
         print("短期可卖出区间")
+
     if buy is False:
         print("非买入区间")
     else:
