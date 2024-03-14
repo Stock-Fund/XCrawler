@@ -2,3 +2,4 @@
 /delete/*
 /src/__pycache__/*
 /src/html/__pycache__/*
+/src/html/quantifytest/__pycache__/*

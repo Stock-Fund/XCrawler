@@ -282,6 +282,8 @@ async def _check_total_stocks(
         date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
     ).time()
     for stockData in stockdatas:
+        if index > 20:
+            break
         # 获取分时级别数据
         stockNum = stockData["代码"].tolist()[0]
         # 分时数据
