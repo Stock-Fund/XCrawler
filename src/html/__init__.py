@@ -5,13 +5,18 @@ from io import BytesIO
 import pytesseract
 from PIL import Image
 
-from src.html.stockutils import getStockTimeUrl, getStockSuffix, get_StockInflow_Outflow
+from src.html.stockutils import (
+    getStockTimeUrl,
+    getStockSuffix,
+    get_StockInflow_OutflowUrl,
+    get_Stock_chipsUrl,
+)
 from src.html.mainboardcrawler import getSHBoard, get_Data_FromSoup
 from src.html.stocktimecrawler import (
     getStocksTime,
     checkAllTimeStock,
     getStockInflowOutflow,
-    getAllStockInflowOutflow
+    getStockAllInflowOutflow,
 )
 from src.html.stockcustomcrawler import getStockData_datareader, showStockData
 from src.html.stockAllcrawler import getAllStock, checkAllStock

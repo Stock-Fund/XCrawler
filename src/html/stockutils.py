@@ -41,8 +41,22 @@ def getStockTimeUrl(stockNum):
         return f"http://quote.eastmoney.com/sz{stockNum}.html"
 
 
-def get_StockInflow_Outflow(stockNum):
+# 获取股票资金流入流出数据地址
+def get_StockInflow_OutflowUrl(stockNum):
     return f"http://data.eastmoney.com/zjlx/{stockNum}.html"
+
+
+# 获取股票筹码数据地址
+def get_Stock_chipsUrl(stockNum):
+    stockType = stockcheck(stockNum)
+    if stockType == StockType.SH_A:
+        return f"http://quote.eastmoney.com/concept/sh{stockNum}.html#chart-k-cyq"
+    elif (
+        stockType == StockType.SZ_A
+        or stockType == StockType.SZ_B
+        or stockType == StockType.CHUANGYEBAN
+    ):
+        return f"http://quote.eastmoney.com/concept/sz{stockNum}.html#chart-k-cyq"
 
 
 def getStockSuffix(stockNum):

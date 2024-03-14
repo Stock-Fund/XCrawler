@@ -2,7 +2,12 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from datetime import time
 import src.data_processor as data_processor
-from src.html.stockutils import getStockTimeUrl, checkGem, get_StockInflow_Outflow
+from src.html.stockutils import (
+    getStockTimeUrl,
+    checkGem,
+    get_StockInflow_OutflowUrl,
+    get_Stock_chipsUrl,
+)
 import asyncio
 import re
 
@@ -86,10 +91,10 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
     #  src.data_processor.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
     #  src.data_processor.SaveToJson(datas,f"Assets/{stockNum}_time.json")
     data_processor.SaveTosqlMinutes(datas, headers, enginstr, time_part, name)
-    print(f"{name} stockminutesdata crawle completed")
+    print(f"{name} DckminAllutesdata crawle completed")
 
 
-def getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
+def getStockAllInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     driver.get(url)
     driver.implicitly_wait(delay_time)
     # 格式化为字符串
@@ -199,6 +204,18 @@ def getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     print(f"{name} 当日资金情况获取完成")
 
 
+# 爬取指定股票的筹码情况
+def getStock_Chips_Data(stockNum, driver, url, now, enginstr):
+    driver.get(url)
+    driver.implicitly_wait(delay_time)
+    # 格式化为字符串
+    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    date_part, time_part = formatted.split(" ")
+    if now.time() >= time(15, 0, 0):
+        time_part = "15:00:00"
+    soup = BeautifulSoup(driver.page_source, "lxml")
+
+
 # 循环爬取制定股票分时数据
 def getStocksTime(stockNum, now, enginstr):
     options = webdriver.ChromeOptions()
@@ -212,27 +229,37 @@ def getStocksTime(stockNum, now, enginstr):
     #  time.sleep(10)
 
 
-# 爬取指定股票当日资金流入流出
+# 爬取指定股票当日资金流入流出情况
 def getStockInflowOutflow(stockNum, now, enginstr):
-    # getAllStockInflowOutflow(stockNum, now, enginstr)
+    # getStockAllInflowOutflow(stockNum, now, enginstr)
     # return
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
-    url = get_StockInflow_Outflow(stockNum)
+    url = get_StockInflow_OutflowUrl(stockNum)
     getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
-    getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
+    getStockAllInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
 
 
-# 爬取知道股票时间范围内的资金流入流出情况
-def getAllStockInflowOutflow(stockNum, now, enginstr):
+# 爬取指定股票历史的资金流入流出情况
+def getStockAllInflowOutflow(stockNum, now, enginstr):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
-    url = get_StockInflow_Outflow(stockNum)
-    getAllStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
+    url = get_StockInflow_OutflowUrl(stockNum)
+    getStockAllInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
+
+
+# 爬取指定股票的筹码分布情况
+def getStockChips(stockNum, now, enginstr):
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    # options.add_argument('--disable-tabs')
+    driver = webdriver.Chrome(options=options)
+    url = get_Stock_chipsUrl(stockNum)
+    getStock_Chips_Data(stockNum, driver, url, now, enginstr)
 
 
 async def checkAllTimeStock(stockNum):
