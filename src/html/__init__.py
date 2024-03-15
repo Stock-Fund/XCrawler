@@ -17,6 +17,7 @@ from src.html.stocktimecrawler import (
     checkAllTimeStock,
     getStockInflowOutflow,
     getStockAllInflowOutflow,
+    getStockChips,
 )
 from src.html.stockcustomcrawler import getStockData_datareader, showStockData
 from src.html.stockAllcrawler import getAllStock, checkAllStock

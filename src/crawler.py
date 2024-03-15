@@ -72,6 +72,16 @@ def _runProcess(check, _stocks, ma, start):
                 _p.start()
                 _p.join(30)
 
+            # 获取股票的筹码数据
+            for stock in _stocks:
+                _p = Process(
+                    target=html.getStockChips,
+                    args=(stock, now, enginstr),
+                )
+                _p.daemon = True
+                _p.start()
+                _p.join(30)
+
             # 获取股票第三方数据
             for stock in _stocks:
                 _p = Process(
@@ -101,6 +111,16 @@ def _runProcess(check, _stocks, ma, start):
         for stock in _stocks:
             _p = Process(
                 target=html.getStockInflowOutflow,
+                args=(stock, now, enginstr),
+            )
+            _p.daemon = True
+            _p.start()
+            _p.join(30)
+
+        # 获取股票的筹码数据
+        for stock in _stocks:
+            _p = Process(
+                target=html.getStockChips,
                 args=(stock, now, enginstr),
             )
             _p.daemon = True
@@ -185,14 +205,21 @@ def find(stockNum, ma=5):
     )
     p1.daemon = True
     p1.start()
-    
+
     p2 = Process(
-        target=html.getStockData_datareader,
-        args=(f"{stockNum}", now, None, enginstr, check, ma),
+        target=html.getStockChips,
+        args=(f"{stockNum}", now, enginstr),
     )
     p2.daemon = True
     p2.start()
-    
+
+    p3 = Process(
+        target=html.getStockData_datareader,
+        args=(f"{stockNum}", now, None, enginstr, check, ma),
+    )
+    p3.daemon = True
+    p3.start()
+
     print(f"查找对应代码{stockNum}股票")
 
 

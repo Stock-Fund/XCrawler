@@ -238,6 +238,8 @@ def getStock_Chips_Data(stockNum, driver, url, now, enginstr):
     datas.append(time_part)
     datas = list(map(str, datas))
     headers = list(map(str, headers))
+    print(headers, 1)
+    print(datas, 2)
 
 
 # 循环爬取制定股票分时数据
