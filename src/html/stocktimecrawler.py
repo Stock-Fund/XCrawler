@@ -91,7 +91,7 @@ def get_stock_data(stockNum, driver, url, now, enginstr):
     #  src.data_processor.SaveToCsv(datas,headers,f"Assets/{stockNum}_time.csv")
     #  src.data_processor.SaveToJson(datas,f"Assets/{stockNum}_time.json")
     data_processor.SaveTosqlMinutes(datas, headers, enginstr, time_part, name)
-    print(f"{name} DckminAllutesdata crawle completed")
+    # print(f"{name} DckminAllutesdata crawle completed")
 
 
 def getStockAllInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
@@ -201,7 +201,7 @@ def getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr):
     data_processor.SaveTosqlInflowOutflow(
         datas, headers, enginstr, time_part, tableName
     )
-    print(f"{name} 当日资金情况获取完成")
+    # print(f"{name} 当日资金情况获取完成")
 
 
 # 爬取指定股票的筹码情况
@@ -217,16 +217,25 @@ def getStock_Chips_Data(stockNum, driver, url, now, enginstr):
     titleClass = soup.find("div", class_="sqt_l")
     name = titleClass.find("span", class_="name").text
     code = titleClass.find("span", class_="code").text
-    table = soup.find("table", class_="quotechart2022_c_cyg_info_table")
+    # div_element = soup.find("div", class_="quotechart2022_c_cyq_info")
+    # table = div_element.select("table")[0]
+    table = soup.find("table", class_="quotechart2022_c_cyq_info_table")
     headers = ["代码", "名字"]
     datas = [code, name]
     for body in table.select("tbody"):
         titleIndex = 0
         for tr in body.select("tr"):
             index = 0
+            if titleIndex == 2 or titleIndex == 0 or titleIndex == 3:
+                titleIndex += 1
+                continue
             for td in tr.select("td"):
                 data = td.get_text()
                 if index == 0:
+                    if titleIndex == 6:
+                        data = "90%" + str(data)
+                    elif titleIndex == 8:
+                        data = "70%" + str(data)
                     headers.append(data)
                 else:
                     datas.append(data)
@@ -238,8 +247,8 @@ def getStock_Chips_Data(stockNum, driver, url, now, enginstr):
     datas.append(time_part)
     datas = list(map(str, datas))
     headers = list(map(str, headers))
-    print(headers, 1)
-    print(datas, 2)
+    tableName = name + "筹码情况"
+    data_processor.SaveTosqlChips(datas, headers, enginstr, time_part, tableName)
 
 
 # 循环爬取制定股票分时数据

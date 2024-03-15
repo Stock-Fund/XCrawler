@@ -70,7 +70,7 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
         if check:
             quantifytest.startQuantifytest(stockNum, now, formatted_date, enginstr, ma)
 
-        print(f"{name} customDatareader crawle completed")
+        # print(f"{name} customDatareader crawle completed")
 
     # 5日收盘价均价
     # mean_price_5 = stock['Close'].rolling(window=5).mean()

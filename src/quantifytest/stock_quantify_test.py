@@ -131,27 +131,27 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
 
     weekClose = stock_instance.get_weekClose
     mouthClose = stock_instance.get_mouthClose
-    print(f"{weekClose},{mouthClose}")
+    # print(f"{weekClose},{mouthClose}")
     buy = stock_instance.StockBuy()
     buy_short = stock_instance.StockBuy_short()
     sell_short = stock_instance.StockSell_short()
     day = 10
     flow = stock_instance.checkFlow(day)
     print(f"{name},{day}日内资金情况为{flow}")
-    if buy_short is False:
-        print("非短期买入区间")
-    else:
-        print("短期可买入区间")
+    # if buy_short is False:
+    #     print("非短期买入区间")
+    # else:
+    #     print("短期可买入区间")
 
-    if sell_short is False:
-        print("非短期卖出区间")
-    else:
-        print("短期可卖出区间")
+    # if sell_short is False:
+    #     print("非短期卖出区间")
+    # else:
+    #     print("短期可卖出区间")
 
-    if buy is False:
-        print("非买入区间")
-    else:
-        print("可买入区间")
+    # if buy is False:
+    #     print("非买入区间")
+    # else:
+    #     print("可买入区间")
     weekly_close = ma5
     monthly_close = ma30
     weekly_macd, weekly_signal, weekly_hist = ta.MACD(

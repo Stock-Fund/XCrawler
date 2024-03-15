@@ -103,6 +103,11 @@ def SaveTosqlInflowOutflow(datas, head, enginestr, timepart, table, replace=Fals
     SaveTosqlMinutes(datas, head, enginestr, timepart, table, replace)
 
 
+# 存储股票筹码情况
+def SaveTosqlChips(datas, head, enginestr, timepart, table, replace=False):
+    SaveTosqlMinutes(datas, head, enginestr, timepart, table, replace)
+
+
 # 分时数据存储
 def SaveTosqlMinutes(datas, head, enginestr, timepart, table, replace=False):
     # timestamp = datetime.fromtimestamp(time.time())
@@ -117,7 +122,7 @@ def SaveTosqlMinutes(datas, head, enginestr, timepart, table, replace=False):
         data_table = pd.read_sql_table(table, enginestr)
     except:
         data_table = None
-        print(f"datatable {table} is None")
+        print(f"数据库中 {table} is None")
     if replace == True:
         # 当存在一张空白的表格时，需要用replace，而不是append，否则找不到对应的列
         data_rows = [
@@ -176,6 +181,7 @@ def SaveTosqlMinutes(datas, head, enginestr, timepart, table, replace=False):
             data_table.to_sql(name=table, con=engine, if_exists="append", index=False)
 
             # print("create mysql data complete")
+    print(f'{table} 数据存储完成')
     engine.dispose()
 
 
@@ -235,6 +241,7 @@ def customDataSavetosql(table, enginestr, datas):
         datas.to_sql(name=table, con=engine, if_exists="replace")
     else:
         datas.to_sql(name=table, con=engine, if_exists="append")
+    print(f'{table} 第三方数据存储完成')
     engine.dispose()
 
 
