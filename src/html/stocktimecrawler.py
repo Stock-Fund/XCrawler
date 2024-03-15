@@ -214,6 +214,30 @@ def getStock_Chips_Data(stockNum, driver, url, now, enginstr):
     if now.time() >= time(15, 0, 0):
         time_part = "15:00:00"
     soup = BeautifulSoup(driver.page_source, "lxml")
+    titleClass = soup.find("div", class_="sqt_l")
+    name = titleClass.find("span", class_="name").text
+    code = titleClass.find("span", class_="code").text
+    table = soup.find("table", class_="quotechart2022_c_cyg_info_table")
+    headers = ["代码", "名字"]
+    datas = [code, name]
+    for body in table.select("tbody"):
+        titleIndex = 0
+        for tr in body.select("tr"):
+            index = 0
+            for td in tr.select("td"):
+                data = td.get_text()
+                if index == 0:
+                    headers.append(data)
+                else:
+                    datas.append(data)
+                index += 1
+            titleIndex += 1
+    headers.append("日期")
+    headers.append("时间")
+    datas.append(date_part)
+    datas.append(time_part)
+    datas = list(map(str, datas))
+    headers = list(map(str, headers))
 
 
 # 循环爬取制定股票分时数据
