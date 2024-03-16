@@ -272,7 +272,7 @@ def GetDataFromSql(table, id, value, stockNum, enginestr):
         try:
             data = df.loc[df[id] == stockNum, value].values[0]
         except IndexError:
-            print("data does not exist")
+            print(f"{table} 数据不存在")
         engine.dispose()
         return data
     else:
@@ -288,7 +288,7 @@ def GetDatasFromSql1(table, id, value, enginestr):
         try:
             data = df.loc[df[id] == value].values[0]
         except IndexError:
-            print("data does not exist")
+            print(f"{table} 数据不存在")
         engine.dispose()
         return data
     else:
@@ -307,7 +307,7 @@ def GetDatasFromSql2(table, obj1, obj2, enginestr):
             # 默认返回最新数据，即最后一位数据
             data = datas[len(datas) - 1]
         except IndexError:
-            print("data does not exist")
+            print(f"{table} 数据不存在")
         engine.dispose()
         return data
     else:

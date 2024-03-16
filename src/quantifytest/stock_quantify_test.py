@@ -24,7 +24,6 @@ def getStockTimeData(
         {"id": "时间", "value": time_part},
         enginstr,
     )
-
     if stockTimeData is None:
         print(f"{timename} table is not exist")
         return None
@@ -66,10 +65,7 @@ def getStockTimeData(
         ).time()
         datas = [
             saveTime,
-            stockTimeData[0],
-            stockTimeData[1],
-            stockTimeData[6],
-            stockTimeData[7],
+            stockTimeData,
             stockInflow_OutflowData,
             Chipsconcentrations,
             stockNum,
@@ -135,8 +131,8 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     buy = stock_instance.StockBuy()
     buy_short = stock_instance.StockBuy_short()
     sell_short = stock_instance.StockSell_short()
-    day = 10
-    flow = stock_instance.checkFlow(day)
+    day = 25
+    flow = round(stock_instance.checkFlow(day), 2)
     print(f"{name},{day}日内资金情况为{flow}")
     # if buy_short is False:
     #     print("非短期买入区间")
@@ -292,14 +288,12 @@ async def _check_total_stocks(
         stockInflow_OutflowData = data_processor.GetAllStockCode(
             table, "主力净额", enginstr
         )
+        Chipsconcentrations = 1  # 筹码集中度，算法未处理，暂时为1
         _datas = [
             saveTime,  # 数据获取时间
-            datas[0],  # 当前价格
-            datas[1],  # 换手率
-            datas[6],  # 量比
-            datas[7],  # 分时均价
+            datas,
             stockInflow_OutflowData,
-            1,  # 筹码集中度
+            Chipsconcentrations,  # 筹码集中度
             stockNum,
             name,
         ]

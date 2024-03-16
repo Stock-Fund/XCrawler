@@ -217,8 +217,6 @@ def getStock_Chips_Data(stockNum, driver, url, now, enginstr):
     titleClass = soup.find("div", class_="sqt_l")
     name = titleClass.find("span", class_="name").text
     code = titleClass.find("span", class_="code").text
-    # div_element = soup.find("div", class_="quotechart2022_c_cyq_info")
-    # table = div_element.select("table")[0]
     table = soup.find("table", class_="quotechart2022_c_cyq_info_table")
     headers = ["代码", "名字"]
     datas = [code, name]
