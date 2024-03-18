@@ -43,11 +43,11 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     stockData.to_json("Assets/" + code + ".json")
 
     # stockData.index = pd.to_datetime(stockData.index)
-    # # 周级别数据
-    # weekdata = stockData.resample("W").last()
+    # 周级别数据
+    weekdata = stockData.resample("W").last()
 
-    # # 月级别数据
-    # mouthdata = stockData.resample("M").last()
+    # 月级别数据
+    mouthdata = stockData.resample("M").last()
 
     # 开始时间
     # print(stockData.index[0])
@@ -66,7 +66,9 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
             return
     else:
         data_processor.customDataSavetosql(name, enginstr, stockData)
-
+        data_processor.customDataSavetosql(name+"_周", enginstr, weekdata)
+        data_processor.customDataSavetosql(name+"_月", enginstr, mouthdata)
+        
         if check:
             quantifytest.startQuantifytest(stockNum, now, formatted_date, enginstr, ma)
 
