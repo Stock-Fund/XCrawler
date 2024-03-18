@@ -132,8 +132,11 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     buy_short = stock_instance.StockBuy_short()
     sell_short = stock_instance.StockSell_short()
     day = 25
-    flow = round(stock_instance.checkFlow(day), 2)
+    flow = stock_instance.checkFlow(day)
     print(f"{name},{day}日内资金情况为{flow}")
+
+    volum = stock_instance.checkVolumLogic()
+    print(f"{name}, 成就量判断后市为{volum}")
     # if buy_short is False:
     #     print("非短期买入区间")
     # else:
