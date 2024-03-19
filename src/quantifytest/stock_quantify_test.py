@@ -24,6 +24,8 @@ def getStockTimeData(
         {"id": "时间", "value": time_part},
         enginstr,
     )
+    chipname = name + "筹码情况"
+    chipData = data_processor.GetAllStockCode(chipname, "90%集中度", enginstr)[0] # 获取90筹码集中度数组的最新情况
     if stockTimeData is None:
         print(f"{timename} table is not exist")
         return None
@@ -35,31 +37,8 @@ def getStockTimeData(
         stockInflow_OutflowData = data_processor.GetAllStockCode(
             table, "主力净额", enginstr
         )
-        # stockData = {"Close":stockCustomData[4],"Open":stockCustomData[1],"High":stockCustomData[2],"Low":stockCustomData[3],"Volume":stockCustomData[6]}
         stockData = stockCustomData
-        # pd.DataFrame(
-        #     {
-        #         "Close": stockCustomData.loc[0:, "Close"],
-        #         "Open": stockCustomData.loc[0:, "Open"],
-        #         "High": stockCustomData.loc[0:, "High"],
-        #         "Low": stockCustomData.loc[0:, "Low"],
-        #         "Volume": stockCustomData.loc[0:, "Volume"],
-        #         # 记录股票数据的时间范围
-        #         "Date": stockCustomData.loc[0, "Date"],
-        #         "Week": stockCustomData.resample("W").last(),
-        #         "Mouth": stockCustomData.resample("M").last(),
-        #     }
-        # )
-
-        # stockCustomData["Date"] = pd.to_datetime(stockCustomData["Date"])
-        # # 将"Date"列设置为索引
-        # stockCustomData.set_index("Date", inplace=True)
-        # day1 = stockCustomData.index[0]
-        # day2 = stockCustomData.index[-1]
-        # print(f"开始时间：{day1}")
-        # print(f"结束时间：{day2}")
-
-        Chipsconcentrations = 1  # 筹码集中度，算法未处理，暂时为1
+        Chipsconcentrations = chipData  # 90筹码集中度
         saveTime = datetime.strptime(
             date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
         ).time()
@@ -291,7 +270,10 @@ async def _check_total_stocks(
         stockInflow_OutflowData = data_processor.GetAllStockCode(
             table, "主力净额", enginstr
         )
-        Chipsconcentrations = 1  # 筹码集中度，算法未处理，暂时为1
+        chipname = name + "筹码情况"
+        chipData = data_processor.GetAllStockCode(chipname, "90%集中度", enginstr)[0]  # 获取90筹码集中度数组的最新情况
+
+        Chipsconcentrations = chipData  # 筹码集中度，算法未处理，暂时为1
         _datas = [
             saveTime,  # 数据获取时间
             datas,
