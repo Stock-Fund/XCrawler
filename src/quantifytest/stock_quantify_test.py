@@ -24,10 +24,6 @@ def getStockTimeData(
         {"id": "时间", "value": time_part},
         enginstr,
     )
-    chipname = name + "筹码情况"
-    Chipsconcentrations = data_processor.GetAllStockCode(
-        chipname, "90%集中度", enginstr
-    )  # 获取90筹码集中度数组的最新情况
     if stockTimeData is None:
         print(f"{timename} table is not exist")
         return None
@@ -39,7 +35,15 @@ def getStockTimeData(
         stockInflow_OutflowData = data_processor.GetAllStockCode(
             table, "主力净额", enginstr
         )
-        Profitratio = data_processor.GetAllStockCode(chipname, "获利比例:", enginstr)
+        chipname = name + "筹码情况"
+        Chips90concentrations = data_processor.GetAllStockCode(
+            chipname, "90%集中度:", enginstr
+        )  # 获取90筹码集中度数组的最新情况
+        Chips90Prices = data_processor.GetAllStockCode(chipname, "90%成本:", enginstr)
+        Profitratios = data_processor.GetAllStockCode(chipname, "获利比例:", enginstr)
+        ChipAverageValues = data_processor.GetAllStockCode(
+            chipname, "平均成本:", enginstr
+        )
         stockData = stockCustomData
         saveTime = datetime.strptime(
             date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
@@ -48,8 +52,10 @@ def getStockTimeData(
             saveTime,
             stockTimeData,
             stockInflow_OutflowData,
-            Chipsconcentrations,
-            Profitratio,
+            Chips90concentrations,
+            Chips90Prices,
+            Profitratios,
+            ChipAverageValues,
             stockNum,
             name,
         ]
@@ -274,16 +280,22 @@ async def _check_total_stocks(
             table, "主力净额", enginstr
         )
         chipname = name + "筹码情况"
-        Chipsconcentrations = data_processor.GetAllStockCode(
+        Chips90concentrations = data_processor.GetAllStockCode(
             chipname, "90%集中度:", enginstr
         )  # 获取90筹码集中度数组的最新情况
-        Profitratio = data_processor.GetAllStockCode(chipname, "获利比例:", enginstr)
+        Chips90Prices = data_processor.GetAllStockCode(chipname, "90%成本:", enginstr)
+        Profitratios = data_processor.GetAllStockCode(chipname, "获利比例:", enginstr)
+        ChipAverageValues = data_processor.GetAllStockCode(
+            chipname, "平均成本:", enginstr
+        )
         _datas = [
             saveTime,  # 数据获取时间
             datas,
             stockInflow_OutflowData,
-            Chipsconcentrations,  # 90筹码集中度
-            Profitratio,  # 筹码盈利比例
+            Chips90concentrations,  # 90筹码集中度
+            Chips90Prices,  # 90筹码成本
+            Profitratios,  # 筹码盈利比例
+            ChipAverageValues,  # 筹码均价
             stockNum,
             name,
         ]
