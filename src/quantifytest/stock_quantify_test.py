@@ -25,7 +25,9 @@ def getStockTimeData(
         enginstr,
     )
     chipname = name + "筹码情况"
-    chipData = data_processor.GetAllStockCode(chipname, "90%集中度", enginstr)[0] # 获取90筹码集中度数组的最新情况
+    Chipsconcentrations = data_processor.GetAllStockCode(
+        chipname, "90%集中度", enginstr
+    )  # 获取90筹码集中度数组的最新情况
     if stockTimeData is None:
         print(f"{timename} table is not exist")
         return None
@@ -37,8 +39,8 @@ def getStockTimeData(
         stockInflow_OutflowData = data_processor.GetAllStockCode(
             table, "主力净额", enginstr
         )
+        Profitratio = data_processor.GetAllStockCode(chipname, "获利比例:", enginstr)
         stockData = stockCustomData
-        Chipsconcentrations = chipData  # 90筹码集中度
         saveTime = datetime.strptime(
             date_part + " " + time_part, "%Y-%m-%d %H:%M:%S"
         ).time()
@@ -47,6 +49,7 @@ def getStockTimeData(
             stockTimeData,
             stockInflow_OutflowData,
             Chipsconcentrations,
+            Profitratio,
             stockNum,
             name,
         ]
@@ -271,14 +274,16 @@ async def _check_total_stocks(
             table, "主力净额", enginstr
         )
         chipname = name + "筹码情况"
-        chipData = data_processor.GetAllStockCode(chipname, "90%集中度", enginstr)[0]  # 获取90筹码集中度数组的最新情况
-
-        Chipsconcentrations = chipData  # 筹码集中度，算法未处理，暂时为1
+        Chipsconcentrations = data_processor.GetAllStockCode(
+            chipname, "90%集中度:", enginstr
+        )  # 获取90筹码集中度数组的最新情况
+        Profitratio = data_processor.GetAllStockCode(chipname, "获利比例:", enginstr)
         _datas = [
             saveTime,  # 数据获取时间
             datas,
             stockInflow_OutflowData,
-            Chipsconcentrations,  # 筹码集中度
+            Chipsconcentrations,  # 90筹码集中度
+            Profitratio,  # 筹码盈利比例
             stockNum,
             name,
         ]
