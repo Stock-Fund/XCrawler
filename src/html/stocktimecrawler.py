@@ -256,6 +256,9 @@ def getStocksTime(stockNum, now, enginstr):
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
     url = getStockTimeUrl(stockNum)
+    if url == "":
+        print(f"{stockNum} ETF基金暂不支持")
+        return
     # url = f"http://quote.eastmoney.com/sh{stockNum}.html"
     # while True:
     get_stock_data(stockNum, driver, url, now, enginstr)
@@ -271,6 +274,9 @@ def getStockInflowOutflow(stockNum, now, enginstr):
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
     url = get_StockInflow_OutflowUrl(stockNum)
+    if url == "":
+        print(f"{stockNum} ETF基金暂不支持")
+        return
     getStockInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
     getStockAllInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
 
@@ -282,6 +288,9 @@ def getStockAllInflowOutflow(stockNum, now, enginstr):
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
     url = get_StockInflow_OutflowUrl(stockNum)
+    if url == "":
+        print(f"{stockNum} ETF基金暂不支持")
+        return
     getStockAllInflow_Outflow_Data(stockNum, driver, url, now, enginstr)
 
 
@@ -292,6 +301,9 @@ def getStockChips(stockNum, now, enginstr):
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
     url = get_Stock_chipsUrl(stockNum)
+    if url == "":
+        print(f"{stockNum} ETF基金暂不支持")
+        return
     getStock_Chips_Data(stockNum, driver, url, now, enginstr)
 
 
@@ -301,6 +313,9 @@ async def checkAllTimeStock(stockNum):
     # options.add_argument('--disable-tabs')
     driver = webdriver.Chrome(options=options)
     url = getStockTimeUrl(stockNum)
+    if url == "":
+        print(f"{stockNum} ETF基金暂不支持")
+        return
     datas = []
     driver.get(url)
     driver.implicitly_wait(delay_time)

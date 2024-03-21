@@ -8,6 +8,7 @@ class StockType(Enum):
     SZ_A = "深圳A股"
     SZ_B = "深圳B股"
     CHUANGYEBAN = "创业板"
+    ETF = "ETF基金"
     UNKNOWN = "未知类型"
 
 
@@ -24,7 +25,12 @@ def stockcheck(stockNum):
         return StockType.SH_A
     elif stockNum.startswith("900"):
         return StockType.SH_B
-
+    elif (
+        stockNum.startswith("15")  # 深市上市
+        or stockNum.startswith("51")  # 沪市上市
+        or stockNum.startswith("58")  # 沪市上市 双创基金
+    ):
+        return StockType.ETF
     else:
         return StockType.UNKNOWN
 
@@ -39,10 +45,15 @@ def getStockTimeUrl(stockNum):
         or stockType == StockType.CHUANGYEBAN
     ):
         return f"http://quote.eastmoney.com/sz{stockNum}.html"
+    elif stockType == StockType.ETF:
+        return ""
 
 
 # 获取股票资金流入流出数据地址
 def get_StockInflow_OutflowUrl(stockNum):
+    stockType = stockcheck(stockNum)
+    if stockType == StockType.ETF:
+        return ""
     return f"http://data.eastmoney.com/zjlx/{stockNum}.html"
 
 
@@ -57,6 +68,8 @@ def get_Stock_chipsUrl(stockNum):
         or stockType == StockType.CHUANGYEBAN
     ):
         return f"http://quote.eastmoney.com/concept/sz{stockNum}.html#chart-k-cyq"
+    elif stockType == StockType.ETF:
+        return ""
 
 
 def getStockSuffix(stockNum):
