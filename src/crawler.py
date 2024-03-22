@@ -228,11 +228,11 @@ def filter():
     now = datetime.datetime.now()
     quantifytest.check_total_stocks(
         now,
-        "2024-03-13-allstock",
+        "2024-03-22-allstock",
         "代码",
         "2024-03-12",
-        "2024-03-13",
-        "2024-03-13",
+        "2024-03-22",
+        "2024-03-22",
         enginstr,
     )
 

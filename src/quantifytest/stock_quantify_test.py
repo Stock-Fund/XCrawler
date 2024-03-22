@@ -96,10 +96,18 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     # 获取某个股票的检测结果
     final = stock_instance.get_final_result(ma)
     name = stock_instance.get_Name
-
+    day = 20
     simulated_prices = stock_instance.monte_carlo_simulation(num_simulations)
     if final is True:
         print(f"{name}检测结果为:{final},满足趋势向上放量反包")
+        bias_rate = stock_instance.get_over_trade(day)
+        if bias_rate >= 1:
+            print(f"{name}{day}检测结果为:超卖")
+        elif bias_rate <= -1:
+            # 排除超买情况
+            print(f"{name}{day}检测结果为:超买")
+        elif bias_rate > 1 and bias_rate < -1:
+            print(f"{name}{day}检测结果为:震荡区间")
     else:
         print(f"{name}检测结果为:{final},观望为主")
     macd, macd_signal, macd_hist = stock_instance.get_MACD()
@@ -309,13 +317,13 @@ async def _check_total_stocks(
             # 加入乖离率来判断该股票是否存在超卖/超买情况，并以此作标准来判断是否可以关注
             print(f"{name}检测结果为:{final},满足趋势向上放量反包")
             bias_rate = stock_instance.get_over_trade(day)
-            if bias_rate == 1:
+            if bias_rate >= 1:
                 index += 1
                 print(f"{name}{day}检测结果为:超卖")
-            elif bias_rate == -1:
+            elif bias_rate <= -1:
                 # 排除超买情况
                 print(f"{name}{day}检测结果为:超买")
-            elif bias_rate == 0:
+            elif bias_rate > 1 and bias_rate < -1:
                 index += 1
                 print(f"{name}{day}检测结果为:震荡区间")
         else:
