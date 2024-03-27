@@ -127,7 +127,10 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     buy = stock_instance.StockBuy()
     buy_short = stock_instance.StockBuy_short()
     sell_short = stock_instance.StockSell_short()
-    day = 25
+    day = 5
+    boo = stock_instance.multiple_upper_shadows_when_daily_fluctuation_stable(day)
+    print(f"{name},{day}天内，主力试盘可能性为{boo}")
+
     flow = stock_instance.checkFlow(day)
     print(f"{name},{day}日内资金情况为{flow}")
 
