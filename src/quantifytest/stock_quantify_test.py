@@ -130,6 +130,8 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     day = 5
     boo = stock_instance.multiple_upper_shadows_when_daily_fluctuation_stable(day)
     print(f"{name},{day}天内，主力试盘可能性为{boo}")
+    
+    stock_instance.checkValueVolumeReversal()
 
     flow = stock_instance.checkFlow(day)
     print(f"{name},{day}日内资金情况为{flow}")
