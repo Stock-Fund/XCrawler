@@ -62,9 +62,8 @@ def getStockTimeData(
         return stockData, datas
 
 
-def get_stock(stockNum, now, start, enginstr, ma=20):
+def get_stock(stockNum, now, start, enginstr, end="", ma=20):
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
-    formatted_start = start
     date_part, time_part = formatted.split(" ")
     # base_time_part = "00:00:00"
     if now.time() >= time(15, 0, 0):
@@ -78,7 +77,7 @@ def get_stock(stockNum, now, start, enginstr, ma=20):
         )
     timename = name + "分时"
     result = getStockTimeData(
-        date_part, time_part, start, "", name, enginstr, timename, stockNum
+        date_part, time_part, start, end, name, enginstr, timename, stockNum
     )
     if result is None:
         return None
@@ -89,8 +88,8 @@ def get_stock(stockNum, now, start, enginstr, ma=20):
 
 
 # 股票各因素检测
-def startQuantifytest(stockNum, now, start, enginstr, ma=20):
-    stock_instance = get_stock(stockNum, now, start, enginstr, ma)
+def startQuantifytest(stockNum, now, start, enginstr, end="", ma=20):
+    stock_instance = get_stock(stockNum, now, start, enginstr, end, ma)
     if stock_instance is None:
         return
     # 获取某个股票的检测结果
@@ -130,7 +129,7 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     day = 5
     boo = stock_instance.multiple_upper_shadows_when_daily_fluctuation_stable(day)
     print(f"{name},{day}天内，主力试盘可能性为{boo}")
-    
+
     stock_instance.checkValueVolumeReversal()
     stock_instance.get_MACD_divergenc()
 

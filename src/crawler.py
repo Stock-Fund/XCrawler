@@ -5,6 +5,7 @@ import time
 import schedule
 import threading
 import datetime
+import src.util.timeutil
 
 enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
 stocks = [

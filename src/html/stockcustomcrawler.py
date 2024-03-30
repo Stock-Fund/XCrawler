@@ -6,6 +6,7 @@ import src.data_processor as data_processor
 import src.html as html
 import src.quantifytest as quantifytest
 from src.html.stockutils import getStockSuffix
+from src.util.timeutil import *
 import datetime
 import src.data_processor as data_processor
 
@@ -32,11 +33,17 @@ def showStockData(stockNum, enginstr):
 def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     yf.pdr_override()
     if start is not None:
-        formatted_date = start
+        start_date = start
     else:
-        formatted_date = "2023-10-01"
+        start_date = "2023-10-01"
     code = stockNum + getStockSuffix(stockNum)
-    stockData = pdr.get_data_yahoo(code, formatted_date)
+    # 获取今天的日期
+    today = datetime.datetime.today().date()
+    adjusted_date = adjust_date_to_weekday(today)
+    print(f"调整后的日期{adjusted_date}")
+    # 格式化日期
+    end_date = adjusted_date.strftime("%Y-%m-%d")  # 假设需要的格式为 "YYYY-MM-DD"
+    stockData = pdr.get_data_yahoo(code, start_date, end_date)
     stockData = stockData.round(2)
     stockData.to_csv("Assets/" + code + ".csv")
     stockData.to_excel("Assets/" + code + ".xlsx")
@@ -66,11 +73,11 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
             return
     else:
         data_processor.customDataSavetosql(name, enginstr, stockData)
-        data_processor.customDataSavetosql(name+"_周", enginstr, weekdata)
-        data_processor.customDataSavetosql(name+"_月", enginstr, mouthdata)
-        
+        data_processor.customDataSavetosql(name + "_周", enginstr, weekdata)
+        data_processor.customDataSavetosql(name + "_月", enginstr, mouthdata)
+
         if check:
-            quantifytest.startQuantifytest(stockNum, now, formatted_date, enginstr, ma)
+            quantifytest.startQuantifytest(stockNum, now, start_date, enginstr, end_date, ma)
 
         # print(f"{name} customDatareader crawle completed")
 

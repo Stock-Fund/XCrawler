@@ -3,6 +3,15 @@ import pytz
 import schedule
 import time
 import ntplib
+from pandas.tseries.offsets import BDay
+
+
+# 将日期调整到最近的工作日
+def adjust_date_to_weekday(date):
+    # 如果提供的日期是周末，将其调整为最近的工作日
+    if date.weekday() > 4:  # 0 = Monday, 1=Tuesday, 2=Wednesday...
+        return date - BDay(1)  # subtract one business day
+    return date
 
 
 def get_network_time():

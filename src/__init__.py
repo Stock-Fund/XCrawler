@@ -1,4 +1,4 @@
-from src.timeutil import get_network_time
+from src.util.timeutil import *
 import src.data_processor
 import src.html
 import src.quantifytest
