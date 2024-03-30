@@ -132,6 +132,7 @@ def startQuantifytest(stockNum, now, start, enginstr, ma=20):
     print(f"{name},{day}天内，主力试盘可能性为{boo}")
     
     stock_instance.checkValueVolumeReversal()
+    stock_instance.get_MACD_divergenc()
 
     flow = stock_instance.checkFlow(day)
     print(f"{name},{day}日内资金情况为{flow}")
