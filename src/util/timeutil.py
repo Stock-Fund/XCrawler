@@ -1,16 +1,21 @@
-import datetime
+from datetime import datetime, timedelta
 import pytz
 import schedule
 import time
 import ntplib
 from pandas.tseries.offsets import BDay
+from workalendar.asia import China
 
 
 # 将日期调整到最近的工作日
 def adjust_date_to_weekday(date):
-    # 如果提供的日期是周末，将其调整为最近的工作日
-    if date.weekday() > 4:  # 0 = Monday, 1=Tuesday, 2=Wednesday...
-        return date - BDay(1)  # subtract one business day
+    cal = China()
+    print(cal)
+    # 如果提供的日期是周末或者节假日，将其调整为最近的工作日
+    while date.weekday() > 4 or cal.is_holiday(
+        date
+    ):  # 0 = Monday, 1=Tuesday, 2=Wednesday...
+        date -= timedelta(days=1)  # 减去一天
     return date
 
 
@@ -22,7 +27,7 @@ def get_network_time():
     response = client.request("pool.ntp.org")
 
     timestamp = response.tx_time
-    network_time = datetime.datetime.fromtimestamp(timestamp)
+    network_time = datetime.fromtimestamp(timestamp)
 
     # 获取本地时区
     local_timezone = pytz.timezone("Asia/Shanghai")  # 例如 'Asia/Shanghai'
@@ -35,5 +40,5 @@ def get_network_time():
 
 
 def get_local_time():
-    local_time = datetime.datetime.now()
+    local_time = datetime.now()
     return local_time

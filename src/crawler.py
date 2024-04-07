@@ -5,147 +5,199 @@ import time
 import schedule
 import threading
 import datetime
-import src.util.timeutil
 
 enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
-stocks = [
-    "300552",
-    "300496",
-    "000628",
-    "603019"
-]
+stocks = ["603019"]  # "300552", "300496", "000628",
 done = threading.Event()
+
+FUNCTION_MAP = {
+    "html.getStocksTime": html.getStocksTime,
+    "html.getStockInflowOutflow": html.getStockInflowOutflow,
+    "html.getStockChips": html.getStockChips,
+    "html.getStockData_datareader": html.getStockData_datareader,
+    "quantifytest.startQuantifytest": quantifytest.startQuantifytest,
+}
+
+
+def run_stock_process(target, stocks, now, enginStr, start=None, check=None, ma=None):
+    func = FUNCTION_MAP[target]
+    for stock in stocks:
+        args = (stock, now, enginStr)
+        if target == "quantifytest.startQuantifytest":
+            args = (stock, now, start, enginStr, ma)
+        elif target == "html.getStockData_datareader":
+            args = (stock, now, start, enginStr, check, ma)
+        _p = Process(target=func, args=args)
+        _p.daemon = True
+        _p.start()
+        _p.join(30)
 
 
 def _runProcess(check, _stocks, ma, start):
     now = datetime.datetime.now()
-    if check:
-        # 收盘时间
-        target_time1 = datetime.time(11, 30)
-        target_time2 = datetime.time(15, 00)
-        target_time3 = datetime.time(13, 00)
-        # 大于三点做买入卖出逻辑判断
-        if now.time() > target_time2 or (
-            now.time() < target_time3 and now.time() >= target_time1
-        ):
-            # 直接从数据库获取数据
-            for stock in _stocks:
-                _p = Process(
-                    target=quantifytest.startQuantifytest,
-                    args=(stock, now, start, enginstr, ma),
-                )
-                _p.daemon = True
-                _p.start()
-                _p.join(30)
-        else:
-            # 开市时间做数据存储
-            # 股票分时数据
-            for stock in _stocks:
-                _p = Process(
-                    target=html.getStocksTime,
-                    args=(
-                        stock,
-                        now,
-                        enginstr,
-                    ),
-                )
-                _p.daemon = True
-                _p.start()
-                _p.join(30)
-
-            # 获取股票的资金流入流出数据
-            for stock in _stocks:
-                _p = Process(
-                    target=html.getStockInflowOutflow,
-                    args=(stock, now, enginstr),
-                )
-                _p.daemon = True
-                _p.start()
-                _p.join(30)
-
-            # 获取股票的筹码数据
-            for stock in _stocks:
-                _p = Process(
-                    target=html.getStockChips,
-                    args=(stock, now, enginstr),
-                )
-                _p.daemon = True
-                _p.start()
-                _p.join(30)
-
-            # 获取股票第三方数据
-            for stock in _stocks:
-                _p = Process(
-                    target=html.getStockData_datareader,
-                    args=(stock, now, start, enginstr, check, ma),
-                )
-                _p.daemon = True
-                _p.start()
-                _p.join(30)
+    # 收盘时间
+    target_time1 = datetime.time(11, 30)
+    target_time2 = datetime.time(15, 00)
+    target_time3 = datetime.time(13, 00)
+    # 大于三点做买入卖出逻辑判断
+    if check and (
+        now.time() > target_time2
+        or (now.time() < target_time3 and now.time() >= target_time1)
+    ):
+        run_stock_process(
+            "quantifytest.startQuantifytest", _stocks, now, enginstr, start, ma
+        )
     else:
-        # 开市时间做数据存储
-        # 股票分时数据
-        for stock in _stocks:
-            _p = Process(
-                target=html.getStocksTime,
+        run_stock_process("html.getStocksTime", _stocks, now, enginstr)
+        run_stock_process("html.getStockInflowOutflow", _stocks, now, enginstr)
+        run_stock_process("html.getStockChips", _stocks, now, enginstr)
+        run_stock_process(
+            "html.getStockData_datareader", _stocks, now, enginstr, start, check, ma
+        )
+        if not check:
+            # 主板
+            p = Process(
+                target=html.getSHBoard,
                 args=(
-                    stock,
-                    now,
+                    "http://quote.eastmoney.com/center/gridlist.html#sh_a_board",
                     enginstr,
                 ),
             )
-            _p.daemon = True
-            _p.start()
-            _p.join(30)
-
-        # 获取股票的资金流入流出数据
-        for stock in _stocks:
-            _p = Process(
-                target=html.getStockInflowOutflow,
-                args=(stock, now, enginstr),
-            )
-            _p.daemon = True
-            _p.start()
-            _p.join(30)
-
-        # 获取股票的筹码数据
-        for stock in _stocks:
-            _p = Process(
-                target=html.getStockChips,
-                args=(stock, now, enginstr),
-            )
-            _p.daemon = True
-            _p.start()
-            _p.join(30)
-
-        # 获取股票第三方数据
-        for stock in _stocks:
-            _p = Process(
-                target=html.getStockData_datareader,
-                args=(stock, now, start, enginstr, check, ma),
-            )
-            _p.daemon = True
-            _p.start()
-            _p.join(30)
-
-        # 主板
-        p = Process(
-            target=html.getSHBoard,
-            args=(
-                "http://quote.eastmoney.com/center/gridlist.html#sh_a_board",
-                enginstr,
-            ),
-        )
-        p.daemon = True
-        p.start()
-
+            p.daemon = True
+            p.start()
+            p.join(30)
     done.set()
+
+
+# def _runProcess(check, _stocks, ma, start):
+#     now = datetime.datetime.now()
+#     if check:
+#         # 收盘时间
+#         target_time1 = datetime.time(11, 30)
+#         target_time2 = datetime.time(15, 00)
+#         target_time3 = datetime.time(13, 00)
+#         # 大于三点做买入卖出逻辑判断
+#         if now.time() > target_time2 or (
+#             now.time() < target_time3 and now.time() >= target_time1
+#         ):
+#             # 直接从数据库获取数据
+#             for stock in _stocks:
+#                 _p = Process(
+#                     target=quantifytest.startQuantifytest,
+#                     args=(stock, now, start, enginstr, ma),
+#                 )
+#                 _p.daemon = True
+#                 _p.start()
+#                 _p.join(30)
+#         else:
+#             # 开市时间做数据存储
+#             # 股票分时数据
+#             for stock in _stocks:
+#                 _p = Process(
+#                     target=html.getStocksTime,
+#                     args=(
+#                         stock,
+#                         now,
+#                         enginstr,
+#                     ),
+#                 )
+#                 _p.daemon = True
+#                 _p.start()
+#                 _p.join(30)
+
+#             # 获取股票的资金流入流出数据
+#             for stock in _stocks:
+#                 _p = Process(
+#                     target=html.getStockInflowOutflow,
+#                     args=(stock, now, enginstr),
+#                 )
+#                 _p.daemon = True
+#                 _p.start()
+#                 _p.join(30)
+
+#             # 获取股票的筹码数据
+#             for stock in _stocks:
+#                 _p = Process(
+#                     target=html.getStockChips,
+#                     args=(stock, now, enginstr),
+#                 )
+#                 _p.daemon = True
+#                 _p.start()
+#                 _p.join(30)
+
+#             # 获取股票第三方数据
+#             for stock in _stocks:
+#                 _p = Process(
+#                     target=html.getStockData_datareader,
+#                     args=(stock, now, start, enginstr, check, ma),
+#                 )
+#                 _p.daemon = True
+#                 _p.start()
+#                 _p.join(30)
+#     else:
+#         # 开市时间做数据存储
+#         # 股票分时数据
+#         for stock in _stocks:
+#             _p = Process(
+#                 target=html.getStocksTime,
+#                 args=(
+#                     stock,
+#                     now,
+#                     enginstr,
+#                 ),
+#             )
+#             _p.daemon = True
+#             _p.start()
+#             _p.join(30)
+
+#         # 获取股票的资金流入流出数据
+#         for stock in _stocks:
+#             _p = Process(
+#                 target=html.getStockInflowOutflow,
+#                 args=(stock, now, enginstr),
+#             )
+#             _p.daemon = True
+#             _p.start()
+#             _p.join(30)
+
+#         # 获取股票的筹码数据
+#         for stock in _stocks:
+#             _p = Process(
+#                 target=html.getStockChips,
+#                 args=(stock, now, enginstr),
+#             )
+#             _p.daemon = True
+#             _p.start()
+#             _p.join(30)
+
+#         # 获取股票第三方数据
+#         for stock in _stocks:
+#             _p = Process(
+#                 target=html.getStockData_datareader,
+#                 args=(stock, now, start, enginstr, check, ma),
+#             )
+#             _p.daemon = True
+#             _p.start()
+#             _p.join(30)
+
+#         # 主板
+#         p = Process(
+#             target=html.getSHBoard,
+#             args=(
+#                 "http://quote.eastmoney.com/center/gridlist.html#sh_a_board",
+#                 enginstr,
+#             ),
+#         )
+#         p.daemon = True
+#         p.start()
+
+#     done.set()
 
 
 def run_forever(polling, _stocks, ma=5, start=None, check=False):
     if polling:
         schedule.every().day.at("15:00").do(
-            lambda: _runProcess(check, _stocks, ma, now)
+            lambda: _runProcess(check, _stocks, ma, start)
         )
         while not done.is_set():
             # localtime = src.timeutil.get_local_time()
