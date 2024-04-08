@@ -7,7 +7,7 @@ import threading
 import datetime
 
 enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
-stocks = ["603019"]  # "300552", "300496", "000628",
+stocks = ["300552", "300496", "000628","603019","000911"]  # "300552", "300496", "000628",
 done = threading.Event()
 
 FUNCTION_MAP = {
