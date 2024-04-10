@@ -5,7 +5,7 @@
 <a href="https://github.com/Stock-Fund/algorithm/"><img src="https://img.shields.io/badge/Algorithm-algorithm-yellow"></a>
 <a href="https://github.com/Stock-Fund/algorithm_server"><img src="https://img.shields.io/badge/Algorithm-Server-pink"></a>
 <a href="http://dev.mysql.com/"><img src="https://img.shields.io/badge/Database-MySQL-red.svg?style=flat"></a>
-
+<a href="https://github.com/akeboshi1/workalendar"><img src="https://img.shields.io/badge/Workalendar-workalendar-brown.svg?style=flat"></a>
 A股爬虫项目
 - 环境安装:
   - python3.10.12
