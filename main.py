@@ -12,7 +12,6 @@ import talib
 import numpy as np
 from datetime import datetime
 
-
 def main():
     app = QApplication(sys.argv)
     path = os.path.join(
