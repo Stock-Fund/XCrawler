@@ -5,6 +5,7 @@ import time
 import schedule
 import threading
 import datetime
+import src.cProfile_test
 
 enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
 stocks = ["300552", "300496", "000628","603019","000911"]  # "300552", "300496", "000628",
@@ -221,7 +222,8 @@ def try_start():
 
 
 def start():
-    run_forever(False, stocks)
+    src.cProfile_test.cProfile_test(run_forever,False,stocks)
+    # run_forever(False, stocks)
 
 
 def getAllStock():

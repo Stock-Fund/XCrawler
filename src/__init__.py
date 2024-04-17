@@ -12,3 +12,4 @@ from src.crawler import (
     showStockData,
     getMarginAllData,
 )
+import src.cProfile_test
