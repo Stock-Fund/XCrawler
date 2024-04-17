@@ -4,3 +4,5 @@
 /src/__pycache__/*
 /src/html/__pycache__/*
 /src/html/quantifytest/__pycache__/*
+/pipeline.prof
+/pipeline.svg
