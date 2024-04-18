@@ -11,6 +11,7 @@ import src
 import talib
 import numpy as np
 from datetime import datetime
+import notification.pushover as pushover
 
 def main():
     app = QApplication(sys.argv)

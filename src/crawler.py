@@ -11,6 +11,8 @@ enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
 stocks = ["300552", "300496", "000628","603019","000911"]  # "300552", "300496", "000628",
 done = threading.Event()
 
+pushover = None
+
 FUNCTION_MAP = {
     "html.getStocksTime": html.getStocksTime,
     "html.getStockInflowOutflow": html.getStockInflowOutflow,
@@ -220,6 +222,8 @@ def try_start():
     )
     thread.start()
 
+def init_pushover(func):
+    pushover = func
 
 def start():
     src.cProfile_test.cProfile_test(run_forever,False,stocks)
