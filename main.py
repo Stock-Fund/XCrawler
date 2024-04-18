@@ -13,8 +13,7 @@ import numpy as np
 from datetime import datetime
 import notification.pushover as pushover
 
-key="u8hxscv479iru5gwgtu3825jjmwg4o"
-token="ajo4nyx5miu8syjn8dxp67rtm84rk5"
+
 notification = pushover.send_pushover_notification
 
 def main():
