@@ -24,7 +24,7 @@ def xcrawlerStockData(soup):
     return datas, headers
 
 
-def get_allstock_data(driver, enginstr):
+def get_allstock_data(key,token,pushover,driver, enginstr):
     driver.get(url)
     driver.implicitly_wait(30)
     index = 1
@@ -81,14 +81,15 @@ def get_allstock_data(driver, enginstr):
     data_processor.SaveToXlsx(datas, headers, "Assets/allstock_data.xlsx")
     data_processor.SaveToJson(datas, "Assets/allstock_data.json")
     data_processor.SaveTosql(datas, headers, enginstr, f"{formatted}-allstock")
+    pushover(key,token,"全局股票数据获取完成")
 
 
 # 获取所有股票数据
-def getAllStock(enginstr):
+def getAllStock(key,token,pushover,enginstr):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
-    get_allstock_data(driver, enginstr)
+    get_allstock_data(key,token,pushover,driver, enginstr)
 
 
 # =========================================

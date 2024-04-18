@@ -252,12 +252,12 @@ def startQuantifytest(stockNum, now, start, enginstr, end="", ma=20):
 
 
 # 检测全局5000支股票，提取满足要求股票
-def check_total_stocks(now, table, value, start, end_single, end_total, enginstr):
+def check_total_stocks(key,token,notification,now, table, value, start, end_single, end_total, enginstr):
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(
             _check_total_stocks(
-                now, table, value, start, end_single, end_total, enginstr
+                key,token,notification,now, table, value, start, end_single, end_total, enginstr
             )
         )
     finally:
@@ -265,7 +265,7 @@ def check_total_stocks(now, table, value, start, end_single, end_total, enginstr
 
 
 async def _check_total_stocks(
-    now, table, value, start, end_single, end_total, enginstr
+    key,token,notification,now, table, value, start, end_single, end_total, enginstr
 ):
     global check
     if check:
@@ -334,3 +334,4 @@ async def _check_total_stocks(
         else:
             print(f"{name}检测结果为:{final},不满足放量反包条件")
     print("complete")
+    notification(key,token,"全局筛选完成")

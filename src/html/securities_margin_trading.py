@@ -54,7 +54,7 @@ def xcrawlerMarginData(soup):
     return datas, headers
 
 
-def get_margin_data(driver, url, now, enginstr):
+def get_margin_data(key,token,notification,driver, url, now, enginstr):
     driver.get(url)
     driver.implicitly_wait(delay_time)
     index = 1
@@ -129,15 +129,16 @@ def get_margin_data(driver, url, now, enginstr):
     data_processor.SaveToXlsx(datas, headers, "Assets/allMargin_data.xlsx")
     data_processor.SaveToJson(datas, "Assets/allMargin_data.json")
     data_processor.SaveTosql(datas, headers, enginstr, f"{formatted}-allMargin")
+    notification(key,token,"融资融券数据获取完成")
 
 
 # 获取融资融券交易明细
-def getmargindata(url, now, enginstr):
+def getmargindata(key,token,notification,url, now, enginstr):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
 
-    get_margin_data(driver, url, now, enginstr)
+    get_margin_data(key,token,notification,driver, url, now, enginstr)
 
 
 # ==================================================

@@ -53,10 +53,10 @@ class Window(QWidget):
         src.start(key,token,notification)
 
     def button_Allclicked(self):
-        src.getAllStock()
+        src.getAllStock(key,token,notification)
 
     def button_AllMarginclicked(self):
-        src.getMarginAllData()
+        src.getMarginAllData(key,token,notification)
 
     def button_showStockData(self, stockNum):
         src.showStockData(stockNum)
@@ -70,7 +70,7 @@ class Window(QWidget):
             src.check(key,token,notification,[self.inputText], self.ma, date_object)
 
     def button_filter(self):
-        src.filter()
+        src.filter(key,token,notification)
 
     def button_find(self, stockNum):
         if len(self.inputText) == 0:

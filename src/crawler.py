@@ -66,7 +66,7 @@ def _runProcess(key,token,pushover,check, _stocks, ma, start):
             p.daemon = True
             p.start()
             p.join(30)
-    pushover(key,token,"xcarwler complete")
+    pushover(key,token,"自选股数据爬取完成")
     done.set()
 
 
@@ -228,8 +228,8 @@ def start(key,token,pushover):
     # run_forever(False, stocks)
 
 
-def getAllStock():
-    html.getAllStock(enginstr)
+def getAllStock(key,token,pushover):
+    html.getAllStock(key,token,pushover,enginstr)
 
 
 def find(stockNum, ma=5):
@@ -280,10 +280,11 @@ def check(key,token,pushover,customstocks=None, ma=5, start=None):
     run_forever(key,token,pushover,False, customstocks, ma, start, True)
 
 
-def filter():
+def filter(key,token,notification):
     print("开始全局筛选")
     now = datetime.datetime.now()
     quantifytest.check_total_stocks(
+        key,token,notification,
         now,
         "2024-03-22-allstock",
         "代码",
@@ -294,6 +295,6 @@ def filter():
     )
 
 
-def getMarginAllData():
+def getMarginAllData(key,token,notification):
     now = datetime.datetime.now()
-    html.getmargindata("https://data.eastmoney.com/rzrq/detail/all.html", now, enginstr)
+    html.getmargindata(key,token,notification,"https://data.eastmoney.com/rzrq/detail/all.html", now, enginstr)
