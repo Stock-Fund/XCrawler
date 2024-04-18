@@ -66,7 +66,7 @@ def _runProcess(key,token,pushover,check, _stocks, ma, start):
             p.daemon = True
             p.start()
             p.join(30)
-    pushover(key,token,"自选股数据爬取完成")
+    pushover(key,token,"股票数据获取取完成")
     done.set()
 
 
