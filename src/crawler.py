@@ -11,8 +11,6 @@ enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
 stocks = ["300552", "300496", "000628","603019","000911"]  # "300552", "300496", "000628",
 done = threading.Event()
 
-pushover = None
-
 FUNCTION_MAP = {
     "html.getStocksTime": html.getStocksTime,
     "html.getStockInflowOutflow": html.getStockInflowOutflow,
@@ -20,7 +18,6 @@ FUNCTION_MAP = {
     "html.getStockData_datareader": html.getStockData_datareader,
     "quantifytest.startQuantifytest": quantifytest.startQuantifytest,
 }
-
 
 def run_stock_process(target, stocks, now, enginStr, start=None, check=None, ma=None):
     func = FUNCTION_MAP[target]
@@ -36,7 +33,7 @@ def run_stock_process(target, stocks, now, enginStr, start=None, check=None, ma=
         _p.join(30)
 
 
-def _runProcess(check, _stocks, ma, start):
+def _runProcess(key,token,pushover,check, _stocks, ma, start):
     now = datetime.datetime.now()
     # 收盘时间
     target_time1 = datetime.time(11, 30)
@@ -69,6 +66,7 @@ def _runProcess(check, _stocks, ma, start):
             p.daemon = True
             p.start()
             p.join(30)
+    pushover(key,token,"xcarwler complete")
     done.set()
 
 
@@ -197,10 +195,10 @@ def _runProcess(check, _stocks, ma, start):
 #     done.set()
 
 
-def run_forever(polling, _stocks, ma=5, start=None, check=False):
+def run_forever(key,token,pushover,polling, _stocks, ma=5, start=None, check=False):
     if polling:
         schedule.every().day.at("15:00").do(
-            lambda: _runProcess(check, _stocks, ma, start)
+            lambda: _runProcess(key,token,pushover,check, _stocks, ma, start)
         )
         while not done.is_set():
             # localtime = src.timeutil.get_local_time()
@@ -208,13 +206,16 @@ def run_forever(polling, _stocks, ma=5, start=None, check=False):
             schedule.run_pending()
             time.sleep(1)
     else:
-        _runProcess(check, _stocks, ma, start)
+        _runProcess(key,token,pushover,check, _stocks, ma, start)
 
 
-def try_start():
+def try_start(key,token,pushover):
     thread = threading.Thread(
         target=run_forever,
         args=(
+            key,
+            token,
+            pushover,
             True,
             stocks,
         ),
@@ -222,11 +223,8 @@ def try_start():
     )
     thread.start()
 
-def init_pushover(func):
-    pushover = func
-
-def start():
-    src.cProfile_test.cProfile_test(run_forever,False,stocks)
+def start(key,token,pushover):
+    src.cProfile_test.cProfile_test(run_forever,key,token,pushover,False,stocks)
     # run_forever(False, stocks)
 
 
@@ -276,10 +274,10 @@ def showStockData(stockNum):
     html.showStockData(stockNum, enginstr)
 
 
-def check(customstocks=None, ma=5, start=None):
+def check(key,token,pushover,customstocks=None, ma=5, start=None):
     if not customstocks:
         customstocks = stocks
-    run_forever(False, customstocks, ma, start, True)
+    run_forever(key,token,pushover,False, customstocks, ma, start, True)
 
 
 def filter():

@@ -1,1 +1,1 @@
-import notification.pushover
+from notification.pushover import * 

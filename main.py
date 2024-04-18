@@ -13,6 +13,10 @@ import numpy as np
 from datetime import datetime
 import notification.pushover as pushover
 
+key="u8hxscv479iru5gwgtu3825jjmwg4o"
+token="ajo4nyx5miu8syjn8dxp67rtm84rk5"
+notification = pushover.send_pushover_notification
+
 def main():
     app = QApplication(sys.argv)
     path = os.path.join(
@@ -46,7 +50,7 @@ def main():
 
 class Window(QWidget):
     def button_clicked(self):
-        src.start()
+        src.start(key,token,notification)
 
     def button_Allclicked(self):
         src.getAllStock()
@@ -59,11 +63,11 @@ class Window(QWidget):
 
     def button_check(self):
         if len(self.inputText) == 0:
-            src.check()
+            src.check(key,token,notification)
         else:
             date_string = "2023-10-01 15:00:00"
             date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
-            src.check([self.inputText], self.ma, date_object)
+            src.check(key,token,notification,[self.inputText], self.ma, date_object)
 
     def button_filter(self):
         src.filter()
@@ -197,7 +201,7 @@ class Window(QWidget):
 
     # 槽函数
     def handle_load_finished(self):
-        src.try_start()
+        src.try_start(key,token,notification)
 
 
 if __name__ == "__main__":
