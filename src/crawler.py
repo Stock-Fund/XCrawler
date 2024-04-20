@@ -6,6 +6,7 @@ import schedule
 import threading
 import datetime
 import src.cProfile_test
+import src.util.infoutil as info
 
 enginstr = "mysql+pymysql://gxm:password@localhost:3306/stock"
 stocks = ["300552", "300496", "000628","603019","000911"]  # "300552", "300496", "000628",
@@ -66,7 +67,8 @@ def _runProcess(key,token,pushover,check, _stocks, ma, start):
             p.daemon = True
             p.start()
             p.join(30)
-    pushover(key,token,"股票数据获取取完成")
+    message = info.get_total_info()
+    pushover(key,token,f"股票数据获取取完成,{message}")
     done.set()
 
 

@@ -1,4 +1,5 @@
 from src.util.timeutil import *
+from src.util.infoutil import *
 import src.data_processor
 import src.html
 import src.quantifytest

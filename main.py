@@ -13,7 +13,6 @@ import numpy as np
 from datetime import datetime
 import notification.pushover as pushover
 
-
 notification = pushover.send_pushover_notification
 
 def main():
