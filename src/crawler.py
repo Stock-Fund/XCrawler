@@ -68,7 +68,7 @@ def _runProcess(key,token,pushover,check, _stocks, ma, start):
             p.start()
             p.join(30)
     message = info.get_total_info()
-    pushover(key,token,f"股票数据获取取完成,{message}")
+    pushover(key,token,"股票数据获取取完成")
     done.set()
 
 
