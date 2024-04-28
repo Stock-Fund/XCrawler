@@ -19,11 +19,29 @@ def getStockData(stockNum):
     # dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
 
 # 通过efinace获取股票的实时数据
-def getStockMinutesData(stockNum):
+def getStockMinutesData(stockNum,freq):
     freq = 1
     # 获取最新一个交易日的分钟级别股票行情数据
     df = ef.stock.get_quote_history(stockNum, klt=freq)
     return df
+
+def getStockData_Minutes_Normal(stockNum, freq = 1):
+    status = {stockNum: 0}
+    while 1:
+        # 获取最新一个交易日的分钟级别股票行情数据
+        df = getStockMinutesData(stockNum, freq)
+        # 现在的时间
+        now = str(datetime.today()).split('.')[0]
+        # 将数据存储到 csv 文件中
+        df.to_csv(f'{stockNum}.csv', encoding='utf-8-sig', index=None)
+        print(f'已在 {now}, 将股票: {stockNum} 的行情数据存储到文件: {stockNum}.csv 中！')
+        if len(df) == status[stockNum]:
+            print(f'{stockNum} 已收盘')
+            break
+        status[stockNum] = len(df)
+        print('暂停 60 秒')
+        time.sleep(60)
+        print('-'*10)
 
 def showStockData(stockNum, enginstr):
     now = datetime.datetime.now()
