@@ -2,6 +2,7 @@ import tushare as ts
 from pandas_datareader import data as pdr
 import pandas as pd
 import yfinance as yf
+import efinance as ef
 import src.data_processor as data_processor
 import src.html as html
 import src.quantifytest as quantifytest
@@ -14,8 +15,15 @@ import src.data_processor as data_processor
 # 第三方tushare获取股票数据
 def getStockData(stockNum):
     dd = ts.get_hist_data(stockNum)  # 爬取股票近三年的全部日k信息
+    da = ts.get_realtime_quotes(stockNum) # 爬取股票实时行情信息
     # dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
 
+# 通过efinace获取股票的实时数据
+def getStockMinutesData(stockNum):
+    freq = 1
+    # 获取最新一个交易日的分钟级别股票行情数据
+    df = ef.stock.get_quote_history(stockNum, klt=freq)
+    return df
 
 def showStockData(stockNum, enginstr):
     now = datetime.datetime.now()
