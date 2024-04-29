@@ -10,7 +10,7 @@ from src.html.stockutils import getStockSuffix
 from src.util.timeutil import *
 import datetime
 import src.data_processor as data_processor
-
+from typing import Dict
 
 # 第三方tushare获取股票数据
 def getStockData(stockNum):
@@ -25,6 +25,7 @@ def getStockMinutesData(stockNum,freq):
     df = ef.stock.get_quote_history(stockNum, klt=freq)
     return df
 
+# 每间隔 1 分钟获取一次单只股票分钟行情数据
 def getStockData_Minutes_Normal(stockNum, freq = 1):
     status = {stockNum: 0}
     while 1:
@@ -42,6 +43,54 @@ def getStockData_Minutes_Normal(stockNum, freq = 1):
         print('暂停 60 秒')
         time.sleep(60)
         print('-'*10)
+
+# 每间隔 1 分钟获取一次多只股票分钟行情数据(普通版)
+def getStockDatas_Minutes_Normal(stockNums, freq = 1):
+    status = {stock_code: 0 for stock_code in stockNums}
+    while len(stockNums) != 0:
+        for stock_code in stockNums.copy():
+            # 现在的时间
+            now = str(datetime.today()).split('.')[0]
+            # 获取最新一个交易日的分钟级别股票行情数据
+            df = ef.stock.get_quote_history(stock_code, klt=freq)
+            # 将数据存储到 csv 文件中
+            df.to_csv(f'{stock_code}.csv', encoding='utf-8-sig', index=None)
+            print(f'已在 {now}, 将股票: {stock_code} 的行情数据存储到文件: {stock_code}.csv 中！')
+            if len(df) == status[stock_code]:
+                # 移除已经收盘的股票代码
+                stockNums.remove(stock_code)
+                print(f'股票 {stock_code} 已收盘！')
+            status[stock_code] = len(df)
+        if len(stockNums) != 0:
+           print('暂停 60 秒')
+           time.sleep(60)
+        print('-'*10)
+
+# 每间隔 1 分钟获取一次多只股票分钟行情数据(高速版)  
+def getStockDatas_Minutes_Advanced(stockNums, freq = 1):
+    status = {stock_code: 0 for stock_code in stockNums}
+    while len(stockNums) != 0:
+        # 获取最新一个交易日的分钟级别股票行情数据
+        stocks_df: Dict[str, pd.DataFrame] = ef.stock.get_quote_history(
+            stockNums, klt=freq)
+        for stock_code, df in stocks_df.items():
+            # 现在的时间
+            now = str(datetime.today()).split('.')[0]
+            # 将数据存储到 csv 文件中
+            df.to_csv(f'{stock_code}.csv', encoding='utf-8-sig', index=None)
+            print(f'已在 {now}, 将股票: {stock_code} 的行情数据存储到文件: {stock_code}.csv 中！')
+            if len(df) == status[stock_code]:
+                # 移除已经收盘的股票代码
+                stockNums.remove(stock_code)
+                print(f'股票 {stock_code} 已收盘！')
+            status[stock_code] = len(df)
+        if len(stockNums) != 0:
+            print('暂停 60 秒')
+            time.sleep(60)
+        print('-'*10)
+
+    print('全部股票已收盘')
+    
 
 def showStockData(stockNum, enginstr):
     now = datetime.datetime.now()
