@@ -124,7 +124,7 @@ def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
     stockData.to_excel("Assets/" + code + ".xlsx")
     stockData.to_json("Assets/" + code + ".json")
 
-    # stockData.index = pd.to_datetime(stockData.index)
+    stockData.index = pd.to_datetime(stockData.index)
     # 周级别数据
     weekdata = stockData.resample("W").last()
 

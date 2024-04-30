@@ -10,4 +10,4 @@ def cProfile_test(func,*args,**kwargs):
     sortby = "cumtime"  # 仅适用于 3.6, 3.7 把这里改成常量了
     ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
     ps.print_stats()
-    print(s.getvalue())
+    # print(s.getvalue())
