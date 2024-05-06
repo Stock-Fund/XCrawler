@@ -110,11 +110,18 @@ def showStockData(stockNum, enginstr):
 
 # pandas_datareader通过efinance获取股票数据
 def getStockData_efinance(stockNum, now, start,end, enginstr, check, ma=5):
+    # 获取今天的日期
+    today = datetime.datetime.today().date()
+    adjusted_date = adjust_date_to_weekday(today)
+    if not start:
+        start = "2023-10-01"
+    else:
+        start = start
     if not end: 
-       now = datetime.datetime.now()
        # 格式化为字符串
-       end = now.strftime("%Y-%m-%d")
-    getStockDayData(stockNum,start,end)
+       end = adjusted_date.strftime("%Y-%m-%d") 
+    df = getStockDayData(stockNum,start,end)
+    print(df)
 
 # pandas_datareader通过yahoo获取股票数据
 def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):

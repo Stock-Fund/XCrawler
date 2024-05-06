@@ -19,6 +19,6 @@ from src.html.stocktimecrawler import (
     getStockAllInflowOutflow,
     getStockChips,
 )
-from src.html.stockcustomcrawler import getStockData_datareader, showStockData
+from src.html.stockcustomcrawler import getStockData_datareader, showStockData,getStockData_efinance
 from src.html.stockAllcrawler import getAllStock, checkAllStock
 from src.html.securities_margin_trading import getmargindata

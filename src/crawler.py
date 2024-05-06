@@ -32,6 +32,7 @@ def run_stock_process(target, stocks, now, enginStr, start=None, check=None, ma=
         _p.daemon = True
         _p.start()
         _p.join(30)
+        _p.close()
 
 
 def _runProcess(key,token,pushover,check, _stocks, ma, start):
