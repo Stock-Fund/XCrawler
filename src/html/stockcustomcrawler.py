@@ -18,6 +18,11 @@ def getStockData(stockNum):
     da = ts.get_realtime_quotes(stockNum) # 爬取股票实时行情信息
     # dd.applymap('002837'+'.xlsx') #将信息导出到excel表格中
 
+# 通过efinace获取股票的日级别数据
+def getStockDayData(stockNum,beg,end):
+    df = ef.stock.get_quote_history(stockNum,beg = beg,end=end)
+    return df
+
 # 通过efinace获取股票的实时数据
 def getStockMinutesData(stockNum,freq):
     freq = 1
@@ -103,6 +108,13 @@ def showStockData(stockNum, enginstr):
     else:
         print(data)
 
+# pandas_datareader通过efinance获取股票数据
+def getStockData_efinance(stockNum, now, start,end, enginstr, check, ma=5):
+    if not end: 
+       now = datetime.datetime.now()
+       # 格式化为字符串
+       end = now.strftime("%Y-%m-%d")
+    getStockDayData(stockNum,start,end)
 
 # pandas_datareader通过yahoo获取股票数据
 def getStockData_datareader(stockNum, now, start, enginstr, check, ma=5):
