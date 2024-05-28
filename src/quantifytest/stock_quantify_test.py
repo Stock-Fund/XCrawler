@@ -138,6 +138,9 @@ def startQuantifytest(stockNum, now, start, enginstr, end="", ma=20):
 
     volum = stock_instance.checkVolumLogic()
     print(f"{name}, 成就量判断后市为{volum}")
+    
+    df = stock_instance.checkDetermineEntryExit()
+    print(f"{df},是否存在主力进场")
     # if buy_short is False:
     #     print("非短期买入区间")
     # else:
